@@ -159,9 +159,12 @@ body { background: var(--boviq-bg); font-family: 'Inter', -apple-system, sans-se
 <div class="container-xl" style="max-width: 680px; padding-top: 2rem;">
 
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
-        <div>
-            <h2 style="margin:0; font-weight:700; color:#1e293b;">📊 Cours du Marché</h2>
-            <p style="margin:0; font-size:0.8rem; color:#868e96;">Prix France – Source: DG AGRI / Commission Européenne</p>
+        <div style="display:flex; align-items:center; gap:12px;">
+            <a href="index.html" style="text-decoration:none;font-size:1.5rem;opacity:.7;transition:opacity .2s;" title="Retour accueil" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='.7'">🐄</a>
+            <div>
+                <h2 style="margin:0; font-weight:700; color:#1e293b;">📊 Cours du Marché</h2>
+                <p style="margin:0; font-size:0.8rem; color:#868e96;">Prix France – Source: DG AGRI / Commission Européenne</p>
+            </div>
         </div>
         <button class="refresh-btn" id="refreshBtn" onclick="CoursMarche.refreshAll()">
             ↻ Actualiser
