@@ -253,13 +253,14 @@ select.form-select{font:400 13px 'DM Sans',sans-serif;padding:6px 10px;border:1p
           <option value="Jeunes Bovins|R">Jeune Bovin R</option>
           <option value="Jeunes Bovins|U">Jeune Bovin U</option>
           <option value="Génisses|R">Génisse R</option>
+          <option value="LAIT">🥛 Lait conventionnel (mensuel)</option>
         </select>
       </div>
       <div class="chart-container">
         <canvas id="chart-cotations"></canvas>
       </div>
       <div style="font-size:11px;color:var(--ink4);text-align:center;margin-top:4px">
-        Source : FranceAgriMer — cotations hebdomadaires entrée abattoir (€/kg carcasse)
+        Source : DG AGRI — Commission Européenne (cotations viande hebdo + prix lait mensuel)
       </div>
     </div>
 
@@ -368,9 +369,12 @@ select.form-select{font:400 13px 'DM Sans',sans-serif;padding:6px 10px;border:1p
 <script>
 // ============================================================
 // BOVIQ — MODULE COURS DU MARCHÉ v2
-// Sources : data.gouv.fr (FranceAgriMer open data)
-// Stratégie : proxy CORS → accès direct → cache → import CSV
+// Sources : DG AGRI (Commission Européenne) via JSON pré-généré
+// Stratégie : JSON local (même domaine) → cache → import CSV manuel
 // ============================================================
+
+// JSON généré par scripts/update-cours-data.py (mis à jour via GitHub Actions)
+const JSON_DATA_URL = 'data/market/cours-data.json';
 
 const RESOURCES = {
   abattoir: {
@@ -385,7 +389,7 @@ const RESOURCES = {
   }
 };
 
-// CORS proxies to try (from file:// protocol)
+// CORS proxies as fallback (rarely works)
 const CORS_PROXIES = [
   { name: 'corsproxy.io', wrap: url => `https://corsproxy.io/?${encodeURIComponent(url)}` },
   { name: 'allorigins', wrap: url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}` },
@@ -434,6 +438,68 @@ function setStatus(state, html) {
   document.getElementById('status-text').innerHTML = html;
 }
 
+// === LOAD FROM JSON (priority source) ===
+function jsonToMarketData(json) {
+  const cotations = [];
+  const beef = json.beef?.prices || {};
+  const weekDate = json.beef?.week_date || '';
+  
+  // Convert week date "26.02.2026" → "2026-S09" (approximate)
+  let semLabel = weekDate;
+  if (weekDate.match(/\d{2}\.\d{2}\.\d{4}/)) {
+    const [d,m,y] = weekDate.split('.');
+    const dt = new Date(+y, +m-1, +d);
+    const weekNum = Math.ceil(((dt - new Date(+y,0,1)) / 86400000 + 1) / 7);
+    semLabel = `${y}-S${String(weekNum).padStart(2,'0')}`;
+  }
+  
+  // Beef categories → cotation entries (EUR/100kg → EUR/kg = ÷100)
+  const beefMap = [
+    ['vache_r3','Vaches','R','3'], ['vache_r4','Vaches','R','4'],
+    ['vache_o3','Vaches','O','3'], ['vache_o4','Vaches','O','4'],
+    ['vache_p2','Vaches','P','2'], ['vache_p3','Vaches','P','3'],
+    ['jb_u2','Jeunes Bovins','U','2'], ['jb_u3','Jeunes Bovins','U','3'],
+    ['jb_r2','Jeunes Bovins','R','2'], ['jb_r3','Jeunes Bovins','R','3'],
+    ['jb_o2','Jeunes Bovins','O','2'], ['jb_o3','Jeunes Bovins','O','3'],
+    ['genisse_u3','Génisses','U','3'], ['genisse_r2','Génisses','R','2'],
+    ['genisse_r3','Génisses','R','3'], ['genisse_r4','Génisses','R','4'],
+    ['genisse_o3','Génisses','O','3'],
+    ['boeuf_r3','Bœufs','R','3'], ['boeuf_o3','Bœufs','O','3'],
+  ];
+  
+  for (const [key, cat, conf, eng] of beefMap) {
+    if (beef[key]) {
+      cotations.push({
+        semaine: semLabel,
+        categorie: cat,
+        categorieNorm: cat,
+        conformation: conf,
+        engraissement: eng,
+        prix: Math.round(beef[key]) / 100  // EUR/100kg → EUR/kg
+      });
+    }
+  }
+  
+  // Auto-fill milk price (EUR/100kg → EUR/1000L ≈ ×10)
+  const milkLatest = json.milk?.latest;
+  if (milkLatest) {
+    const milkPer1000L = Math.round(milkLatest.price * 10);
+    const inp = document.getElementById('inp-milk-price');
+    if (inp && !inp.value) inp.value = milkPer1000L;
+  }
+  
+  // Store milk history for chart
+  window._milkHistory = json.milk?.prices || [];
+  window._jsonMeta = json.meta || {};
+  
+  return {
+    cotations,
+    lastUpdate: json.meta?.generated || new Date().toISOString(),
+    source: `DG AGRI (${weekDate || 'Commission Européenne'})`,
+    rawHeaders: null
+  };
+}
+
 // === FETCH WITH CASCADE ===
 async function refreshAllData() {
   const btn = document.getElementById('btn-refresh');
@@ -441,11 +507,34 @@ async function refreshAllData() {
   btn.innerHTML = '<span class="spinner"></span> Chargement...';
   setStatus('loading', 'Récupération des cotations en cours...');
 
+  // ── 1) TRY LOCAL JSON (same-origin, no CORS) ──
+  try {
+    log('📡 Chargement données JSON pré-générées...', 'info');
+    const resp = await fetch(JSON_DATA_URL, { signal: AbortSignal.timeout(8000) });
+    if (resp.ok) {
+      const json = await resp.json();
+      const beefCount = Object.keys(json.beef?.prices || {}).length;
+      const milkCount = json.milk?.prices?.length || 0;
+      if (beefCount > 0 || milkCount > 0) {
+        marketData = jsonToMarketData(json);
+        saveToCache();
+        renderAll();
+        setStatus('ok', `<strong>Cours à jour ✓</strong> — ${marketData.cotations.length} cotations viande + ${milkCount} mois lait — Source : DG AGRI (${json.beef?.week_date || ''})`);
+        log(`✅ JSON chargé : ${beefCount} prix viande, ${milkCount} mois lait`, 'ok');
+        btn.disabled = false;
+        btn.innerHTML = '🔄 Actualiser les cours';
+        return;
+      }
+    }
+  } catch (e) {
+    log(`⚠️ JSON local : ${e.message}`, 'warn');
+  }
+
+  // ── 2) TRY CORS PROXIES (legacy CSV) ──
   const targetUrl = RESOURCES.abattoir.directUrl;
   let csvText = null;
   let source = null;
 
-  // 1) Try each CORS proxy
   for (const proxy of CORS_PROXIES) {
     try {
       log(`📡 Tentative via ${proxy.name}...`, 'info');
@@ -453,7 +542,6 @@ async function refreshAllData() {
       const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
       if (resp.ok) {
         const text = await resp.text();
-        // Validate it looks like CSV (not an error page)
         if (text.length > 200 && (text.includes(';') || text.includes(','))) {
           csvText = text;
           source = `data.gouv.fr via ${proxy.name}`;
@@ -470,7 +558,7 @@ async function refreshAllData() {
     }
   }
 
-  // 2) Try direct (works from http:// but not file://)
+  // 3) Try direct
   if (!csvText) {
     try {
       log('📡 Tentative accès direct...', 'info');
@@ -485,7 +573,7 @@ async function refreshAllData() {
     }
   }
 
-  // 3) Parse if we got CSV
+  // 4) Parse CSV if we got it
   if (csvText) {
     const data = parseCSV(csvText);
     if (data.length > 0) {
@@ -958,15 +1046,8 @@ function loadDemoData() {
 // === BOOT ===
 loadSettings();
 updateCacheInfo();
-const cached = loadFromCache();
-if (cached) {
-  marketData = cached;
-  renderAll();
-  const hrs = Math.round((Date.now() - new Date(cached.lastUpdate).getTime()) / 3600000);
-  setStatus(hrs < 168 ? 'ok' : 'warn',
-    `<strong>Données du cache</strong> — ${cached.cotations.length} cotations du ${new Date(cached.lastUpdate).toLocaleDateString('fr-FR')} (${cached.source})${hrs >= 168 ? ' · <a href="#" onclick="refreshAllData();return false">⟳ Actualiser</a>' : ''}`
-  );
-}
+// Auto-load: try JSON first, then cache
+refreshAllData();
 </script>
 </body>
 </html>
