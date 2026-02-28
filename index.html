@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BOVIQ — Gestion de troupeau laitier</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐄</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--brand:#1B4332;--brand2:#2D6A4F;--brand3:#40916C;--bg:#F4F1EB;--card:#fff;--ink:#1E1B16;--ink2:#4A4538;--ink3:#8C8474}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px}
+.hero{text-align:center;max-width:640px;margin-bottom:48px}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;color:var(--brand);margin-bottom:8px;letter-spacing:-1px}
+.hero p{font-size:1.1rem;color:var(--ink2);line-height:1.6}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;max-width:700px;width:100%}
+.card{background:var(--card);border-radius:16px;padding:32px 28px;box-shadow:0 2px 12px rgba(30,27,22,.06);border:1px solid rgba(30,27,22,.06);transition:all .2s;text-decoration:none;color:inherit}
+.card:hover{transform:translateY(-4px);box-shadow:0 8px 30px rgba(30,27,22,.12)}
+.card-icon{font-size:2.4rem;margin-bottom:16px}
+.card h2{font-size:1.25rem;font-weight:700;color:var(--brand);margin-bottom:8px}
+.card p{font-size:.95rem;color:var(--ink3);line-height:1.5}
+.card .tag{display:inline-block;margin-top:16px;padding:4px 12px;background:#D8F3DC;color:var(--brand2);border-radius:20px;font-size:.8rem;font-weight:600}
+footer{margin-top:60px;color:var(--ink3);font-size:.85rem;text-align:center}
+footer a{color:var(--brand3);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>🐄 BOVIQ</h1>
+  <p>Outils de gestion pour éleveurs laitiers français.<br>100% local, zéro serveur, données privées.</p>
+</div>
+<div class="cards">
+  <a href="boviq-v6-latest.html" class="card">
+    <div class="card-icon">📋</div>
+    <h2>Gestion de troupeau</h2>
+    <p>Animaux, reproduction, sanitaire, vaccinations, tableau de bord, bilan financier simplifié.</p>
+    <span class="tag">V6 — App principale</span>
+  </a>
+  <a href="boviq-cours-marche.html" class="card">
+    <div class="card-icon">📈</div>
+    <h2>Cours du marché</h2>
+    <p>Prix lait, viande bovine et céréales en temps réel. Données DG AGRI, mise à jour Excel.</p>
+    <span class="tag">Données DG AGRI</span>
+  </a>
+</div>
+<footer>
+  Projet open-source — <a href="https://github.com/loduval/boviq-app">GitHub</a>
+</footer>
+</body>
+</html>

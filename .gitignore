@@ -1,0 +1,15 @@
+# Backups & archives (pas besoin sur le repo)
+_backups-v6/
+_backups-ami/
+_archives/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp files
+~$*
+*.tmp
+
+# Bilans comptables (données sensibles)
+data/bilan/*.pdf

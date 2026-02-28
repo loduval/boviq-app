@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BOVIQ - Cours du Marché</title>
+<!-- Tabler CSS (same as BOVIQ main app) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/css/tabler.min.css">
+<!-- SheetJS for Excel parsing -->
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<style>
+:root {
+    --boviq-green: #2fb344;
+    --boviq-blue: #206bc4;
+    --boviq-orange: #f76707;
+    --boviq-red: #d63939;
+    --boviq-bg: #f4f6fa;
+}
+body { background: var(--boviq-bg); font-family: 'Inter', -apple-system, sans-serif; }
+
+.cours-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+}
+.cours-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+.cours-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+.cours-badge {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+.cours-badge-fresh { background: #d3f9d8; color: #2b8a3e; }
+.cours-badge-stale { background: #fff3bf; color: #e67700; }
+.cours-badge-error { background: #ffe3e3; color: #c92a2a; }
+.cours-badge-loading { background: #e7f5ff; color: #1971c2; }
+
+.prix-main {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+.prix-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1;
+}
+.prix-unit {
+    font-size: 0.8rem;
+    color: #868e96;
+}
+.prix-date {
+    font-size: 0.75rem;
+    color: #adb5bd;
+    margin-bottom: 0.75rem;
+}
+.prix-variation {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+.prix-variation.up { background: #d3f9d8; color: #2b8a3e; }
+.prix-variation.down { background: #ffe3e3; color: #c92a2a; }
+.prix-variation.stable { background: #f1f3f5; color: #868e96; }
+
+.beef-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+.beef-item {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 0.75rem;
+}
+.beef-item-label {
+    font-size: 0.7rem;
+    color: #868e96;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+}
+.beef-item-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+.beef-item-unit {
+    font-size: 0.7rem;
+    color: #adb5bd;
+}
+
+.source-link {
+    font-size: 0.65rem;
+    color: #adb5bd;
+    text-decoration: none;
+    margin-top: 0.75rem;
+    display: block;
+}
+.source-link:hover { color: var(--boviq-blue); }
+
+.refresh-btn {
+    background: none;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    color: #495057;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.refresh-btn:hover { background: #f8f9fa; border-color: #adb5bd; }
+.refresh-btn.loading { opacity: 0.5; pointer-events: none; }
+
+.skeleton {
+    background: linear-gradient(90deg, #f1f3f5 25%, #e9ecef 50%, #f1f3f5 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+    height: 1em;
+    width: 80%;
+}
+.skeleton-lg { height: 2rem; width: 120px; }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+.cors-notice {
+    background: #fff9db;
+    border: 1px solid #ffe066;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
+    color: #5c4000;
+    margin-bottom: 1rem;
+}
+</style>
+</head>
+<body>
+<div class="container-xl" style="max-width: 680px; padding-top: 2rem;">
+
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
+        <div>
+            <h2 style="margin:0; font-weight:700; color:#1e293b;">📊 Cours du Marché</h2>
+            <p style="margin:0; font-size:0.8rem; color:#868e96;">Prix France – Source: DG AGRI / Commission Européenne</p>
+        </div>
+        <button class="refresh-btn" id="refreshBtn" onclick="CoursMarche.refreshAll()">
+            ↻ Actualiser
+        </button>
+    </div>
+
+    <div id="corsNotice" class="cors-notice" style="display:none;">
+        ⚠️ Accès direct bloqué par CORS. Les données affichées proviennent du cache local.
+        <br><small>Les fichiers Excel de la Commission ne sont pas accessibles en cross-origin depuis un navigateur. Utilisez le bouton "Import manuel" ci-dessous.</small>
+    </div>
+
+    <!-- LAIT -->
+    <div class="cours-card" id="milkCard">
+        <div class="cours-header">
+            <h3>🥛 Lait cru de vache</h3>
+            <span class="cours-badge cours-badge-loading" id="milkBadge">Chargement…</span>
+        </div>
+        <div id="milkContent">
+            <div class="prix-main"><div class="skeleton skeleton-lg"></div></div>
+            <div class="prix-date"><div class="skeleton" style="width:150px;"></div></div>
+        </div>
+        <a class="source-link" href="https://agriculture.ec.europa.eu/data-and-analysis/markets/overviews/market-observatories/milk_en" target="_blank">
+            Source: Milk Market Observatory – DG AGRI
+        </a>
+    </div>
+
+    <!-- VIANDE BOVINE -->
+    <div class="cours-card" id="beefCard">
+        <div class="cours-header">
+            <h3>🥩 Viande bovine (carcasses)</h3>
+            <span class="cours-badge cours-badge-loading" id="beefBadge">Chargement…</span>
+        </div>
+        <div id="beefContent">
+            <div class="beef-grid">
+                <div class="beef-item"><div class="skeleton" style="width:100%;"></div></div>
+                <div class="beef-item"><div class="skeleton" style="width:100%;"></div></div>
+                <div class="beef-item"><div class="skeleton" style="width:100%;"></div></div>
+                <div class="beef-item"><div class="skeleton" style="width:100%;"></div></div>
+            </div>
+        </div>
+        <a class="source-link" href="https://agriculture.ec.europa.eu/data-and-analysis/markets/overviews/market-observatories/meat/beef-statistics_en" target="_blank">
+            Source: Meat Market Observatory – DG AGRI
+        </a>
+    </div>
+
+    <!-- Import manuel (fallback CORS) -->
+    <div class="cours-card" id="manualImport" style="display:none;">
+        <div class="cours-header">
+            <h3>📁 Import manuel des fichiers Excel</h3>
+        </div>
+        <p style="font-size:0.8rem; color:#495057; margin-bottom:0.75rem;">
+            Si le chargement automatique échoue (blocage CORS), téléchargez les fichiers depuis les liens ci-dessous, puis importez-les ici :
+        </p>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.75rem;">
+            <a href="https://agriculture.ec.europa.eu/document/download/62d01488-33a0-4601-a841-ca48fa11d999_en?filename=eu-milk-historical-price-series_en.xlsx"
+               target="_blank" class="refresh-btn" style="text-decoration:none;">⬇ Télécharger Lait (xlsx)</a>
+            <a href="https://agriculture.ec.europa.eu/document/download/db5b282e-a2b4-4d18-91bd-bd4854dc2030_en?filename=bovine-carcase-prices-latest_en.xlsx"
+               target="_blank" class="refresh-btn" style="text-decoration:none;">⬇ Télécharger Viande (xlsx)</a>
+        </div>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <label class="refresh-btn" style="cursor:pointer;">
+                📂 Importer Lait
+                <input type="file" accept=".xlsx,.xls" style="display:none;" onchange="CoursMarche.handleManualFile(this, 'milk')">
+            </label>
+            <label class="refresh-btn" style="cursor:pointer;">
+                📂 Importer Viande
+                <input type="file" accept=".xlsx,.xls" style="display:none;" onchange="CoursMarche.handleManualFile(this, 'beef')">
+            </label>
+        </div>
+    </div>
+
+    <!-- Dernière MàJ -->
+    <div style="text-align:center; padding:0.5rem; font-size:0.7rem; color:#adb5bd;" id="lastUpdate"></div>
+
+</div>
+
+<script>
+/**
+ * BOVIQ Cours du Marché - Module d'intégration des prix DG AGRI
+ * 
+ * Sources Excel (Commission Européenne):
+ * - Lait: doc 62d01488 → Sheet "Raw Milk Prices", col K (11) = FR, €/100kg
+ * - Viande: doc db5b282e → Sheet "Weekly All Carcase Prices", col K (11) = FR, €/100kg carcasse
+ * 
+ * Architecture:
+ * 1. Tente fetch CORS direct des .xlsx
+ * 2. Parse avec SheetJS (xlsx.js)
+ * 3. Cache dans localStorage (clé: boviq_cours_*)
+ * 4. Fallback: import manuel si CORS bloqué
+ * 5. Auto-refresh: lait=mensuel, viande=hebdo
+ */
+const CoursMarche = (() => {
+
+    // === CONFIGURATION ===
+    const CONFIG = {
+        milk: {
+            url: 'https://agriculture.ec.europa.eu/document/download/62d01488-33a0-4601-a841-ca48fa11d999_en?filename=eu-milk-historical-price-series_en.xlsx',
+            docId: '62d01488',
+            sheet: 'Raw Milk Prices',
+            frCol: 10,       // 0-indexed col K = France
+            euCol: 30,       // col AE = EU weighted average
+            dateCol: 0,      // col A = date (format "2026m01")
+            headerRow: 4,    // row 5 (0-indexed) has country codes
+            dataStartRow: 6, // row 7 (0-indexed) is first data
+            cacheKey: 'boviq_cours_milk',
+            refreshDays: 15, // re-fetch every 15 days (monthly data)
+        },
+        beef: {
+            url: 'https://agriculture.ec.europa.eu/document/download/db5b282e-a2b4-4d18-91bd-bd4854dc2030_en?filename=bovine-carcase-prices-latest_en.xlsx',
+            docId: 'db5b282e',
+            sheet: 'Weekly All Carcase Prices',
+            frCol: 10,       // 0-indexed col K = France
+            cacheKey: 'boviq_cours_beef',
+            refreshDays: 5,  // re-fetch every 5 days (weekly data)
+            // Categories to extract (row labels → 0-indexed row numbers)
+            // These are looked up dynamically by label match
+            categories: {
+                'jb_r3':     { label: 'Young Bulls 12>24m A-R3', displayFr: 'Jeune Bovin R3' },
+                'vache_o3':  { label: 'Cows D-O3',               displayFr: 'Vache O3' },
+                'vache_r3':  { label: 'Cows D-R3',               displayFr: 'Vache R3' },
+                'genisse_r3':{ label: 'Heifers  E-R3',           displayFr: 'Génisse R3' },
+                'boeuf_r3':  { label: 'Bullocks  C-R3',          displayFr: 'Bœuf R3' },
+                'vache_o2':  { label: 'Cows D-O2',               displayFr: 'Vache O2' },
+                'vache_p2':  { label: 'Cows D-P2',               displayFr: 'Vache P2' },
+                'moyenne':   { label: 'All CAT Avg Price',        displayFr: 'Moyenne toutes catég.' },
+            },
+            // Which categories to display in the card (top 4)
+            displayCats: ['jb_r3', 'vache_o3', 'genisse_r3', 'vache_r3'],
+        }
+    };
+
+    // === CACHE ===
+    function getCache(key) {
+        try {
+            const raw = localStorage.getItem(key);
+            if (!raw) return null;
+            const data = JSON.parse(raw);
+            // Check expiry
+            const ageDays = (Date.now() - data.timestamp) / (1000 * 60 * 60 * 24);
+            return { ...data, expired: ageDays > (data.refreshDays || 7) };
+        } catch { return null; }
+    }
+
+    function setCache(key, data, refreshDays) {
+        try {
+            localStorage.setItem(key, JSON.stringify({
+                ...data,
+                timestamp: Date.now(),
+                refreshDays
+            }));
+        } catch (e) { console.warn('BOVIQ Cours: cache write failed', e); }
+    }
+
+    // === FETCH & PARSE ===
+    async function fetchExcel(url) {
+        const resp = await fetch(url, { mode: 'cors' });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const buf = await resp.arrayBuffer();
+        return XLSX.read(buf, { type: 'array' });
+    }
+
+    function parseMilkData(workbook) {
+        const ws = workbook.Sheets[CONFIG.milk.sheet];
+        if (!ws) throw new Error('Sheet "Raw Milk Prices" non trouvée');
+        
+        const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
+        
+        // Find last rows with valid FR data
+        let latest = null, previous = null;
+        for (let i = data.length - 1; i >= CONFIG.milk.dataStartRow; i--) {
+            const row = data[i];
+            if (!row) continue;
+            const date = row[CONFIG.milk.dateCol];
+            const frPrice = row[CONFIG.milk.frCol];
+            const euPrice = row[CONFIG.milk.euCol];
+            
+            if (date && frPrice && typeof frPrice === 'number' && frPrice > 0) {
+                if (!latest) {
+                    latest = { date, price: Math.round(frPrice * 100) / 100, eu: euPrice };
+                } else if (!previous) {
+                    previous = { date, price: Math.round(frPrice * 100) / 100, eu: euPrice };
+                    break;
+                }
+            }
+        }
+        
+        if (!latest) throw new Error('Aucune donnée lait France trouvée');
+        
+        const variation = previous ? Math.round((latest.price - previous.price) * 100) / 100 : null;
+        const variationPct = previous ? Math.round(((latest.price - previous.price) / previous.price) * 10000) / 100 : null;
+        
+        return {
+            type: 'milk',
+            price: latest.price,
+            unit: '€/100 kg',
+            date: latest.date,
+            dateFr: formatMilkDate(latest.date),
+            euPrice: latest.eu ? Math.round(latest.eu * 100) / 100 : null,
+            variation,
+            variationPct,
+            previousDate: previous ? previous.date : null,
+        };
+    }
+
+    function parseBeefData(workbook) {
+        const ws = workbook.Sheets[CONFIG.beef.sheet];
+        if (!ws) throw new Error('Sheet "Weekly All Carcase Prices" non trouvée');
+        
+        const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
+        
+        // Extract week info (row index 2, cols 23-24 → year & week)
+        const year = data[3] ? data[3][23] : null;
+        const week = data[3] ? data[3][24] : null;
+        
+        // Extract date range (rows 2-3, col 29-30)
+        let dateFrom = data[4] ? data[4][29] : null;
+        let dateTo = data[3] ? data[3][29] : null;
+        // Sometimes the dates are in different positions, search for datetime
+        for (let r = 2; r <= 5; r++) {
+            if (!data[r]) continue;
+            for (let c = 25; c <= 32; c++) {
+                const val = data[r][c];
+                if (val instanceof Date || (typeof val === 'number' && val > 40000 && val < 50000)) {
+                    // Excel serial date
+                }
+            }
+        }
+        
+        // Extract FR prices for each category
+        const prices = {};
+        for (const [key, cat] of Object.entries(CONFIG.beef.categories)) {
+            for (let i = 8; i < Math.min(data.length, 60); i++) {
+                const row = data[i];
+                if (!row) continue;
+                const label = row[0];
+                if (label && typeof label === 'string' && label.trim() === cat.label.trim()) {
+                    const frPrice = row[CONFIG.beef.frCol];
+                    prices[key] = {
+                        label: cat.displayFr,
+                        price: (typeof frPrice === 'number' && frPrice > 0) ? Math.round(frPrice * 100) / 100 : null,
+                        row: i,
+                    };
+                    break;
+                }
+            }
+            // Fallback: if not found by exact match, try contains
+            if (!prices[key]) {
+                for (let i = 8; i < Math.min(data.length, 60); i++) {
+                    const row = data[i];
+                    if (!row || !row[0]) continue;
+                    const label = String(row[0]).trim();
+                    // Fuzzy match on key parts
+                    const parts = cat.label.split(/\s+/).filter(p => p.length > 2);
+                    if (parts.every(p => label.includes(p))) {
+                        const frPrice = row[CONFIG.beef.frCol];
+                        prices[key] = {
+                            label: cat.displayFr,
+                            price: (typeof frPrice === 'number' && frPrice > 0) ? Math.round(frPrice * 100) / 100 : null,
+                            row: i,
+                        };
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Get weekly change
+        let weeklyChange = null;
+        for (let i = 8; i < Math.min(data.length, 60); i++) {
+            const row = data[i];
+            if (!row || !row[0]) continue;
+            if (String(row[0]).includes('Change last week')) {
+                const frChange = row[CONFIG.beef.frCol];
+                if (typeof frChange === 'number') weeklyChange = Math.round(frChange * 100) / 100;
+                break;
+            }
+        }
+        
+        return {
+            type: 'beef',
+            prices,
+            unit: '€/100 kg carcasse',
+            year,
+            week,
+            weeklyChange,
+            dateFr: year && week ? `Semaine ${week}/${year}` : 'Date inconnue',
+        };
+    }
+
+    // === FORMATTING ===
+    function formatMilkDate(dateStr) {
+        // "2026m01" → "Janvier 2026"
+        if (!dateStr || typeof dateStr !== 'string') return dateStr;
+        const match = dateStr.match(/(\d{4})m(\d{2})/);
+        if (!match) return dateStr;
+        const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+        return `${months[parseInt(match[2]) - 1]} ${match[1]}`;
+    }
+
+    function variationHtml(variation, variationPct) {
+        if (variation === null || variation === undefined) return '';
+        const cls = variation > 0.5 ? 'up' : variation < -0.5 ? 'down' : 'stable';
+        const arrow = variation > 0.5 ? '↑' : variation < -0.5 ? '↓' : '→';
+        const sign = variation > 0 ? '+' : '';
+        return `<span class="prix-variation ${cls}">${arrow} ${sign}${variation.toFixed(2)} €${variationPct !== null ? ` (${sign}${variationPct.toFixed(1)}%)` : ''}</span>`;
+    }
+
+    // === RENDER ===
+    function renderMilk(data) {
+        const el = document.getElementById('milkContent');
+        const badge = document.getElementById('milkBadge');
+        
+        if (data.error) {
+            badge.className = 'cours-badge cours-badge-error';
+            badge.textContent = 'Erreur';
+            el.innerHTML = `<p style="color:#c92a2a; font-size:0.85rem;">${data.error}</p>`;
+            return;
+        }
+        
+        badge.className = 'cours-badge cours-badge-fresh';
+        badge.textContent = data.dateFr;
+        
+        el.innerHTML = `
+            <div class="prix-main">
+                <span class="prix-value">${data.price.toFixed(2)}</span>
+                <span class="prix-unit">${data.unit}</span>
+            </div>
+            <div class="prix-date">
+                ${data.dateFr} — France
+                ${data.euPrice ? `<span style="margin-left:0.5rem; color:#868e96;">Moy. UE: ${data.euPrice.toFixed(2)} €</span>` : ''}
+            </div>
+            ${variationHtml(data.variation, data.variationPct)}
+            ${data.previousDate ? `<span style="font-size:0.7rem; color:#adb5bd; margin-left:0.5rem;">vs ${formatMilkDate(data.previousDate)}</span>` : ''}
+        `;
+    }
+
+    function renderBeef(data) {
+        const el = document.getElementById('beefContent');
+        const badge = document.getElementById('beefBadge');
+        
+        if (data.error) {
+            badge.className = 'cours-badge cours-badge-error';
+            badge.textContent = 'Erreur';
+            el.innerHTML = `<p style="color:#c92a2a; font-size:0.85rem;">${data.error}</p>`;
+            return;
+        }
+        
+        badge.className = 'cours-badge cours-badge-fresh';
+        badge.textContent = data.dateFr;
+        
+        const cats = CONFIG.beef.displayCats;
+        let gridHtml = '<div class="beef-grid">';
+        for (const key of cats) {
+            const p = data.prices[key];
+            if (p) {
+                gridHtml += `
+                    <div class="beef-item">
+                        <div class="beef-item-label">${p.label}</div>
+                        <div class="beef-item-value">${p.price !== null ? p.price.toFixed(0) : '—'}<span class="beef-item-unit"> €</span></div>
+                    </div>`;
+            }
+        }
+        gridHtml += '</div>';
+        
+        // Secondary prices (compact)
+        const secondaryCats = Object.entries(data.prices).filter(([k]) => !cats.includes(k) && data.prices[k].price !== null);
+        let secondaryHtml = '';
+        if (secondaryCats.length > 0) {
+            secondaryHtml = '<div style="margin-top:0.75rem; display:flex; flex-wrap:wrap; gap:0.5rem;">';
+            for (const [key, p] of secondaryCats) {
+                secondaryHtml += `<span style="font-size:0.75rem; color:#495057; background:#f1f3f5; padding:2px 8px; border-radius:4px;">${p.label}: <b>${p.price.toFixed(0)} €</b></span>`;
+            }
+            secondaryHtml += '</div>';
+        }
+        
+        // Weekly variation
+        let varHtml = '';
+        if (data.weeklyChange !== null) {
+            const cls = data.weeklyChange > 0 ? 'up' : data.weeklyChange < 0 ? 'down' : 'stable';
+            const arrow = data.weeklyChange > 0 ? '↑' : data.weeklyChange < 0 ? '↓' : '→';
+            const sign = data.weeklyChange > 0 ? '+' : '';
+            varHtml = `<div style="margin-top:0.75rem;"><span class="prix-variation ${cls}">${arrow} ${sign}${data.weeklyChange.toFixed(2)} € vs sem. précédente (moy. FR)</span></div>`;
+        }
+        
+        el.innerHTML = `
+            <div style="font-size:0.75rem; color:#868e96; margin-bottom:0.5rem;">${data.dateFr} — France — ${data.unit}</div>
+            ${gridHtml}
+            ${secondaryHtml}
+            ${varHtml}
+        `;
+    }
+
+    // === MAIN LOGIC ===
+    let corsBlocked = false;
+
+    async function loadMilk(forceRefresh = false) {
+        const badge = document.getElementById('milkBadge');
+        badge.className = 'cours-badge cours-badge-loading';
+        badge.textContent = 'Chargement…';
+        
+        // Check cache first
+        if (!forceRefresh) {
+            const cached = getCache(CONFIG.milk.cacheKey);
+            if (cached && !cached.expired) {
+                renderMilk(cached);
+                return cached;
+            }
+        }
+        
+        try {
+            const wb = await fetchExcel(CONFIG.milk.url);
+            const data = parseMilkData(wb);
+            setCache(CONFIG.milk.cacheKey, data, CONFIG.milk.refreshDays);
+            renderMilk(data);
+            return data;
+        } catch (e) {
+            console.warn('BOVIQ Cours Lait: fetch failed', e);
+            corsBlocked = true;
+            // Try cache even if expired
+            const cached = getCache(CONFIG.milk.cacheKey);
+            if (cached) {
+                const badge = document.getElementById('milkBadge');
+                badge.className = 'cours-badge cours-badge-stale';
+                badge.textContent = 'Cache';
+                renderMilk(cached);
+                return cached;
+            }
+            renderMilk({ error: `Impossible de charger les prix lait. ${e.message}` });
+            return null;
+        }
+    }
+
+    async function loadBeef(forceRefresh = false) {
+        const badge = document.getElementById('beefBadge');
+        badge.className = 'cours-badge cours-badge-loading';
+        badge.textContent = 'Chargement…';
+        
+        if (!forceRefresh) {
+            const cached = getCache(CONFIG.beef.cacheKey);
+            if (cached && !cached.expired) {
+                renderBeef(cached);
+                return cached;
+            }
+        }
+        
+        try {
+            const wb = await fetchExcel(CONFIG.beef.url);
+            const data = parseBeefData(wb);
+            setCache(CONFIG.beef.cacheKey, data, CONFIG.beef.refreshDays);
+            renderBeef(data);
+            return data;
+        } catch (e) {
+            console.warn('BOVIQ Cours Viande: fetch failed', e);
+            corsBlocked = true;
+            const cached = getCache(CONFIG.beef.cacheKey);
+            if (cached) {
+                const badge = document.getElementById('beefBadge');
+                badge.className = 'cours-badge cours-badge-stale';
+                badge.textContent = 'Cache';
+                renderBeef(cached);
+                return cached;
+            }
+            renderBeef({ error: `Impossible de charger les prix viande. ${e.message}` });
+            return null;
+        }
+    }
+
+    async function refreshAll(force = true) {
+        const btn = document.getElementById('refreshBtn');
+        btn.classList.add('loading');
+        btn.textContent = '⏳ Chargement…';
+        
+        corsBlocked = false;
+        await Promise.all([loadMilk(force), loadBeef(force)]);
+        
+        btn.classList.remove('loading');
+        btn.innerHTML = '↻ Actualiser';
+        
+        if (corsBlocked) {
+            document.getElementById('corsNotice').style.display = 'block';
+            document.getElementById('manualImport').style.display = 'block';
+        } else {
+            document.getElementById('corsNotice').style.display = 'none';
+            document.getElementById('manualImport').style.display = 'none';
+        }
+        
+        document.getElementById('lastUpdate').textContent = `Dernière vérification: ${new Date().toLocaleString('fr-FR')}`;
+    }
+
+    // === MANUAL FILE IMPORT (CORS FALLBACK) ===
+    function handleManualFile(input, type) {
+        const file = input.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const wb = XLSX.read(e.target.result, { type: 'array' });
+                if (type === 'milk') {
+                    const data = parseMilkData(wb);
+                    setCache(CONFIG.milk.cacheKey, data, CONFIG.milk.refreshDays);
+                    renderMilk(data);
+                } else {
+                    const data = parseBeefData(wb);
+                    setCache(CONFIG.beef.cacheKey, data, CONFIG.beef.refreshDays);
+                    renderBeef(data);
+                }
+            } catch (err) {
+                alert('Erreur lors de la lecture du fichier: ' + err.message);
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    // === PUBLIC API (for BOVIQ integration) ===
+    return {
+        CONFIG,
+        refreshAll,
+        loadMilk,
+        loadBeef,
+        handleManualFile,
+        getCache,
+        
+        // Get latest prices (for use in other BOVIQ modules)
+        getLatestPrices() {
+            const milk = getCache(CONFIG.milk.cacheKey);
+            const beef = getCache(CONFIG.beef.cacheKey);
+            return {
+                milk: milk ? { price: milk.price, unit: milk.unit, date: milk.dateFr } : null,
+                beef: beef ? {
+                    prices: beef.prices,
+                    unit: beef.unit,
+                    date: beef.dateFr,
+                    weeklyChange: beef.weeklyChange
+                } : null,
+            };
+        },
+        
+        // Initialize on page load
+        init() {
+            // Load from cache first (instant), then refresh if needed
+            const milkCache = getCache(CONFIG.milk.cacheKey);
+            const beefCache = getCache(CONFIG.beef.cacheKey);
+            
+            if (milkCache) renderMilk(milkCache);
+            if (beefCache) renderBeef(beefCache);
+            
+            // If no cache or expired, auto-fetch
+            if (!milkCache || milkCache.expired || !beefCache || beefCache.expired) {
+                refreshAll(false);
+            } else {
+                document.getElementById('lastUpdate').textContent = 
+                    `Données en cache. Lait: ${milkCache.dateFr} | Viande: ${beefCache.dateFr}`;
+            }
+        }
+    };
+})();
+
+// Auto-init
+document.addEventListener('DOMContentLoaded', CoursMarche.init);
+</script>
+</body>
+</html>
