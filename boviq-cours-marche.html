@@ -3,728 +3,970 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BOVIQ - Cours du Marché</title>
-<!-- Tabler CSS (same as BOVIQ main app) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/css/tabler.min.css">
-<!-- SheetJS for Excel parsing -->
-<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<title>BOVIQ — Cours du Marché</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-:root {
-    --boviq-green: #2fb344;
-    --boviq-blue: #206bc4;
-    --boviq-orange: #f76707;
-    --boviq-red: #d63939;
-    --boviq-bg: #f4f6fa;
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#F4F1EB;--bg2:#EDE8DF;--card:#FFFFFF;--card2:#FAFAF7;
+  --ink:#1E1B16;--ink2:#4A4538;--ink3:#8C8474;--ink4:#B8B0A2;
+  --line:#E3DED4;--line2:#D1CBBD;
+  --brand:#2D6A4F;--brand2:#40916C;--brand3:#1B4332;--brand-light:#D8F3DC;--brand-pale:#F0FFF4;
+  --blue:#1D4ED8;--blue-l:#DBEAFE;
+  --amber:#D97706;--amber-l:#FEF3C7;
+  --red:#DC2626;--red-l:#FEE2E2;
+  --purple:#7C3AED;--purple-l:#EDE9FE;
+  --teal:#0D9488;--teal-l:#CCFBF1;
+  --r:10px;--r2:14px;
+  --sh:0 1px 3px rgba(30,27,22,.05),0 1px 2px rgba(30,27,22,.03);
+  --sh2:0 4px 16px rgba(30,27,22,.08);
 }
-body { background: var(--boviq-bg); font-family: 'Inter', -apple-system, sans-serif; }
+html{font-size:14px}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100dvh;padding:24px}
 
-.cours-card {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-    padding: 1.25rem;
-    margin-bottom: 1rem;
-}
-.cours-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-}
-.cours-header h3 {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #1e293b;
-}
-.cours-badge {
-    font-size: 0.7rem;
-    padding: 2px 8px;
-    border-radius: 6px;
-    font-weight: 500;
-}
-.cours-badge-fresh { background: #d3f9d8; color: #2b8a3e; }
-.cours-badge-stale { background: #fff3bf; color: #e67700; }
-.cours-badge-error { background: #ffe3e3; color: #c92a2a; }
-.cours-badge-loading { background: #e7f5ff; color: #1971c2; }
+.page{max-width:1100px;margin:0 auto}
+.page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.page-head h2{font-family:'Playfair Display',serif;font-size:22px;font-weight:700}
+.page-head .subtitle{font-size:13px;color:var(--ink3);margin-top:2px}
 
-.prix-main {
-    display: flex;
-    align-items: baseline;
-    gap: 0.5rem;
-    margin-bottom: 0.25rem;
-}
-.prix-value {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #1e293b;
-    line-height: 1;
-}
-.prix-unit {
-    font-size: 0.8rem;
-    color: #868e96;
-}
-.prix-date {
-    font-size: 0.75rem;
-    color: #adb5bd;
-    margin-bottom: 0.75rem;
-}
-.prix-variation {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 6px;
-}
-.prix-variation.up { background: #d3f9d8; color: #2b8a3e; }
-.prix-variation.down { background: #ffe3e3; color: #c92a2a; }
-.prix-variation.stable { background: #f1f3f5; color: #868e96; }
+.card{background:var(--card);border-radius:var(--r2);box-shadow:var(--sh);overflow:hidden;margin-bottom:16px}
+.card-head{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.card-head h3{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
+.card-body{padding:16px 18px}
 
-.beef-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
-}
-.beef-item {
-    background: #f8f9fa;
-    border-radius: 8px;
-    padding: 0.75rem;
-}
-.beef-item-label {
-    font-size: 0.7rem;
-    color: #868e96;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 0.25rem;
-}
-.beef-item-value {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #1e293b;
-}
-.beef-item-unit {
-    font-size: 0.7rem;
-    color: #adb5bd;
-}
+.btn{font:600 13px/1 'DM Sans',sans-serif;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn-p{background:var(--brand);color:white}.btn-p:hover{background:var(--brand3)}
+.btn-o{background:transparent;color:var(--ink2);border:1px solid var(--line2)}.btn-o:hover{background:var(--bg2)}
+.btn-s{padding:5px 10px;font-size:12px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
 
-.source-link {
-    font-size: 0.65rem;
-    color: #adb5bd;
-    text-decoration: none;
-    margin-top: 0.75rem;
-    display: block;
-}
-.source-link:hover { color: var(--boviq-blue); }
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px}
+.b-green{background:var(--brand-light);color:var(--brand)}
+.b-amber{background:var(--amber-l);color:var(--amber)}
+.b-red{background:var(--red-l);color:var(--red)}
+.b-blue{background:var(--blue-l);color:var(--blue)}
+.b-teal{background:var(--teal-l);color:var(--teal)}
 
-.refresh-btn {
-    background: none;
-    border: 1px solid #dee2e6;
-    border-radius: 6px;
-    padding: 4px 10px;
-    font-size: 0.75rem;
-    color: #495057;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-.refresh-btn:hover { background: #f8f9fa; border-color: #adb5bd; }
-.refresh-btn.loading { opacity: 0.5; pointer-events: none; }
+/* STATUS */
+.status-panel{padding:14px 18px;background:var(--card2);display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.status-dot.ok{background:#22c55e;box-shadow:0 0 6px rgba(34,197,94,.4)}
+.status-dot.warn{background:var(--amber);box-shadow:0 0 6px rgba(217,119,6,.4)}
+.status-dot.err{background:var(--red);box-shadow:0 0 6px rgba(220,38,38,.4)}
+.status-dot.loading{background:var(--blue);animation:pulse 1s infinite}
+.status-dot.idle{background:var(--ink4)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.status-text{font-size:13px;color:var(--ink2);flex:1}
+.status-text strong{color:var(--ink)}
+.status-text a{color:var(--brand);font-weight:600;text-decoration:none}
+.status-text a:hover{text-decoration:underline}
 
-.skeleton {
-    background: linear-gradient(90deg, #f1f3f5 25%, #e9ecef 50%, #f1f3f5 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-    border-radius: 4px;
-    height: 1em;
-    width: 80%;
-}
-.skeleton-lg { height: 2rem; width: 120px; }
-@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+.kpi{padding:16px;border-radius:var(--r);background:var(--card);border:1px solid var(--line);text-align:center;position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s}
+.kpi:hover{transform:translateY(-2px);box-shadow:var(--sh2)}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kpi.meat::before{background:linear-gradient(90deg,var(--red),var(--amber))}
+.kpi.milk::before{background:linear-gradient(90deg,var(--blue),var(--teal))}
+.kpi-icon{font-size:22px;margin-bottom:4px}
+.kpi-label{font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.kpi-val{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--ink)}
+.kpi-unit{font-size:12px;font-weight:400;color:var(--ink3);margin-left:2px}
+.kpi-trend{font-size:12px;font-weight:600;margin-top:4px}
+.kpi-trend.up{color:#22c55e}.kpi-trend.down{color:var(--red)}.kpi-trend.stable{color:var(--ink3)}
+.kpi-date{font-size:10px;color:var(--ink4);margin-top:2px}
+.kpi-empty{color:var(--ink4);font-size:20px}
 
-.cors-notice {
-    background: #fff9db;
-    border: 1px solid #ffe066;
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    font-size: 0.8rem;
-    color: #5c4000;
-    margin-bottom: 1rem;
-}
+/* TABS */
+.tab-row{display:flex;gap:4px;padding:0 18px;border-bottom:1px solid var(--line);background:var(--card2);overflow-x:auto}
+.tab-btn{font:500 12px/1 'DM Sans',sans-serif;padding:10px 14px;border:none;background:transparent;color:var(--ink3);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;margin-bottom:-1px;white-space:nowrap}
+.tab-btn:hover{color:var(--ink2)}
+.tab-btn.active{color:var(--brand);border-bottom-color:var(--brand);font-weight:600}
+.tab-panel{display:none;padding:16px 18px}
+.tab-panel.active{display:block}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:collapse;font-size:13px}
+.data-table th{text-align:left;font-weight:600;color:var(--ink3);padding:8px 10px;border-bottom:2px solid var(--line);font-size:11px;text-transform:uppercase;letter-spacing:.3px;cursor:pointer;user-select:none}
+.data-table th:hover{color:var(--ink)}
+.data-table td{padding:8px 10px;border-bottom:1px solid var(--line)}
+.data-table tr:hover td{background:var(--brand-pale)}
+.data-table .num{text-align:right;font-variant-numeric:tabular-nums}
+
+/* CHART */
+.chart-container{position:relative;height:280px;margin:8px 0}
+
+/* DROP ZONE */
+.fallback-zone{border:2px dashed var(--line2);border-radius:var(--r2);padding:28px;text-align:center;background:var(--card2);transition:all .2s}
+.fallback-zone.dragover{border-color:var(--brand);background:var(--brand-pale)}
+.fallback-zone p{font-size:14px;color:var(--ink2);margin-bottom:10px}
+.fallback-zone .hint{font-size:11px;color:var(--ink4);margin-top:8px}
+input[type="file"]{display:none}
+
+/* STEPS */
+.steps{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.step{flex:1;min-width:180px;padding:16px;border-radius:var(--r);border:1px solid var(--line);background:var(--card2);text-align:center}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--brand);color:white;font-size:13px;font-weight:700;margin-bottom:8px}
+.step-text{font-size:12px;color:var(--ink2);line-height:1.5}
+.step a{color:var(--brand);font-weight:600;text-decoration:none}
+.step a:hover{text-decoration:underline}
+
+/* LOG */
+.log{max-height:180px;overflow-y:auto;font-family:'SF Mono',Consolas,monospace;font-size:11px;background:#1a1a2e;color:#a8b2d1;padding:12px;border-radius:var(--r);line-height:1.8}
+.log .ok{color:#22c55e}.log .warn{color:var(--amber)}.log .err{color:#ef4444}.log .info{color:#60a5fa}
+
+/* TEST GRID */
+.test-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+@media(max-width:600px){.test-grid{grid-template-columns:1fr}}
+.test-item{padding:12px;border-radius:var(--r);border:1px solid var(--line);background:var(--card2);transition:all .3s}
+.test-item.success{border-color:#22c55e;background:#f0fdf4}
+.test-item.fail{border-color:var(--red);background:var(--red-l)}
+.test-item.testing{border-color:var(--blue);background:var(--blue-l)}
+.test-label{font-size:12px;font-weight:600;color:var(--ink3);margin-bottom:3px}
+.test-value{font-size:12px;color:var(--ink)}
+.test-value code{font-family:'SF Mono',Consolas,monospace;font-size:10px;background:rgba(0,0,0,.06);padding:1px 4px;border-radius:3px}
+
+/* SETTINGS */
+.setting-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.setting-row:last-child{border-bottom:none}
+.setting-label{flex:1;font-size:13px}
+.setting-label small{display:block;font-size:11px;color:var(--ink3);margin-top:2px}
+select.form-select{font:400 13px 'DM Sans',sans-serif;padding:6px 10px;border:1px solid var(--line2);border-radius:6px;background:var(--card);color:var(--ink)}
+
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
-<div class="container-xl" style="max-width: 680px; padding-top: 2rem;">
 
-    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
-        <div style="display:flex; align-items:center; gap:12px;">
-            <a href="index.html" style="text-decoration:none;font-size:1.5rem;opacity:.7;transition:opacity .2s;" title="Retour accueil" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='.7'">🐄</a>
-            <div>
-                <h2 style="margin:0; font-weight:700; color:#1e293b;">📊 Cours du Marché</h2>
-                <p style="margin:0; font-size:0.8rem; color:#868e96;">Prix France – Source: DG AGRI / Commission Européenne</p>
-            </div>
-        </div>
-        <button class="refresh-btn" id="refreshBtn" onclick="CoursMarche.refreshAll()">
-            ↻ Actualiser
-        </button>
+<div class="page">
+  <div class="page-head">
+    <div style="display:flex;align-items:center;gap:14px">
+      <a href="index.html" style="text-decoration:none;font-size:1.8rem;opacity:.7;transition:opacity .2s" title="Retour accueil BOVIQ" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='.7'">🐄</a>
+      <div>
+        <h2>📈 Cours du Marché</h2>
+        <div class="subtitle">Cotations viande bovine & prix du lait — données FranceAgriMer / data.gouv.fr (open data)</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-p" id="btn-refresh" onclick="refreshAllData()">🔄 Actualiser les cours</button>
+      <button class="btn btn-o btn-s" onclick="clearCache()">🗑️ Vider le cache</button>
+    </div>
+  </div>
+
+  <!-- STATUS -->
+  <div class="card">
+    <div class="status-panel" id="status-bar">
+      <div class="status-dot idle" id="status-dot"></div>
+      <div class="status-text" id="status-text">
+        Cliquez sur « Actualiser les cours » pour récupérer les dernières cotations, ou <a href="#" onclick="loadDemoData();return false">charger les données démo</a>.
+      </div>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-row" id="kpi-row">
+    <div class="kpi meat">
+      <div class="kpi-icon">🥩</div>
+      <div class="kpi-label">Vache R</div>
+      <div class="kpi-val" id="kpi-vache-r"><span class="kpi-empty">—</span><span class="kpi-unit">€/kg</span></div>
+      <div class="kpi-trend stable" id="trend-vache-r"></div>
+      <div class="kpi-date" id="date-vache-r"></div>
+    </div>
+    <div class="kpi meat">
+      <div class="kpi-icon">🐄</div>
+      <div class="kpi-label">Vache O</div>
+      <div class="kpi-val" id="kpi-vache-o"><span class="kpi-empty">—</span><span class="kpi-unit">€/kg</span></div>
+      <div class="kpi-trend stable" id="trend-vache-o"></div>
+      <div class="kpi-date" id="date-vache-o"></div>
+    </div>
+    <div class="kpi meat">
+      <div class="kpi-icon">🐂</div>
+      <div class="kpi-label">Jeune Bovin R</div>
+      <div class="kpi-val" id="kpi-jb-r"><span class="kpi-empty">—</span><span class="kpi-unit">€/kg</span></div>
+      <div class="kpi-trend stable" id="trend-jb-r"></div>
+      <div class="kpi-date" id="date-jb-r"></div>
+    </div>
+    <div class="kpi milk">
+      <div class="kpi-icon">🥛</div>
+      <div class="kpi-label">Lait conventionnel</div>
+      <div class="kpi-val" id="kpi-lait"><span class="kpi-empty">—</span><span class="kpi-unit">€/1000L</span></div>
+      <div class="kpi-trend stable" id="trend-lait"></div>
+      <div class="kpi-date" id="date-lait"></div>
+    </div>
+  </div>
+
+  <!-- MAIN CARD WITH TABS -->
+  <div class="card">
+    <div class="tab-row">
+      <button class="tab-btn active" data-tab="cotations">📊 Cotations</button>
+      <button class="tab-btn" data-tab="graphique">📈 Tendance</button>
+      <button class="tab-btn" data-tab="import">📥 Import CSV</button>
+      <button class="tab-btn" data-tab="diagnostic">🔧 Diagnostic</button>
     </div>
 
-    <div id="corsNotice" class="cors-notice" style="display:none;">
-        ⚠️ Accès direct bloqué par CORS. Les données affichées proviennent du cache local.
-        <br><small>Les fichiers Excel de la Commission ne sont pas accessibles en cross-origin depuis un navigateur. Utilisez le bouton "Import manuel" ci-dessous.</small>
+    <!-- TAB: COTATIONS -->
+    <div class="tab-panel active" id="tab-cotations">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-weight:600;font-size:13px">Filtrer :</span>
+          <select class="form-select" id="sel-categorie" onchange="renderTable()">
+            <option value="all">Toutes catégories</option>
+            <option value="Vaches">Vaches</option>
+            <option value="Génisses">Génisses</option>
+            <option value="Jeunes Bovins">Jeunes Bovins</option>
+            <option value="Bœufs">Bœufs</option>
+            <option value="Taureaux">Taureaux</option>
+          </select>
+        </div>
+        <span class="badge b-teal" id="data-count">0 cotations</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="data-table" id="table-cotations">
+          <thead>
+            <tr>
+              <th onclick="sortTable('semaine')">Semaine ↕</th>
+              <th onclick="sortTable('categorie')">Catégorie ↕</th>
+              <th onclick="sortTable('conformation')">Conf. ↕</th>
+              <th class="num" onclick="sortTable('prix')">Prix (€/kg) ↕</th>
+              <th class="num">Évol.</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-cotations">
+            <tr><td colspan="5" style="text-align:center;color:var(--ink3);padding:32px">
+              Cliquez sur « 🔄 Actualiser les cours » ou importez un CSV
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <!-- LAIT -->
-    <div class="cours-card" id="milkCard">
-        <div class="cours-header">
-            <h3>🥛 Lait cru de vache</h3>
-            <span class="cours-badge cours-badge-loading" id="milkBadge">Chargement…</span>
-        </div>
-        <div id="milkContent">
-            <div class="prix-main"><div class="skeleton skeleton-lg"></div></div>
-            <div class="prix-date"><div class="skeleton" style="width:150px;"></div></div>
-        </div>
-        <a class="source-link" href="https://agriculture.ec.europa.eu/data-and-analysis/markets/overviews/market-observatories/milk_en" target="_blank">
-            Source: Milk Market Observatory – DG AGRI
-        </a>
+    <!-- TAB: GRAPHIQUE -->
+    <div class="tab-panel" id="tab-graphique">
+      <div style="margin-bottom:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <span style="font-weight:600;font-size:13px">Série :</span>
+        <select class="form-select" id="sel-chart-type" onchange="updateChart()">
+          <option value="Vaches|R">Vache R</option>
+          <option value="Vaches|O">Vache O</option>
+          <option value="Vaches|P">Vache P</option>
+          <option value="Jeunes Bovins|R">Jeune Bovin R</option>
+          <option value="Jeunes Bovins|U">Jeune Bovin U</option>
+          <option value="Génisses|R">Génisse R</option>
+        </select>
+      </div>
+      <div class="chart-container">
+        <canvas id="chart-cotations"></canvas>
+      </div>
+      <div style="font-size:11px;color:var(--ink4);text-align:center;margin-top:4px">
+        Source : FranceAgriMer — cotations hebdomadaires entrée abattoir (€/kg carcasse)
+      </div>
     </div>
 
-    <!-- VIANDE BOVINE -->
-    <div class="cours-card" id="beefCard">
-        <div class="cours-header">
-            <h3>🥩 Viande bovine (carcasses)</h3>
-            <span class="cours-badge cours-badge-loading" id="beefBadge">Chargement…</span>
+    <!-- TAB: IMPORT CSV -->
+    <div class="tab-panel" id="tab-import">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-text">
+            Téléchargez le CSV depuis<br>
+            <a href="https://www.data.gouv.fr/datasets/cotations-gros-bovins-entree-abattoir" target="_blank">📄 Cotations entrée abattoir</a>
+            <br>ou<br>
+            <a href="https://www.data.gouv.fr/datasets/cotations-gros-bovins-vifs" target="_blank">📄 Cotations bovins vifs</a>
+          </div>
         </div>
-        <div id="beefContent">
-            <div class="beef-grid">
-                <div class="beef-item"><div class="skeleton" style="width:100%;"></div></div>
-                <div class="beef-item"><div class="skeleton" style="width:100%;"></div></div>
-                <div class="beef-item"><div class="skeleton" style="width:100%;"></div></div>
-                <div class="beef-item"><div class="skeleton" style="width:100%;"></div></div>
-            </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-text">
+            Glissez le fichier<br>dans la zone ci-dessous<br>ou cliquez « Parcourir »
+          </div>
         </div>
-        <a class="source-link" href="https://agriculture.ec.europa.eu/data-and-analysis/markets/overviews/market-observatories/meat/beef-statistics_en" target="_blank">
-            Source: Meat Market Observatory – DG AGRI
-        </a>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-text">
+            Les cours se mettent à jour<br>automatiquement et sont<br>gardés en cache offline
+          </div>
+        </div>
+      </div>
+
+      <div class="fallback-zone" id="drop-zone">
+        <p>📄 Glissez un fichier CSV FranceAgriMer ici</p>
+        <button class="btn btn-p btn-s" onclick="document.getElementById('file-input').click()">📂 Parcourir...</button>
+        <input type="file" id="file-input" accept=".csv,.txt,.xls,.xlsx" onchange="handleFileImport(event)">
+        <div class="hint">Formats acceptés : CSV des cotations gros bovins (FranceAgriMer / data.gouv.fr)</div>
+      </div>
+      <div id="import-result" style="margin-top:12px"></div>
     </div>
 
-    <!-- Import manuel (fallback CORS) -->
-    <div class="cours-card" id="manualImport" style="display:none;">
-        <div class="cours-header">
-            <h3>📁 Import manuel des fichiers Excel</h3>
+    <!-- TAB: DIAGNOSTIC -->
+    <div class="tab-panel" id="tab-diagnostic">
+      <p style="font-size:13px;color:var(--ink2);margin-bottom:14px">
+        Test de connectivité vers les sources open data. Résultats spécifiques à votre navigateur et protocole (<code id="protocol-info"></code>).
+      </p>
+      <div class="test-grid" id="test-grid">
+        <div class="test-item" id="test-proxy1">
+          <div class="test-label">🔀 Proxy CORS #1 (corsproxy.io)</div>
+          <div class="test-value">En attente...</div>
         </div>
-        <p style="font-size:0.8rem; color:#495057; margin-bottom:0.75rem;">
-            Si le chargement automatique échoue (blocage CORS), téléchargez les fichiers depuis les liens ci-dessous, puis importez-les ici :
-        </p>
-        <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.75rem;">
-            <a href="https://agriculture.ec.europa.eu/document/download/62d01488-33a0-4601-a841-ca48fa11d999_en?filename=eu-milk-historical-price-series_en.xlsx"
-               target="_blank" class="refresh-btn" style="text-decoration:none;">⬇ Télécharger Lait (xlsx)</a>
-            <a href="https://agriculture.ec.europa.eu/document/download/db5b282e-a2b4-4d18-91bd-bd4854dc2030_en?filename=bovine-carcase-prices-latest_en.xlsx"
-               target="_blank" class="refresh-btn" style="text-decoration:none;">⬇ Télécharger Viande (xlsx)</a>
+        <div class="test-item" id="test-proxy2">
+          <div class="test-label">🔀 Proxy CORS #2 (allorigins)</div>
+          <div class="test-value">En attente...</div>
         </div>
-        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-            <label class="refresh-btn" style="cursor:pointer;">
-                📂 Importer Lait
-                <input type="file" accept=".xlsx,.xls" style="display:none;" onchange="CoursMarche.handleManualFile(this, 'milk')">
-            </label>
-            <label class="refresh-btn" style="cursor:pointer;">
-                📂 Importer Viande
-                <input type="file" accept=".xlsx,.xls" style="display:none;" onchange="CoursMarche.handleManualFile(this, 'beef')">
-            </label>
+        <div class="test-item" id="test-direct">
+          <div class="test-label">📡 Accès direct data.gouv.fr</div>
+          <div class="test-value">En attente...</div>
         </div>
+        <div class="test-item" id="test-tabular">
+          <div class="test-label">📊 API tabulaire data.gouv.fr</div>
+          <div class="test-value">En attente...</div>
+        </div>
+      </div>
+      <button class="btn btn-p" onclick="runDiagnostic()">▶️ Lancer le diagnostic complet</button>
+      <div class="log" id="log" style="margin-top:12px"></div>
     </div>
+  </div>
 
-    <!-- Dernière MàJ -->
-    <div style="text-align:center; padding:0.5rem; font-size:0.7rem; color:#adb5bd;" id="lastUpdate"></div>
-
+  <!-- CONFIG -->
+  <div class="card">
+    <div class="card-head"><h3>⚙️ Configuration</h3></div>
+    <div class="card-body">
+      <div class="setting-row">
+        <div class="setting-label">
+          Catégorie de vente principale
+          <small>Pour les KPIs et le pré-remplissage du bilan</small>
+        </div>
+        <select class="form-select" id="sel-main-category" onchange="saveSettings()">
+          <option value="Vaches|R">Vache R (standard laitière)</option>
+          <option value="Vaches|O">Vache O</option>
+          <option value="Vaches|P">Vache P</option>
+          <option value="Génisses|R">Génisse R</option>
+          <option value="Jeunes Bovins|R">Jeune Bovin R</option>
+          <option value="Jeunes Bovins|U">Jeune Bovin U</option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">
+          Prix du lait personnalisé
+          <small>Votre paie de lait réelle (remplace le prix national)</small>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <input type="number" id="inp-milk-price" placeholder="ex: 480" style="font:400 13px 'DM Sans';padding:6px 10px;border:1px solid var(--line2);border-radius:6px;width:100px;text-align:right" onchange="saveSettings()">
+          <span style="font-size:12px;color:var(--ink3)">€/1000L</span>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">
+          Cache local
+          <small>Données conservées pour un accès hors-ligne</small>
+        </div>
+        <span class="badge b-blue" id="cache-info">Pas de cache</span>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-/**
- * BOVIQ Cours du Marché - Module d'intégration des prix DG AGRI
- * 
- * Sources Excel (Commission Européenne):
- * - Lait: doc 62d01488 → Sheet "Raw Milk Prices", col K (11) = FR, €/100kg
- * - Viande: doc db5b282e → Sheet "Weekly All Carcase Prices", col K (11) = FR, €/100kg carcasse
- * 
- * Architecture:
- * 1. Tente fetch CORS direct des .xlsx
- * 2. Parse avec SheetJS (xlsx.js)
- * 3. Cache dans localStorage (clé: boviq_cours_*)
- * 4. Fallback: import manuel si CORS bloqué
- * 5. Auto-refresh: lait=mensuel, viande=hebdo
- */
-const CoursMarche = (() => {
+// ============================================================
+// BOVIQ — MODULE COURS DU MARCHÉ v2
+// Sources : data.gouv.fr (FranceAgriMer open data)
+// Stratégie : proxy CORS → accès direct → cache → import CSV
+// ============================================================
 
-    // === CONFIGURATION ===
-    const CONFIG = {
-        milk: {
-            url: 'https://agriculture.ec.europa.eu/document/download/62d01488-33a0-4601-a841-ca48fa11d999_en?filename=eu-milk-historical-price-series_en.xlsx',
-            docId: '62d01488',
-            sheet: 'Raw Milk Prices',
-            frCol: 10,       // 0-indexed col K = France
-            euCol: 30,       // col AE = EU weighted average
-            dateCol: 0,      // col A = date (format "2026m01")
-            headerRow: 4,    // row 5 (0-indexed) has country codes
-            dataStartRow: 6, // row 7 (0-indexed) is first data
-            cacheKey: 'boviq_cours_milk',
-            refreshDays: 15, // re-fetch every 15 days (monthly data)
-        },
-        beef: {
-            url: 'https://agriculture.ec.europa.eu/document/download/db5b282e-a2b4-4d18-91bd-bd4854dc2030_en?filename=bovine-carcase-prices-latest_en.xlsx',
-            docId: 'db5b282e',
-            sheet: 'Weekly All Carcase Prices',
-            frCol: 10,       // 0-indexed col K = France
-            cacheKey: 'boviq_cours_beef',
-            refreshDays: 5,  // re-fetch every 5 days (weekly data)
-            // Categories to extract (row labels → 0-indexed row numbers)
-            // These are looked up dynamically by label match
-            categories: {
-                'jb_r3':     { label: 'Young Bulls 12>24m A-R3', displayFr: 'Jeune Bovin R3' },
-                'vache_o3':  { label: 'Cows D-O3',               displayFr: 'Vache O3' },
-                'vache_r3':  { label: 'Cows D-R3',               displayFr: 'Vache R3' },
-                'genisse_r3':{ label: 'Heifers  E-R3',           displayFr: 'Génisse R3' },
-                'boeuf_r3':  { label: 'Bullocks  C-R3',          displayFr: 'Bœuf R3' },
-                'vache_o2':  { label: 'Cows D-O2',               displayFr: 'Vache O2' },
-                'vache_p2':  { label: 'Cows D-P2',               displayFr: 'Vache P2' },
-                'moyenne':   { label: 'All CAT Avg Price',        displayFr: 'Moyenne toutes catég.' },
-            },
-            // Which categories to display in the card (top 4)
-            displayCats: ['jb_r3', 'vache_o3', 'genisse_r3', 'vache_r3'],
-        }
-    };
+const RESOURCES = {
+  abattoir: {
+    id: '52055779-875e-4940-b2ce-93a2160e748e',
+    label: 'Cotations entrée abattoir',
+    directUrl: 'https://www.data.gouv.fr/fr/datasets/r/52055779-875e-4940-b2ce-93a2160e748e'
+  },
+  vifs: {
+    id: '04f61a99-d5d1-4a35-b8a4-2f3be5e3a5a3',
+    label: 'Cotations bovins vifs',
+    directUrl: 'https://www.data.gouv.fr/fr/datasets/r/04f61a99-d5d1-4a35-b8a4-2f3be5e3a5a3'
+  }
+};
 
-    // === CACHE ===
-    function getCache(key) {
-        try {
-            const raw = localStorage.getItem(key);
-            if (!raw) return null;
-            const data = JSON.parse(raw);
-            // Check expiry
-            const ageDays = (Date.now() - data.timestamp) / (1000 * 60 * 60 * 24);
-            return { ...data, expired: ageDays > (data.refreshDays || 7) };
-        } catch { return null; }
-    }
+// CORS proxies to try (from file:// protocol)
+const CORS_PROXIES = [
+  { name: 'corsproxy.io', wrap: url => `https://corsproxy.io/?${encodeURIComponent(url)}` },
+  { name: 'allorigins', wrap: url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}` },
+];
 
-    function setCache(key, data, refreshDays) {
-        try {
-            localStorage.setItem(key, JSON.stringify({
-                ...data,
-                timestamp: Date.now(),
-                refreshDays
-            }));
-        } catch (e) { console.warn('BOVIQ Cours: cache write failed', e); }
-    }
+const STORAGE_KEY = 'boviq_market_v2';
+const SETTINGS_KEY = 'boviq_market_settings_v2';
+let chartInstance = null;
+let marketData = { cotations: [], lastUpdate: null, source: null, rawHeaders: null };
+let currentSort = { key: 'semaine', dir: 'desc' };
 
-    // === FETCH & PARSE ===
-    async function fetchExcel(url) {
-        const resp = await fetch(url, { mode: 'cors' });
-        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-        const buf = await resp.arrayBuffer();
-        return XLSX.read(buf, { type: 'array' });
-    }
+// === INIT ===
+document.getElementById('protocol-info').textContent = location.protocol;
 
-    function parseMilkData(workbook) {
-        const ws = workbook.Sheets[CONFIG.milk.sheet];
-        if (!ws) throw new Error('Sheet "Raw Milk Prices" non trouvée');
-        
-        const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
-        
-        // Find last rows with valid FR data
-        let latest = null, previous = null;
-        for (let i = data.length - 1; i >= CONFIG.milk.dataStartRow; i--) {
-            const row = data[i];
-            if (!row) continue;
-            const date = row[CONFIG.milk.dateCol];
-            const frPrice = row[CONFIG.milk.frCol];
-            const euPrice = row[CONFIG.milk.euCol];
-            
-            if (date && frPrice && typeof frPrice === 'number' && frPrice > 0) {
-                if (!latest) {
-                    latest = { date, price: Math.round(frPrice * 100) / 100, eu: euPrice };
-                } else if (!previous) {
-                    previous = { date, price: Math.round(frPrice * 100) / 100, eu: euPrice };
-                    break;
-                }
-            }
-        }
-        
-        if (!latest) throw new Error('Aucune donnée lait France trouvée');
-        
-        const variation = previous ? Math.round((latest.price - previous.price) * 100) / 100 : null;
-        const variationPct = previous ? Math.round(((latest.price - previous.price) / previous.price) * 10000) / 100 : null;
-        
-        return {
-            type: 'milk',
-            price: latest.price,
-            unit: '€/100 kg',
-            date: latest.date,
-            dateFr: formatMilkDate(latest.date),
-            euPrice: latest.eu ? Math.round(latest.eu * 100) / 100 : null,
-            variation,
-            variationPct,
-            previousDate: previous ? previous.date : null,
-        };
-    }
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
 
-    function parseBeefData(workbook) {
-        const ws = workbook.Sheets[CONFIG.beef.sheet];
-        if (!ws) throw new Error('Sheet "Weekly All Carcase Prices" non trouvée');
-        
-        const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
-        
-        // Extract week info (row index 2, cols 23-24 → year & week)
-        const year = data[3] ? data[3][23] : null;
-        const week = data[3] ? data[3][24] : null;
-        
-        // Extract date range (rows 2-3, col 29-30)
-        let dateFrom = data[4] ? data[4][29] : null;
-        let dateTo = data[3] ? data[3][29] : null;
-        // Sometimes the dates are in different positions, search for datetime
-        for (let r = 2; r <= 5; r++) {
-            if (!data[r]) continue;
-            for (let c = 25; c <= 32; c++) {
-                const val = data[r][c];
-                if (val instanceof Date || (typeof val === 'number' && val > 40000 && val < 50000)) {
-                    // Excel serial date
-                }
-            }
-        }
-        
-        // Extract FR prices for each category
-        const prices = {};
-        for (const [key, cat] of Object.entries(CONFIG.beef.categories)) {
-            for (let i = 8; i < Math.min(data.length, 60); i++) {
-                const row = data[i];
-                if (!row) continue;
-                const label = row[0];
-                if (label && typeof label === 'string' && label.trim() === cat.label.trim()) {
-                    const frPrice = row[CONFIG.beef.frCol];
-                    prices[key] = {
-                        label: cat.displayFr,
-                        price: (typeof frPrice === 'number' && frPrice > 0) ? Math.round(frPrice * 100) / 100 : null,
-                        row: i,
-                    };
-                    break;
-                }
-            }
-            // Fallback: if not found by exact match, try contains
-            if (!prices[key]) {
-                for (let i = 8; i < Math.min(data.length, 60); i++) {
-                    const row = data[i];
-                    if (!row || !row[0]) continue;
-                    const label = String(row[0]).trim();
-                    // Fuzzy match on key parts
-                    const parts = cat.label.split(/\s+/).filter(p => p.length > 2);
-                    if (parts.every(p => label.includes(p))) {
-                        const frPrice = row[CONFIG.beef.frCol];
-                        prices[key] = {
-                            label: cat.displayFr,
-                            price: (typeof frPrice === 'number' && frPrice > 0) ? Math.round(frPrice * 100) / 100 : null,
-                            row: i,
-                        };
-                        break;
-                    }
-                }
-            }
-        }
+// Drag & drop
+const dropZone = document.getElementById('drop-zone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  if (e.dataTransfer.files.length) {
+    handleFileImport({ target: { files: e.dataTransfer.files } });
+  }
+});
 
-        // Get weekly change
-        let weeklyChange = null;
-        for (let i = 8; i < Math.min(data.length, 60); i++) {
-            const row = data[i];
-            if (!row || !row[0]) continue;
-            if (String(row[0]).includes('Change last week')) {
-                const frChange = row[CONFIG.beef.frCol];
-                if (typeof frChange === 'number') weeklyChange = Math.round(frChange * 100) / 100;
-                break;
-            }
-        }
-        
-        return {
-            type: 'beef',
-            prices,
-            unit: '€/100 kg carcasse',
-            year,
-            week,
-            weeklyChange,
-            dateFr: year && week ? `Semaine ${week}/${year}` : 'Date inconnue',
-        };
-    }
+// === LOGGING ===
+function log(msg, type='info') {
+  const el = document.getElementById('log');
+  const t = new Date().toLocaleTimeString('fr-FR');
+  el.innerHTML += `<div class="${type}">[${t}] ${msg}</div>`;
+  el.scrollTop = el.scrollHeight;
+}
 
-    // === FORMATTING ===
-    function formatMilkDate(dateStr) {
-        // "2026m01" → "Janvier 2026"
-        if (!dateStr || typeof dateStr !== 'string') return dateStr;
-        const match = dateStr.match(/(\d{4})m(\d{2})/);
-        if (!match) return dateStr;
-        const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
-        return `${months[parseInt(match[2]) - 1]} ${match[1]}`;
-    }
+function setStatus(state, html) {
+  document.getElementById('status-dot').className = 'status-dot ' + state;
+  document.getElementById('status-text').innerHTML = html;
+}
 
-    function variationHtml(variation, variationPct) {
-        if (variation === null || variation === undefined) return '';
-        const cls = variation > 0.5 ? 'up' : variation < -0.5 ? 'down' : 'stable';
-        const arrow = variation > 0.5 ? '↑' : variation < -0.5 ? '↓' : '→';
-        const sign = variation > 0 ? '+' : '';
-        return `<span class="prix-variation ${cls}">${arrow} ${sign}${variation.toFixed(2)} €${variationPct !== null ? ` (${sign}${variationPct.toFixed(1)}%)` : ''}</span>`;
-    }
+// === FETCH WITH CASCADE ===
+async function refreshAllData() {
+  const btn = document.getElementById('btn-refresh');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Chargement...';
+  setStatus('loading', 'Récupération des cotations en cours...');
 
-    // === RENDER ===
-    function renderMilk(data) {
-        const el = document.getElementById('milkContent');
-        const badge = document.getElementById('milkBadge');
-        
-        if (data.error) {
-            badge.className = 'cours-badge cours-badge-error';
-            badge.textContent = 'Erreur';
-            el.innerHTML = `<p style="color:#c92a2a; font-size:0.85rem;">${data.error}</p>`;
-            return;
-        }
-        
-        badge.className = 'cours-badge cours-badge-fresh';
-        badge.textContent = data.dateFr;
-        
-        el.innerHTML = `
-            <div class="prix-main">
-                <span class="prix-value">${data.price.toFixed(2)}</span>
-                <span class="prix-unit">${data.unit}</span>
-            </div>
-            <div class="prix-date">
-                ${data.dateFr} — France
-                ${data.euPrice ? `<span style="margin-left:0.5rem; color:#868e96;">Moy. UE: ${data.euPrice.toFixed(2)} €</span>` : ''}
-            </div>
-            ${variationHtml(data.variation, data.variationPct)}
-            ${data.previousDate ? `<span style="font-size:0.7rem; color:#adb5bd; margin-left:0.5rem;">vs ${formatMilkDate(data.previousDate)}</span>` : ''}
-        `;
-    }
+  const targetUrl = RESOURCES.abattoir.directUrl;
+  let csvText = null;
+  let source = null;
 
-    function renderBeef(data) {
-        const el = document.getElementById('beefContent');
-        const badge = document.getElementById('beefBadge');
-        
-        if (data.error) {
-            badge.className = 'cours-badge cours-badge-error';
-            badge.textContent = 'Erreur';
-            el.innerHTML = `<p style="color:#c92a2a; font-size:0.85rem;">${data.error}</p>`;
-            return;
-        }
-        
-        badge.className = 'cours-badge cours-badge-fresh';
-        badge.textContent = data.dateFr;
-        
-        const cats = CONFIG.beef.displayCats;
-        let gridHtml = '<div class="beef-grid">';
-        for (const key of cats) {
-            const p = data.prices[key];
-            if (p) {
-                gridHtml += `
-                    <div class="beef-item">
-                        <div class="beef-item-label">${p.label}</div>
-                        <div class="beef-item-value">${p.price !== null ? p.price.toFixed(0) : '—'}<span class="beef-item-unit"> €</span></div>
-                    </div>`;
-            }
-        }
-        gridHtml += '</div>';
-        
-        // Secondary prices (compact)
-        const secondaryCats = Object.entries(data.prices).filter(([k]) => !cats.includes(k) && data.prices[k].price !== null);
-        let secondaryHtml = '';
-        if (secondaryCats.length > 0) {
-            secondaryHtml = '<div style="margin-top:0.75rem; display:flex; flex-wrap:wrap; gap:0.5rem;">';
-            for (const [key, p] of secondaryCats) {
-                secondaryHtml += `<span style="font-size:0.75rem; color:#495057; background:#f1f3f5; padding:2px 8px; border-radius:4px;">${p.label}: <b>${p.price.toFixed(0)} €</b></span>`;
-            }
-            secondaryHtml += '</div>';
-        }
-        
-        // Weekly variation
-        let varHtml = '';
-        if (data.weeklyChange !== null) {
-            const cls = data.weeklyChange > 0 ? 'up' : data.weeklyChange < 0 ? 'down' : 'stable';
-            const arrow = data.weeklyChange > 0 ? '↑' : data.weeklyChange < 0 ? '↓' : '→';
-            const sign = data.weeklyChange > 0 ? '+' : '';
-            varHtml = `<div style="margin-top:0.75rem;"><span class="prix-variation ${cls}">${arrow} ${sign}${data.weeklyChange.toFixed(2)} € vs sem. précédente (moy. FR)</span></div>`;
-        }
-        
-        el.innerHTML = `
-            <div style="font-size:0.75rem; color:#868e96; margin-bottom:0.5rem;">${data.dateFr} — France — ${data.unit}</div>
-            ${gridHtml}
-            ${secondaryHtml}
-            ${varHtml}
-        `;
-    }
-
-    // === MAIN LOGIC ===
-    let corsBlocked = false;
-
-    async function loadMilk(forceRefresh = false) {
-        const badge = document.getElementById('milkBadge');
-        badge.className = 'cours-badge cours-badge-loading';
-        badge.textContent = 'Chargement…';
-        
-        // Check cache first
-        if (!forceRefresh) {
-            const cached = getCache(CONFIG.milk.cacheKey);
-            if (cached && !cached.expired) {
-                renderMilk(cached);
-                return cached;
-            }
-        }
-        
-        try {
-            const wb = await fetchExcel(CONFIG.milk.url);
-            const data = parseMilkData(wb);
-            setCache(CONFIG.milk.cacheKey, data, CONFIG.milk.refreshDays);
-            renderMilk(data);
-            return data;
-        } catch (e) {
-            console.warn('BOVIQ Cours Lait: fetch failed', e);
-            corsBlocked = true;
-            // Try cache even if expired
-            const cached = getCache(CONFIG.milk.cacheKey);
-            if (cached) {
-                const badge = document.getElementById('milkBadge');
-                badge.className = 'cours-badge cours-badge-stale';
-                badge.textContent = 'Cache';
-                renderMilk(cached);
-                return cached;
-            }
-            renderMilk({ error: `Impossible de charger les prix lait. ${e.message}` });
-            return null;
-        }
-    }
-
-    async function loadBeef(forceRefresh = false) {
-        const badge = document.getElementById('beefBadge');
-        badge.className = 'cours-badge cours-badge-loading';
-        badge.textContent = 'Chargement…';
-        
-        if (!forceRefresh) {
-            const cached = getCache(CONFIG.beef.cacheKey);
-            if (cached && !cached.expired) {
-                renderBeef(cached);
-                return cached;
-            }
-        }
-        
-        try {
-            const wb = await fetchExcel(CONFIG.beef.url);
-            const data = parseBeefData(wb);
-            setCache(CONFIG.beef.cacheKey, data, CONFIG.beef.refreshDays);
-            renderBeef(data);
-            return data;
-        } catch (e) {
-            console.warn('BOVIQ Cours Viande: fetch failed', e);
-            corsBlocked = true;
-            const cached = getCache(CONFIG.beef.cacheKey);
-            if (cached) {
-                const badge = document.getElementById('beefBadge');
-                badge.className = 'cours-badge cours-badge-stale';
-                badge.textContent = 'Cache';
-                renderBeef(cached);
-                return cached;
-            }
-            renderBeef({ error: `Impossible de charger les prix viande. ${e.message}` });
-            return null;
-        }
-    }
-
-    async function refreshAll(force = true) {
-        const btn = document.getElementById('refreshBtn');
-        btn.classList.add('loading');
-        btn.textContent = '⏳ Chargement…';
-        
-        corsBlocked = false;
-        await Promise.all([loadMilk(force), loadBeef(force)]);
-        
-        btn.classList.remove('loading');
-        btn.innerHTML = '↻ Actualiser';
-        
-        if (corsBlocked) {
-            document.getElementById('corsNotice').style.display = 'block';
-            document.getElementById('manualImport').style.display = 'block';
+  // 1) Try each CORS proxy
+  for (const proxy of CORS_PROXIES) {
+    try {
+      log(`📡 Tentative via ${proxy.name}...`, 'info');
+      const url = proxy.wrap(targetUrl);
+      const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
+      if (resp.ok) {
+        const text = await resp.text();
+        // Validate it looks like CSV (not an error page)
+        if (text.length > 200 && (text.includes(';') || text.includes(','))) {
+          csvText = text;
+          source = `data.gouv.fr via ${proxy.name}`;
+          log(`✅ Succès via ${proxy.name} (${(text.length/1024).toFixed(1)} Ko)`, 'ok');
+          break;
         } else {
-            document.getElementById('corsNotice').style.display = 'none';
-            document.getElementById('manualImport').style.display = 'none';
+          log(`⚠️ ${proxy.name} : réponse non-CSV (${text.length} octets)`, 'warn');
         }
-        
-        document.getElementById('lastUpdate').textContent = `Dernière vérification: ${new Date().toLocaleString('fr-FR')}`;
+      } else {
+        log(`⚠️ ${proxy.name} : HTTP ${resp.status}`, 'warn');
+      }
+    } catch (e) {
+      log(`⚠️ ${proxy.name} : ${e.message}`, 'warn');
     }
+  }
 
-    // === MANUAL FILE IMPORT (CORS FALLBACK) ===
-    function handleManualFile(input, type) {
-        const file = input.files[0];
-        if (!file) return;
-        
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const wb = XLSX.read(e.target.result, { type: 'array' });
-                if (type === 'milk') {
-                    const data = parseMilkData(wb);
-                    setCache(CONFIG.milk.cacheKey, data, CONFIG.milk.refreshDays);
-                    renderMilk(data);
-                } else {
-                    const data = parseBeefData(wb);
-                    setCache(CONFIG.beef.cacheKey, data, CONFIG.beef.refreshDays);
-                    renderBeef(data);
-                }
-            } catch (err) {
-                alert('Erreur lors de la lecture du fichier: ' + err.message);
-            }
-        };
-        reader.readAsArrayBuffer(file);
+  // 2) Try direct (works from http:// but not file://)
+  if (!csvText) {
+    try {
+      log('📡 Tentative accès direct...', 'info');
+      const resp = await fetch(targetUrl, { signal: AbortSignal.timeout(8000) });
+      if (resp.ok) {
+        csvText = await resp.text();
+        source = 'data.gouv.fr (accès direct)';
+        log(`✅ Accès direct OK (${(csvText.length/1024).toFixed(1)} Ko)`, 'ok');
+      }
+    } catch (e) {
+      log(`⚠️ Accès direct : ${e.message}`, 'warn');
     }
+  }
 
-    // === PUBLIC API (for BOVIQ integration) ===
-    return {
-        CONFIG,
-        refreshAll,
-        loadMilk,
-        loadBeef,
-        handleManualFile,
-        getCache,
-        
-        // Get latest prices (for use in other BOVIQ modules)
-        getLatestPrices() {
-            const milk = getCache(CONFIG.milk.cacheKey);
-            const beef = getCache(CONFIG.beef.cacheKey);
-            return {
-                milk: milk ? { price: milk.price, unit: milk.unit, date: milk.dateFr } : null,
-                beef: beef ? {
-                    prices: beef.prices,
-                    unit: beef.unit,
-                    date: beef.dateFr,
-                    weeklyChange: beef.weeklyChange
-                } : null,
-            };
-        },
-        
-        // Initialize on page load
-        init() {
-            // Load from cache first (instant), then refresh if needed
-            const milkCache = getCache(CONFIG.milk.cacheKey);
-            const beefCache = getCache(CONFIG.beef.cacheKey);
-            
-            if (milkCache) renderMilk(milkCache);
-            if (beefCache) renderBeef(beefCache);
-            
-            // If no cache or expired, auto-fetch
-            if (!milkCache || milkCache.expired || !beefCache || beefCache.expired) {
-                refreshAll(false);
-            } else {
-                document.getElementById('lastUpdate').textContent = 
-                    `Données en cache. Lait: ${milkCache.dateFr} | Viande: ${beefCache.dateFr}`;
-            }
+  // 3) Parse if we got CSV
+  if (csvText) {
+    const data = parseCSV(csvText);
+    if (data.length > 0) {
+      marketData.cotations = data;
+      marketData.lastUpdate = new Date().toISOString();
+      marketData.source = source;
+      saveToCache();
+      renderAll();
+      setStatus('ok', `<strong>Cours à jour ✓</strong> — ${data.length} cotations (${source}) — ${new Date().toLocaleDateString('fr-FR')} à ${new Date().toLocaleTimeString('fr-FR')}`);
+    } else {
+      log('❌ CSV récupéré mais aucune donnée exploitable', 'err');
+      tryCache();
+    }
+  } else {
+    log('❌ Aucun accès réseau. Tentative cache...', 'warn');
+    tryCache();
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '🔄 Actualiser les cours';
+}
+
+function tryCache() {
+  const cached = loadFromCache();
+  if (cached) {
+    marketData = cached;
+    renderAll();
+    const d = new Date(cached.lastUpdate);
+    setStatus('warn', `<strong>Mode hors-ligne</strong> — Cache du ${d.toLocaleDateString('fr-FR')} (${cached.cotations.length} cotations). <a href="#" onclick="document.querySelector('[data-tab=import]').click();return false">Importer un CSV frais →</a>`);
+    log('📦 Données chargées depuis le cache local', 'warn');
+  } else {
+    setStatus('err', `<strong>Aucune donnée</strong> — <a href="#" onclick="document.querySelector('[data-tab=import]').click();return false">Importez un CSV manuellement →</a> ou <a href="#" onclick="loadDemoData();return false">chargez la démo</a>`);
+  }
+}
+
+// === CSV PARSER ===
+function parseCSV(text) {
+  const lines = text.trim().split(/\r?\n/);
+  if (lines.length < 2) return [];
+
+  const sep = (lines[0].match(/;/g)||[]).length > (lines[0].match(/,/g)||[]).length ? ';' : ',';
+  const headers = lines[0].split(sep).map(h => h.trim().replace(/^"|"$/g, ''));
+  
+  log(`📋 CSV : ${lines.length} lignes, séparateur "${sep}"`, 'info');
+  log(`📋 Colonnes : ${headers.join(' | ')}`, 'info');
+  
+  marketData.rawHeaders = headers;
+
+  const results = [];
+  for (let i = 1; i < lines.length; i++) {
+    if (!lines[i].trim()) continue;
+    const vals = lines[i].split(sep).map(v => v.trim().replace(/^"|"$/g, ''));
+    const row = {};
+    headers.forEach((h, idx) => row[h] = vals[idx] || '');
+    
+    const normalized = normalizeRow(row, headers);
+    if (normalized) results.push(normalized);
+  }
+
+  log(`✅ ${results.length} cotations extraites sur ${lines.length - 1} lignes`, results.length > 0 ? 'ok' : 'warn');
+  return results;
+}
+
+function normalizeRow(row, headers) {
+  const r = { _raw: row };
+  
+  // Smart field detection
+  for (const [key, val] of Object.entries(row)) {
+    const k = key.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    
+    // Semaine
+    if (k.includes('semaine') || k.includes('sem_') || k === 'sem' || k.includes('week') || k.includes('annee_semaine')) {
+      r.semaine = val;
+    }
+    // Date
+    if (k.includes('date') && !r.semaine) {
+      r.semaine = val;
+    }
+    // Catégorie
+    if (k.includes('categorie') || k.includes('type_animal') || k.includes('espece') || k.includes('type_bovin') || k === 'type' || k.includes('libelle_categorie') || k.includes('lib_categorie')) {
+      r.categorie = val;
+    }
+    // Conformation (EUROP grid)
+    if (k.includes('conformation') || k.includes('classe') || k.includes('conf') || k.includes('qualite')) {
+      r.conformation = val;
+    }
+    // Prix - try several common column names
+    if ((k.includes('prix') || k.includes('cotation') || k.includes('valeur') || k.includes('cours') || k === 'nat' || k.includes('national') || k.includes('moyenne')) && !r.prix) {
+      const p = parseFloat(String(val).replace(',', '.'));
+      if (!isNaN(p) && p > 0 && p < 50) r.prix = p; // bovine prices are 2-10 €/kg range
+    }
+    // Bassin
+    if (k.includes('bassin') || k.includes('region') || k.includes('zone')) {
+      r.bassin = val;
+    }
+    // Engraissement
+    if (k.includes('engraissement') || k.includes('etat') || k.includes('engr')) {
+      r.engraissement = val;
+    }
+  }
+  
+  // If no prix found yet, try each numeric value
+  if (!r.prix) {
+    for (const val of Object.values(row)) {
+      const p = parseFloat(String(val).replace(',', '.'));
+      if (!isNaN(p) && p > 1.5 && p < 12) { // plausible price range
+        r.prix = p;
+        break;
+      }
+    }
+  }
+
+  if (!r.prix || !r.categorie) return null;
+
+  // Normalize category names
+  const cat = r.categorie.toLowerCase();
+  if (cat.includes('vache')) r.categorieNorm = 'Vaches';
+  else if (cat.includes('genisse') || cat.includes('génisse')) r.categorieNorm = 'Génisses';
+  else if (cat.includes('jeune') || cat.includes('jb') || cat.includes('j.b')) r.categorieNorm = 'Jeunes Bovins';
+  else if (cat.includes('boeuf') || cat.includes('bœuf')) r.categorieNorm = 'Bœufs';
+  else if (cat.includes('taureau')) r.categorieNorm = 'Taureaux';
+  else r.categorieNorm = r.categorie;
+
+  // Clean conformation (keep first letter from EUROP)
+  if (r.conformation) {
+    const c = r.conformation.toUpperCase().trim();
+    if (/^[EUROP]/.test(c)) r.conformation = c.charAt(0);
+  }
+
+  return r;
+}
+
+// === FILE IMPORT ===
+function handleFileImport(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  setStatus('loading', `Import de ${file.name}...`);
+  log(`📁 Import : ${file.name} (${(file.size/1024).toFixed(1)} Ko)`, 'info');
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const data = parseCSV(e.target.result);
+    if (data.length > 0) {
+      marketData.cotations = data;
+      marketData.lastUpdate = new Date().toISOString();
+      marketData.source = `CSV (${file.name})`;
+      saveToCache();
+      renderAll();
+      setStatus('ok', `<strong>Import réussi ✓</strong> — ${data.length} cotations depuis « ${file.name} »`);
+      document.getElementById('import-result').innerHTML = `<span class="badge b-green">✓ ${data.length} cotations importées</span>`;
+      document.querySelector('[data-tab="cotations"]').click();
+    } else {
+      setStatus('err', `Format non reconnu dans « ${file.name} ». Colonnes détectées : ${marketData.rawHeaders?.join(', ') || 'aucune'}`);
+      document.getElementById('import-result').innerHTML = `<span class="badge b-red">✗ Aucune donnée exploitable</span><br><small style="color:var(--ink3);margin-top:4px;display:block">Colonnes trouvées : ${marketData.rawHeaders?.join(', ') || '—'}</small>`;
+    }
+  };
+  reader.readAsText(file, 'utf-8');
+}
+
+// === DIAGNOSTIC ===
+async function runDiagnostic() {
+  document.getElementById('log').innerHTML = '';
+  log(`🔍 Diagnostic démarré (protocole : ${location.protocol})`, 'info');
+  
+  const targetUrl = RESOURCES.abattoir.directUrl;
+
+  // Test proxy 1
+  await testEndpoint('test-proxy1', CORS_PROXIES[0].wrap(targetUrl), CORS_PROXIES[0].name);
+  // Test proxy 2
+  await testEndpoint('test-proxy2', CORS_PROXIES[1].wrap(targetUrl), CORS_PROXIES[1].name);
+  // Test direct
+  await testEndpoint('test-direct', targetUrl, 'Accès direct');
+  // Test tabular API
+  await testEndpoint('test-tabular', `https://tabular-api.data.gouv.fr/api/resources/${RESOURCES.abattoir.id}/`, 'API tabulaire');
+
+  // Summary
+  const oks = document.querySelectorAll('.test-item.success').length;
+  if (oks > 0) {
+    log(`🎉 ${oks} méthode(s) fonctionnelle(s) — le bouton "Actualiser" utilisera la meilleure.`, 'ok');
+  } else {
+    log('❌ Aucun accès automatique. Utilisez l\'import CSV (onglet 📥).', 'err');
+  }
+}
+
+async function testEndpoint(elId, url, label) {
+  const el = document.getElementById(elId);
+  el.className = 'test-item testing';
+  el.querySelector('.test-value').textContent = '⏳ Test en cours...';
+
+  try {
+    const t0 = performance.now();
+    const resp = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    const ms = Math.round(performance.now() - t0);
+
+    if (resp.ok) {
+      const text = await resp.text();
+      const isCSV = text.length > 100 && (text.includes(';') || text.includes(','));
+      if (isCSV) {
+        el.className = 'test-item success';
+        el.querySelector('.test-value').innerHTML = `✅ <strong>OK</strong> — ${ms}ms, ${(text.length/1024).toFixed(0)} Ko CSV`;
+        log(`✅ ${label} : OK (${ms}ms, ${(text.length/1024).toFixed(1)} Ko)`, 'ok');
+        return true;
+      } else {
+        el.className = 'test-item fail';
+        el.querySelector('.test-value').innerHTML = `⚠️ Réponse non-CSV (${text.length} octets)`;
+        log(`⚠️ ${label} : réponse non-CSV`, 'warn');
+      }
+    } else {
+      el.className = 'test-item fail';
+      el.querySelector('.test-value').innerHTML = `❌ HTTP ${resp.status} (${ms}ms)`;
+      log(`❌ ${label} : HTTP ${resp.status}`, 'err');
+    }
+  } catch (e) {
+    el.className = 'test-item fail';
+    el.querySelector('.test-value').innerHTML = `❌ ${e.message.includes('timeout') ? 'Timeout (8s)' : 'Bloqué (CORS)'}`;
+    log(`❌ ${label} : ${e.message}`, 'err');
+  }
+  return false;
+}
+
+// === CACHE ===
+function saveToCache() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(marketData)); } catch(e) {}
+  updateCacheInfo();
+}
+function loadFromCache() {
+  try {
+    const d = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    return (d && d.cotations?.length > 0) ? d : null;
+  } catch(e) { return null; }
+}
+function clearCache() {
+  localStorage.removeItem(STORAGE_KEY);
+  marketData = { cotations: [], lastUpdate: null, source: null };
+  renderAll();
+  setStatus('idle', 'Cache vidé. <a href="#" onclick="refreshAllData();return false">Actualiser</a> ou <a href="#" onclick="loadDemoData();return false">charger la démo</a>.');
+}
+function updateCacheInfo() {
+  const el = document.getElementById('cache-info');
+  const c = loadFromCache();
+  if (c?.lastUpdate) {
+    const hrs = Math.round((Date.now() - new Date(c.lastUpdate).getTime()) / 3600000);
+    el.textContent = `${c.cotations.length} cotations — ${new Date(c.lastUpdate).toLocaleDateString('fr-FR')} (${hrs < 24 ? hrs + 'h' : Math.round(hrs/24) + 'j'})`;
+    el.className = hrs < 168 ? 'badge b-green' : 'badge b-amber';
+  } else {
+    el.textContent = 'Pas de cache';
+    el.className = 'badge b-blue';
+  }
+}
+
+// === SETTINGS ===
+function saveSettings() {
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify({
+    mainCategory: document.getElementById('sel-main-category').value,
+    milkPrice: document.getElementById('inp-milk-price').value
+  }));
+  renderKPIs();
+}
+function loadSettings() {
+  try {
+    const s = JSON.parse(localStorage.getItem(SETTINGS_KEY));
+    if (s?.mainCategory) document.getElementById('sel-main-category').value = s.mainCategory;
+    if (s?.milkPrice) document.getElementById('inp-milk-price').value = s.milkPrice;
+  } catch(e) {}
+}
+
+// === RENDER ===
+function renderAll() {
+  renderKPIs();
+  renderTable();
+  updateChart();
+  updateCacheInfo();
+}
+
+function renderKPIs() {
+  const data = marketData.cotations;
+  if (!data?.length) return;
+
+  function fillKPI(id, catNorm, confPrefix) {
+    const sorted = data
+      .filter(r => r.categorieNorm === catNorm && (!confPrefix || r.conformation === confPrefix))
+      .sort((a, b) => String(b.semaine||'').localeCompare(String(a.semaine||'')));
+    
+    const el = document.getElementById(`kpi-${id}`);
+    const trend = document.getElementById(`trend-${id}`);
+    const dateEl = document.getElementById(`date-${id}`);
+
+    if (sorted.length > 0) {
+      const cur = sorted[0].prix;
+      el.innerHTML = `${cur.toFixed(2)}<span class="kpi-unit">€/kg</span>`;
+      dateEl.textContent = sorted[0].semaine ? `Sem. ${sorted[0].semaine}` : '';
+
+      if (sorted.length > 1) {
+        const diff = cur - sorted[1].prix;
+        const pct = ((diff / sorted[1].prix) * 100).toFixed(1);
+        trend.className = 'kpi-trend ' + (diff > 0.01 ? 'up' : diff < -0.01 ? 'down' : 'stable');
+        trend.textContent = diff > 0.01 ? `▲ +${diff.toFixed(2)} (+${pct}%)` : diff < -0.01 ? `▼ ${diff.toFixed(2)} (${pct}%)` : '= Stable';
+      } else {
+        trend.className = 'kpi-trend stable';
+        trend.textContent = '';
+      }
+    }
+  }
+
+  fillKPI('vache-r', 'Vaches', 'R');
+  fillKPI('vache-o', 'Vaches', 'O');
+  fillKPI('jb-r', 'Jeunes Bovins', 'R');
+
+  // Milk
+  const mp = document.getElementById('inp-milk-price').value;
+  if (mp) {
+    document.getElementById('kpi-lait').innerHTML = `${parseFloat(mp).toFixed(0)}<span class="kpi-unit">€/1000L</span>`;
+    document.getElementById('trend-lait').textContent = 'Prix personnalisé';
+    document.getElementById('trend-lait').className = 'kpi-trend stable';
+  }
+}
+
+function sortTable(key) {
+  if (currentSort.key === key) currentSort.dir = currentSort.dir === 'desc' ? 'asc' : 'desc';
+  else { currentSort.key = key; currentSort.dir = 'desc'; }
+  renderTable();
+}
+
+function renderTable() {
+  const tbody = document.getElementById('tbody-cotations');
+  const data = marketData.cotations;
+  if (!data?.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--ink3);padding:32px">Aucune donnée</td></tr>';
+    document.getElementById('data-count').textContent = '0 cotations';
+    return;
+  }
+
+  const filter = document.getElementById('sel-categorie').value;
+  let filtered = filter === 'all' ? [...data] : data.filter(r => r.categorieNorm === filter);
+
+  // Sort
+  const sk = currentSort.key;
+  const sd = currentSort.dir === 'asc' ? 1 : -1;
+  filtered.sort((a, b) => {
+    const va = sk === 'prix' ? (a.prix||0) : String(a[sk]||'');
+    const vb = sk === 'prix' ? (b.prix||0) : String(b[sk]||'');
+    return (va < vb ? -1 : va > vb ? 1 : 0) * sd;
+  });
+
+  const display = filtered.slice(0, 150);
+
+  // Build prev-price lookup for evolution
+  const byKey = {};
+  data.sort((a,b) => String(a.semaine||'').localeCompare(String(b.semaine||''))).forEach(r => {
+    const k = `${r.categorieNorm}|${r.conformation}`;
+    (byKey[k] = byKey[k] || []).push(r);
+  });
+
+  const catColors = {
+    'Vaches': 'b-amber', 'Génisses': 'b-green', 'Jeunes Bovins': 'b-blue',
+    'Bœufs': 'b-teal', 'Taureaux': 'b-red'
+  };
+
+  tbody.innerHTML = display.map(row => {
+    const k = `${row.categorieNorm}|${row.conformation}`;
+    const series = byKey[k] || [];
+    const idx = series.findIndex(r => r.semaine === row.semaine && r.prix === row.prix);
+    let evo = '';
+    if (idx > 0) {
+      const diff = row.prix - series[idx-1].prix;
+      if (diff > 0.005) evo = `<span style="color:#22c55e;font-weight:600">▲ +${diff.toFixed(2)}</span>`;
+      else if (diff < -0.005) evo = `<span style="color:var(--red);font-weight:600">▼ ${diff.toFixed(2)}</span>`;
+      else evo = '<span style="color:var(--ink4)">—</span>';
+    }
+    return `<tr>
+      <td style="font-variant-numeric:tabular-nums">${row.semaine||'—'}</td>
+      <td><span class="badge ${catColors[row.categorieNorm]||''}">${row.categorieNorm}</span></td>
+      <td><strong>${row.conformation||'—'}</strong>${row.engraissement ? ' · '+row.engraissement : ''}</td>
+      <td class="num"><strong>${row.prix.toFixed(2)}</strong></td>
+      <td class="num">${evo}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('data-count').textContent = `${filtered.length} cotations${display.length < filtered.length ? ` (${display.length} affichées)` : ''}`;
+}
+
+// === CHART ===
+function updateChart() {
+  const data = marketData.cotations;
+  if (!data?.length) return;
+
+  const [catNorm, conf] = (document.getElementById('sel-chart-type').value || 'Vaches|R').split('|');
+
+  const filtered = data
+    .filter(r => r.categorieNorm === catNorm && (!conf || r.conformation === conf))
+    .sort((a, b) => String(a.semaine||'').localeCompare(String(b.semaine||'')));
+
+  const recent = filtered.slice(-52);
+  if (recent.length < 2) return;
+
+  const ctx = document.getElementById('chart-cotations');
+  if (chartInstance) chartInstance.destroy();
+
+  const grd = ctx.getContext('2d').createLinearGradient(0, 0, 0, 280);
+  grd.addColorStop(0, 'rgba(45,106,79,.15)');
+  grd.addColorStop(1, 'rgba(45,106,79,0)');
+
+  chartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: recent.map(r => r.semaine || '?'),
+      datasets: [{
+        label: `${catNorm} ${conf} (€/kg carcasse)`,
+        data: recent.map(r => r.prix),
+        borderColor: '#2D6A4F',
+        backgroundColor: grd,
+        borderWidth: 2.5,
+        pointRadius: recent.length > 30 ? 1.5 : 3,
+        pointHoverRadius: 6,
+        pointBackgroundColor: '#2D6A4F',
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true, position: 'top', labels: { font: { family: 'DM Sans', size: 12 }, padding: 16 } },
+        tooltip: {
+          callbacks: { label: c => `${c.parsed.y.toFixed(2)} €/kg` },
+          backgroundColor: '#1B4332',
+          titleFont: { family: 'DM Sans' },
+          bodyFont: { family: 'DM Sans' }
         }
-    };
-})();
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { family: 'DM Sans', size: 10 }, maxRotation: 45, maxTicksLimit: 15 } },
+        y: { grid: { color: '#E3DED4' }, ticks: { font: { family: 'DM Sans', size: 11 }, callback: v => v.toFixed(2) + ' €' } }
+      },
+      interaction: { intersect: false, mode: 'index' }
+    }
+  });
+}
 
-// Auto-init
-document.addEventListener('DOMContentLoaded', CoursMarche.init);
+// === DEMO DATA ===
+function loadDemoData() {
+  const cats = [
+    { cat: 'Vaches', confs: [['E',6.20],['U',5.80],['R',5.35],['O',4.65],['P',3.95]] },
+    { cat: 'Génisses', confs: [['U',5.90],['R',5.55],['O',4.95]] },
+    { cat: 'Jeunes Bovins', confs: [['U',5.85],['R',5.45],['O',4.85]] },
+    { cat: 'Bœufs', confs: [['U',6.10],['R',5.70],['O',5.10]] },
+    { cat: 'Taureaux', confs: [['R',5.00],['O',4.40]] },
+  ];
+  const demo = [];
+  for (let w = 1; w <= 8; w++) {
+    const sem = `2026-S${String(w).padStart(2,'0')}`;
+    for (const c of cats) {
+      for (const [conf, base] of c.confs) {
+        demo.push({
+          semaine: sem, categorie: c.cat, categorieNorm: c.cat,
+          conformation: conf,
+          prix: Math.round((base + (Math.random()-.4)*.12 + w*0.008)*100)/100
+        });
+      }
+    }
+  }
+  marketData = { cotations: demo, lastUpdate: new Date().toISOString(), source: 'Données de démonstration' };
+  saveToCache();
+  renderAll();
+  setStatus('warn', '<strong>Mode démo</strong> — Données simulées. <a href="#" onclick="document.querySelector(\'[data-tab=import]\').click();return false">Importez un vrai CSV →</a> pour les cours réels.');
+}
+
+// === BOOT ===
+loadSettings();
+updateCacheInfo();
+const cached = loadFromCache();
+if (cached) {
+  marketData = cached;
+  renderAll();
+  const hrs = Math.round((Date.now() - new Date(cached.lastUpdate).getTime()) / 3600000);
+  setStatus(hrs < 168 ? 'ok' : 'warn',
+    `<strong>Données du cache</strong> — ${cached.cotations.length} cotations du ${new Date(cached.lastUpdate).toLocaleDateString('fr-FR')} (${cached.source})${hrs >= 168 ? ' · <a href="#" onclick="refreshAllData();return false">⟳ Actualiser</a>' : ''}`
+  );
+}
 </script>
 </body>
 </html>
