@@ -1,4 +1,4 @@
-const CACHE = 'boviq-v6';
+const CACHE = 'boviq-v20260321';
 const ASSETS = [
   './boviq-v6-latest.html',
   './boviq-milklic.html',
