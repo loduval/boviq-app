@@ -439,7 +439,35 @@ function fetchCoursFromRepo(){
     .catch(()=>{});
 }
 
-// ── INIT ──
+// ── INIT — charge INIT_DATA si localStorage vide (même logique que V6) ──
+(function(){
+  try{
+    const raw = localStorage.getItem('boviq');
+    const D = raw ? JSON.parse(raw) : null;
+    const localVer = D?._dataVersion || 0;
+    // Récupère INIT_DATA depuis V6 via fetch (même origin)
+    if(!D || !D.animaux || !D.animaux.length){
+      fetch('boviq-v6-latest.html')
+        .then(r=>r.text())
+        .then(html=>{
+          const m = html.match(/const INIT_DATA=(\{.+?\});[\r\n]/s) ||
+                    html.match(/const INIT_DATA=(\{[\s\S]+?\});\s*\/\//);
+          if(m){
+            try{
+              const init = JSON.parse(m[1]);
+              const existing = JSON.parse(localStorage.getItem('boviq')||'{}');
+              if(!existing.animaux || !existing.animaux.length){
+                localStorage.setItem('boviq', JSON.stringify(init));
+                loadTroupeauKPIs();
+                loadMilklicKPIs();
+              }
+            }catch(e){}
+          }
+        }).catch(()=>{});
+    }
+  }catch(e){}
+})();
+
 loadMeteo();
 loadTroupeauKPIs();
 loadMilklicKPIs();
