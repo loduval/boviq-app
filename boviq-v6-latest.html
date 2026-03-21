@@ -1558,10 +1558,10 @@ load();
 // ========================================
 // NAVIGATION
 // ========================================
-const pages=document.querySelectorAll('.page');
+const navPages=document.querySelectorAll('.page');
 const navBtns=document.querySelectorAll('.nav-btn');
 function goTo(p){
-  pages.forEach(x=>x.classList.toggle('active',x.id==='p-'+p));
+  navPages.forEach(x=>x.classList.toggle('active',x.id==='p-'+p));
   navBtns.forEach(b=>b.classList.toggle('active',b.dataset.p===p));
   document.getElementById('topbar-title').textContent=document.querySelector('.nav-btn[data-p="'+p+'"]')?.textContent.trim()||'';
   if(p==='planning')renderPlanning();
