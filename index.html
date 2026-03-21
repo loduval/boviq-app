@@ -8,17 +8,17 @@
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
-<meta name="theme-color" content="#0A1810">
+<meta name="theme-color" content="#1B4332">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#0A1810;--bg2:#0F2218;--bg3:#162E1E;
-  --card:#1A3526;--card2:#1E3D2C;
-  --brand:#4ED87A;--brand2:#2ECC54;--brand3:#27AE4A;
-  --ink:#E8F5EC;--ink2:#B8D4C2;--ink3:#7A9E87;
-  --amber:#F5A623;--red:#FF6B6B;
-  --line:rgba(78,216,122,.12);
-  --sh:0 2px 16px rgba(0,0,0,.35);
+  --bg:#F4F1EB;--bg2:#EDE9E0;
+  --card:#FFFFFF;--card2:#F9F7F3;
+  --brand:#1B4332;--brand2:#2D6A4F;--brand3:#40916C;
+  --ink:#1E1B16;--ink2:#3A3830;--ink3:#7A7468;
+  --amber:#C47A00;--red:#C0392B;
+  --line:#E3DED4;
+  --sh:0 2px 12px rgba(30,27,22,.07);
   --r:12px;--r2:16px;
 }
 html{font-size:14px}
@@ -32,11 +32,11 @@ body{
 /* HEADER */
 .header{
   display:flex;align-items:center;justify-content:space-between;
-  padding:20px 32px 16px;
+  padding:18px 32px 16px;
   border-bottom:1px solid var(--line);
-  background:var(--bg);
+  background:#fff;
   position:sticky;top:0;z-index:10;
-  backdrop-filter:blur(8px);
+  box-shadow:0 1px 4px rgba(30,27,22,.06);
 }
 .header-logo{display:flex;align-items:center;gap:12px}
 .header-logo span{font-size:28px}
@@ -55,9 +55,9 @@ body{
 .meteo-card{
   background:linear-gradient(135deg,#1B5E34 0%,#0F3D20 50%,#163328 100%);
   border-radius:var(--r2);
-  border:1px solid rgba(78,216,122,.15);
+  border:1px solid rgba(27,67,50,.2);
   overflow:hidden;margin-bottom:24px;
-  box-shadow:var(--sh);
+  box-shadow:0 4px 20px rgba(27,67,50,.15);
 }
 .meteo-inner{padding:20px 24px;display:flex;flex-direction:column;gap:14px}
 .meteo-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
@@ -96,18 +96,20 @@ body{
 /* SECTION TITLE */
 .section-title{
   font-family:'Cormorant Garamond',serif;
-  font-size:1.1rem;font-weight:600;color:var(--ink2);
-  letter-spacing:.3px;margin-bottom:14px;
+  font-size:1.05rem;font-weight:600;color:var(--ink2);
+  letter-spacing:.3px;margin-bottom:12px;
   display:flex;align-items:center;gap:8px;
+  padding-bottom:8px;
+  border-bottom:1px solid var(--line);
 }
-.section-title span{font-size:1.2em}
+.section-title span{font-size:1.1em}
 
 /* KPI GRID */
 .kpi-grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
   gap:12px;
-  margin-bottom:28px;
+  margin-bottom:24px;
 }
 .kpi-card{
   background:var(--card);
@@ -115,11 +117,10 @@ body{
   padding:16px 16px 14px;
   border:1px solid var(--line);
   box-shadow:var(--sh);
-  cursor:default;
-  transition:transform .15s,border-color .15s;
+  transition:transform .15s,box-shadow .15s;
 }
-.kpi-card:hover{transform:translateY(-2px);border-color:rgba(78,216,122,.28)}
-.kpi-label{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);margin-bottom:8px}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(30,27,22,.1)}
+.kpi-label{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);margin-bottom:8px;font-weight:600}
 .kpi-val{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;line-height:1;color:var(--brand)}
 .kpi-val.amber{color:var(--amber)}
 .kpi-val.red{color:var(--red)}
@@ -142,17 +143,15 @@ body{
   box-shadow:var(--sh);
   text-decoration:none;color:inherit;
   display:flex;flex-direction:column;
-  transition:transform .2s,border-color .2s,box-shadow .2s;
+  transition:transform .2s,box-shadow .2s;
   position:relative;overflow:hidden;
 }
 .module-card::before{
   content:'';position:absolute;top:0;left:0;right:0;height:3px;
-  background:var(--brand);opacity:.6;
-  transition:opacity .2s;
+  background:var(--brand);
+  transition:background .2s;
 }
-.module-card:hover{transform:translateY(-4px);border-color:rgba(78,216,122,.35);box-shadow:0 8px 32px rgba(0,0,0,.45)}
-.module-card:hover::before{opacity:1}
-.module-icon{font-size:2rem;margin-bottom:12px;line-height:1}
+.module-card:hover{transform:translateY(-4px);box-shadow:0 10px 32px rgba(30,27,22,.12)}
 .module-card h2{
   font-family:'Cormorant Garamond',serif;
   font-size:1.15rem;font-weight:700;
@@ -162,25 +161,25 @@ body{
 .module-tag{
   display:inline-flex;align-items:center;gap:5px;
   margin-top:14px;padding:4px 10px;
-  background:rgba(78,216,122,.12);color:var(--brand2);
+  background:#D8F3DC;color:var(--brand2);
   border-radius:20px;font-size:11px;font-weight:600;
-  border:1px solid rgba(78,216,122,.2);
 }
-.module-tag.amber{background:rgba(245,166,35,.12);color:var(--amber);border-color:rgba(245,166,35,.2)}
+.module-tag.amber{background:#FEF3CD;color:var(--amber)}
 .status-dot{
-  width:7px;height:7px;border-radius:50%;
-  background:var(--brand);display:inline-block;
+  width:6px;height:6px;border-radius:50%;
+  background:var(--brand3);display:inline-block;
   animation:pulse 2s infinite;
 }
 .status-dot.amber{background:var(--amber)}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 
 footer{
   text-align:center;padding:20px;
   font-size:11px;color:var(--ink3);
   border-top:1px solid var(--line);
+  background:#fff;
 }
-footer a{color:var(--brand3);text-decoration:none}
+footer a{color:var(--brand2);text-decoration:none}
 footer a:hover{text-decoration:underline}
 </style>
 </head>
