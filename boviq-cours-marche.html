@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BOVIQ — Cours du Marché</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#F4F1EB;--bg2:#EDE8DF;--card:#FFFFFF;--card2:#FAFAF7;
+  --ink:#1E1B16;--ink2:#4A4538;--ink3:#8C8474;--ink4:#B8B0A2;
+  --line:#E3DED4;--line2:#D1CBBD;
+  --brand:#2D6A4F;--brand2:#40916C;--brand3:#1B4332;--brand-light:#D8F3DC;--brand-pale:#F0FFF4;
+  --blue:#1D4ED8;--blue-l:#DBEAFE;
+  --amber:#D97706;--amber-l:#FEF3C7;
+  --red:#DC2626;--red-l:#FEE2E2;
+  --teal:#0D9488;--teal-l:#CCFBF1;
+  --r:10px;--r2:14px;
+  --sh:0 1px 3px rgba(30,27,22,.05),0 1px 2px rgba(30,27,22,.03);
+  --sh2:0 4px 16px rgba(30,27,22,.08);
+}
+html{font-size:14px}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100dvh;padding:24px}
+
+.page{max-width:1100px;margin:0 auto}
+.page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.page-head h2{font-family:'Playfair Display',serif;font-size:22px;font-weight:700}
+.page-head .subtitle{font-size:13px;color:var(--ink3);margin-top:2px}
+
+.card{background:var(--card);border-radius:var(--r2);box-shadow:var(--sh);overflow:hidden;margin-bottom:16px}
+.card-head{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.card-head h3{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
+.card-body{padding:16px 18px}
+
+.btn{font:600 13px/1 'DM Sans',sans-serif;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn-p{background:var(--brand);color:white}.btn-p:hover{background:var(--brand3)}
+.btn-o{background:transparent;color:var(--ink2);border:1px solid var(--line2)}.btn-o:hover{background:var(--bg2)}
+.btn-s{padding:5px 10px;font-size:12px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px}
+.b-green{background:var(--brand-light);color:var(--brand)}
+.b-amber{background:var(--amber-l);color:var(--amber)}
+.b-red{background:var(--red-l);color:var(--red)}
+.b-blue{background:var(--blue-l);color:var(--blue)}
+.b-teal{background:var(--teal-l);color:var(--teal)}
+
+/* STATUS */
+.status-panel{padding:14px 18px;background:var(--card2);display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.status-dot.ok{background:#22c55e;box-shadow:0 0 6px rgba(34,197,94,.4)}
+.status-dot.warn{background:var(--amber);box-shadow:0 0 6px rgba(217,119,6,.4)}
+.status-dot.err{background:var(--red);box-shadow:0 0 6px rgba(220,38,38,.4)}
+.status-dot.loading{background:var(--blue);animation:pulse 1s infinite}
+.status-dot.idle{background:var(--ink4)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.status-text{font-size:13px;color:var(--ink2);flex:1}
+.status-text strong{color:var(--ink)}
+.status-text a{color:var(--brand);font-weight:600;text-decoration:none}
+.status-text a:hover{text-decoration:underline}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+.kpi{padding:16px;border-radius:var(--r);background:var(--card);border:1px solid var(--line);text-align:center;position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s}
+.kpi:hover{transform:translateY(-2px);box-shadow:var(--sh2)}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kpi.meat::before{background:linear-gradient(90deg,var(--red),var(--amber))}
+.kpi.milk::before{background:linear-gradient(90deg,var(--blue),var(--teal))}
+.kpi-icon{font-size:22px;margin-bottom:4px}
+.kpi-label{font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.kpi-val{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--ink)}
+.kpi-unit{font-size:12px;font-weight:400;color:var(--ink3);margin-left:2px}
+.kpi-trend{font-size:12px;font-weight:600;margin-top:4px}
+.kpi-trend.up{color:#22c55e}.kpi-trend.down{color:var(--red)}.kpi-trend.stable{color:var(--ink3)}
+.kpi-date{font-size:10px;color:var(--ink4);margin-top:2px}
+.kpi-empty{color:var(--ink4);font-size:20px}
+
+/* TABS */
+.tab-row{display:flex;gap:4px;padding:0 18px;border-bottom:1px solid var(--line);background:var(--card2);overflow-x:auto}
+.tab-btn{font:500 12px/1 'DM Sans',sans-serif;padding:10px 14px;border:none;background:transparent;color:var(--ink3);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;margin-bottom:-1px;white-space:nowrap}
+.tab-btn:hover{color:var(--ink2)}
+.tab-btn.active{color:var(--brand);border-bottom-color:var(--brand);font-weight:600}
+.tab-panel{display:none;padding:16px 18px}
+.tab-panel.active{display:block}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:collapse;font-size:13px}
+.data-table th{text-align:left;font-weight:600;color:var(--ink3);padding:8px 10px;border-bottom:2px solid var(--line);font-size:11px;text-transform:uppercase;letter-spacing:.3px;cursor:pointer;user-select:none}
+.data-table th:hover{color:var(--ink)}
+.data-table td{padding:8px 10px;border-bottom:1px solid var(--line)}
+.data-table tr:hover td{background:var(--brand-pale)}
+.data-table .num{text-align:right;font-variant-numeric:tabular-nums}
+
+/* CHART */
+.chart-container{position:relative;height:300px;margin:8px 0}
+
+/* DROP ZONE */
+.fallback-zone{border:2px dashed var(--line2);border-radius:var(--r2);padding:28px;text-align:center;background:var(--card2);transition:all .2s;margin-top:16px}
+.fallback-zone.dragover{border-color:var(--brand);background:var(--brand-pale)}
+.fallback-zone p{font-size:13px;color:var(--ink3);margin-bottom:8px}
+input[type="file"]{display:none}
+
+/* SETTINGS */
+.setting-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.setting-row:last-child{border-bottom:none}
+.setting-label{flex:1;font-size:13px}
+.setting-label small{display:block;font-size:11px;color:var(--ink3);margin-top:2px}
+select.form-select{font:400 13px 'DM Sans',sans-serif;padding:6px 10px;border:1px solid var(--line2);border-radius:6px;background:var(--card);color:var(--ink)}
+
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* LOG */
+.log{max-height:160px;overflow-y:auto;font-family:'SF Mono',Consolas,monospace;font-size:11px;background:#1a1a2e;color:#a8b2d1;padding:12px;border-radius:var(--r);line-height:1.8}
+.log .ok{color:#22c55e}.log .warn{color:var(--amber)}.log .err{color:#ef4444}.log .info{color:#60a5fa}
+
+.last-update{font-size:11px;color:var(--ink4);text-align:center;margin-top:6px}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-head">
+    <div>
+      <h2>📈 Cours du Marché</h2>
+      <div class="subtitle">Cotations viande bovine & prix du lait — données FranceAgriMer (mise à jour automatique chaque mardi)</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-p" id="btn-refresh" onclick="refreshData()">🔄 Actualiser les cours</button>
+      <button class="btn btn-o btn-s" onclick="clearCache()">🗑️ Vider le cache</button>
+    </div>
+  </div>
+
+  <!-- STATUS -->
+  <div class="card">
+    <div class="status-panel" id="status-bar">
+      <div class="status-dot idle" id="status-dot"></div>
+      <div class="status-text" id="status-text">
+        Cliquez sur « 🔄 Actualiser les cours » pour charger les cotations (mises à jour automatiquement chaque mardi).
+      </div>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-row">
+    <div class="kpi meat">
+      <div class="kpi-icon">🥩</div>
+      <div class="kpi-label">Vache R</div>
+      <div class="kpi-val" id="kpi-vache-r"><span class="kpi-empty">—</span><span class="kpi-unit">€/kg</span></div>
+      <div class="kpi-trend stable" id="trend-vache-r"></div>
+      <div class="kpi-date" id="date-vache-r"></div>
+    </div>
+    <div class="kpi meat">
+      <div class="kpi-icon">🐄</div>
+      <div class="kpi-label">Vache O</div>
+      <div class="kpi-val" id="kpi-vache-o"><span class="kpi-empty">—</span><span class="kpi-unit">€/kg</span></div>
+      <div class="kpi-trend stable" id="trend-vache-o"></div>
+      <div class="kpi-date" id="date-vache-o"></div>
+    </div>
+    <div class="kpi meat">
+      <div class="kpi-icon">🐂</div>
+      <div class="kpi-label">Jeune Bovin R</div>
+      <div class="kpi-val" id="kpi-jb-r"><span class="kpi-empty">—</span><span class="kpi-unit">€/kg</span></div>
+      <div class="kpi-trend stable" id="trend-jb-r"></div>
+      <div class="kpi-date" id="date-jb-r"></div>
+    </div>
+    <div class="kpi milk">
+      <div class="kpi-icon">🥛</div>
+      <div class="kpi-label">Lait conventionnel</div>
+      <div class="kpi-val" id="kpi-lait"><span class="kpi-empty">—</span><span class="kpi-unit">€/1000L</span></div>
+      <div class="kpi-trend stable" id="trend-lait"></div>
+      <div class="kpi-date" id="date-lait"></div>
+    </div>
+  </div>
+
+  <!-- MAIN CARD -->
+  <div class="card">
+    <div class="tab-row">
+      <button class="tab-btn active" data-tab="cotations">📊 Cotations</button>
+      <button class="tab-btn" data-tab="graphique">📈 Tendance</button>
+      <button class="tab-btn" data-tab="import">📥 Import CSV</button>
+    </div>
+
+    <!-- TAB: COTATIONS -->
+    <div class="tab-panel active" id="tab-cotations">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-weight:600;font-size:13px">Filtrer :</span>
+          <select class="form-select" id="sel-categorie" onchange="renderTable()">
+            <option value="all">Toutes catégories</option>
+            <option value="Vaches">Vaches</option>
+            <option value="Génisses">Génisses</option>
+            <option value="Jeunes Bovins">Jeunes Bovins</option>
+            <option value="Bœufs">Bœufs</option>
+            <option value="Taureaux">Taureaux</option>
+          </select>
+        </div>
+        <span class="badge b-teal" id="data-count">0 cotations</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="data-table" id="table-cotations">
+          <thead>
+            <tr>
+              <th onclick="sortTable('semaine')">Semaine ↕</th>
+              <th onclick="sortTable('categorie')">Catégorie ↕</th>
+              <th onclick="sortTable('conformation')">Conf. ↕</th>
+              <th class="num" onclick="sortTable('prix')">Prix (€/kg) ↕</th>
+              <th class="num">Évol.</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-cotations">
+            <tr><td colspan="5" style="text-align:center;color:var(--ink3);padding:32px">
+              Cliquez sur « 🔄 Actualiser les cours » pour charger les données
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB: GRAPHIQUE -->
+    <div class="tab-panel" id="tab-graphique">
+      <div style="margin-bottom:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <span style="font-weight:600;font-size:13px">Série :</span>
+        <select class="form-select" id="sel-chart-type" onchange="updateChart()">
+          <option value="Vaches|R">Vache R</option>
+          <option value="Vaches|O">Vache O</option>
+          <option value="Vaches|P">Vache P</option>
+          <option value="Jeunes Bovins|R">Jeune Bovin R</option>
+          <option value="Jeunes Bovins|U">Jeune Bovin U</option>
+          <option value="Génisses|R">Génisse R</option>
+        </select>
+      </div>
+      <div class="chart-container">
+        <canvas id="chart-cotations"></canvas>
+      </div>
+      <div class="last-update">Source : FranceAgriMer — cotations hebdomadaires entrée abattoir (€/kg carcasse)</div>
+    </div>
+
+    <!-- TAB: IMPORT CSV (fallback) -->
+    <div class="tab-panel" id="tab-import">
+      <p style="font-size:13px;color:var(--ink2);margin-bottom:12px">
+        Méthode alternative : si le téléchargement automatique ne fonctionne pas, vous pouvez télécharger le CSV manuellement et le glisser ici.
+      </p>
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+        <a href="https://www.data.gouv.fr/fr/datasets/r/52055779-875e-4940-b2ce-93a2160e748e" target="_blank" class="btn btn-o btn-s">⬇️ Télécharger CSV entrée abattoir</a>
+        <a href="https://www.data.gouv.fr/fr/datasets/r/04f61a99-d5d1-4a35-b8a4-2f3be5e3a5a3" target="_blank" class="btn btn-o btn-s">⬇️ Télécharger CSV bovins vifs</a>
+      </div>
+      <div class="fallback-zone" id="drop-zone" style="margin-top:0">
+        <p>📄 Glissez un fichier CSV FranceAgriMer ici</p>
+        <button class="btn btn-o btn-s" onclick="document.getElementById('file-input').click()">📂 Parcourir...</button>
+        <input type="file" id="file-input" accept=".csv,.txt" onchange="handleFileImport(event)">
+      </div>
+      <div id="import-result" style="margin-top:10px"></div>
+    </div>
+  </div>
+
+  <!-- CONFIG -->
+  <div class="card">
+    <div class="card-head"><h3>⚙️ Configuration</h3></div>
+    <div class="card-body">
+      <div class="setting-row">
+        <div class="setting-label">
+          Catégorie de vente principale
+          <small>Pour les KPIs et le pré-remplissage du bilan financier</small>
+        </div>
+        <select class="form-select" id="sel-main-category" onchange="saveSettings()">
+          <option value="Vaches|R">Vache R (standard laitière)</option>
+          <option value="Vaches|O">Vache O</option>
+          <option value="Vaches|P">Vache P</option>
+          <option value="Génisses|R">Génisse R</option>
+          <option value="Jeunes Bovins|R">Jeune Bovin R</option>
+          <option value="Jeunes Bovins|U">Jeune Bovin U</option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">
+          Prix du lait personnalisé
+          <small>Votre paie de lait réelle (remplace le prix moyen national)</small>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <input type="number" id="inp-milk-price" placeholder="ex: 480" style="font:400 13px 'DM Sans';padding:6px 10px;border:1px solid var(--line2);border-radius:6px;width:100px;text-align:right" onchange="saveSettings()">
+          <span style="font-size:12px;color:var(--ink3)">€/1000L</span>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">
+          Cache local
+          <small>Les cours sont conservés localement pour un accès instantané</small>
+        </div>
+        <span class="badge b-blue" id="cache-info">Pas de cache</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOG (hidden by default) -->
+  <details>
+    <summary style="font-size:12px;color:var(--ink3);cursor:pointer;padding:4px">📋 Journal technique</summary>
+    <div class="log" id="log" style="margin-top:4px"></div>
+  </details>
+</div>
+
+<script>
+// ============================================================
+// BOVIQ — COURS DU MARCHÉ v4
+// Optimisé pour GitHub Pages (https://)
+// Fetch direct depuis data.gouv.fr — zéro config
+// ============================================================
+
+// CSV hébergés dans le même repo (mis à jour chaque mardi par GitHub Actions)
+const CSV_URL = './data/cotations-abattoir.csv';
+const CSV_URL_VIFS = './data/cotations-vifs.csv';
+const META_URL = './data/meta.json';
+const STORAGE_KEY = 'boviq_market_v4';
+const SETTINGS_KEY = 'boviq_market_settings_v4';
+
+let chartInstance = null;
+let marketData = { cotations: [], lastUpdate: null, source: null };
+let currentSort = { key: 'semaine', dir: 'desc' };
+
+// === INIT ===
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    if (btn.dataset.tab === 'graphique') setTimeout(updateChart, 50);
+  });
+});
+
+// Drag & drop
+const dropZone = document.getElementById('drop-zone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  if (e.dataTransfer.files.length) handleFileImport({ target: { files: e.dataTransfer.files } });
+});
+
+// === LOGGING ===
+function log(msg, type = 'info') {
+  const el = document.getElementById('log');
+  const t = new Date().toLocaleTimeString('fr-FR');
+  el.innerHTML += `<div class="${type}">[${t}] ${msg}</div>`;
+  el.scrollTop = el.scrollHeight;
+}
+
+function setStatus(state, html) {
+  document.getElementById('status-dot').className = 'status-dot ' + state;
+  document.getElementById('status-text').innerHTML = html;
+}
+
+// === MAIN FETCH ===
+async function refreshData() {
+  const btn = document.getElementById('btn-refresh');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Chargement...';
+  setStatus('loading', 'Connexion à data.gouv.fr...');
+
+  let csvText = null;
+  let source = null;
+
+  // Attempt 1: Cotations entrée abattoir (primary source)
+  try {
+    log('📡 Chargement cotations entrée abattoir...', 'info');
+
+    // Check last update date
+    try {
+      const metaResp = await fetch(META_URL, { signal: AbortSignal.timeout(5000), cache: 'no-cache' });
+      if (metaResp.ok) {
+        const meta = await metaResp.json();
+        log(`📅 Dernière MAJ serveur : ${new Date(meta.lastUpdate).toLocaleDateString('fr-FR')}`, 'info');
+      }
+    } catch(e) {}
+
+    const resp = await fetch(CSV_URL, { signal: AbortSignal.timeout(15000), cache: 'no-cache' });
+    if (resp.ok) {
+      const text = await resp.text();
+      if (text.length > 200 && (text.includes(';') || text.includes(','))) {
+        csvText = text;
+        source = 'FranceAgriMer — entrée abattoir';
+        log(`✅ Téléchargé : ${(text.length / 1024).toFixed(1)} Ko`, 'ok');
+      } else {
+        log('⚠️ Réponse inattendue (non-CSV)', 'warn');
+      }
+    } else {
+      log(`⚠️ HTTP ${resp.status}`, 'warn');
+    }
+  } catch (e) {
+    log(`⚠️ Entrée abattoir : ${e.message}`, 'warn');
+  }
+
+  // Attempt 2: Cotations bovins vifs (fallback)
+  if (!csvText) {
+    try {
+      log('📡 Tentative cotations bovins vifs...', 'info');
+      const resp = await fetch(CSV_URL_VIFS, { signal: AbortSignal.timeout(15000), cache: 'no-cache' });
+      if (resp.ok) {
+        const text = await resp.text();
+        if (text.length > 200 && (text.includes(';') || text.includes(','))) {
+          csvText = text;
+          source = 'FranceAgriMer — bovins vifs';
+          log(`✅ Téléchargé : ${(text.length / 1024).toFixed(1)} Ko`, 'ok');
+        }
+      }
+    } catch (e) {
+      log(`⚠️ Bovins vifs : ${e.message}`, 'warn');
+    }
+  }
+
+  // Parse results
+  if (csvText) {
+    const data = parseCSV(csvText);
+    if (data.length > 0) {
+      marketData.cotations = data;
+      marketData.lastUpdate = new Date().toISOString();
+      marketData.source = source;
+      saveToCache();
+      renderAll();
+      setStatus('ok', `<strong>Cours à jour ✓</strong> — ${data.length} cotations (${source}) — mis à jour le ${new Date().toLocaleDateString('fr-FR')} à ${new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`);
+    } else {
+      log('❌ CSV récupéré mais format non reconnu', 'err');
+      tryCache('Format CSV non reconnu');
+    }
+  } else {
+    tryCache('Impossible de contacter data.gouv.fr');
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '🔄 Actualiser les cours';
+}
+
+function tryCache(reason) {
+  const cached = loadFromCache();
+  if (cached) {
+    marketData = cached;
+    renderAll();
+    const d = new Date(cached.lastUpdate);
+    setStatus('warn', `<strong>Mode hors-ligne</strong> — ${reason}. Affichage du cache du ${d.toLocaleDateString('fr-FR')} (${cached.cotations.length} cotations).`);
+    log('📦 Données chargées depuis le cache', 'warn');
+  } else {
+    setStatus('err', `<strong>${reason}</strong> — Essayez l'<a href="#" onclick="document.querySelector('[data-tab=import]').click();return false">import CSV manuel →</a>`);
+  }
+}
+
+// === CSV PARSER ===
+function parseCSV(text) {
+  const lines = text.trim().split(/\r?\n/);
+  if (lines.length < 2) return [];
+
+  const sep = (lines[0].match(/;/g) || []).length > (lines[0].match(/,/g) || []).length ? ';' : ',';
+  const headers = lines[0].split(sep).map(h => h.trim().replace(/^"|"$/g, '').replace(/^\uFEFF/, ''));
+
+  log(`📋 ${lines.length} lignes, séparateur « ${sep} »`, 'info');
+  log(`📋 Colonnes : ${headers.join(' | ')}`, 'info');
+
+  const results = [];
+  for (let i = 1; i < lines.length; i++) {
+    if (!lines[i].trim()) continue;
+    const vals = lines[i].split(sep).map(v => v.trim().replace(/^"|"$/g, ''));
+    const row = {};
+    headers.forEach((h, idx) => row[h] = vals[idx] || '');
+    const normalized = normalizeRow(row);
+    if (normalized) results.push(normalized);
+  }
+
+  log(`✅ ${results.length} cotations exploitables`, results.length > 0 ? 'ok' : 'warn');
+  return results;
+}
+
+function normalizeRow(row) {
+  const r = {};
+
+  for (const [key, val] of Object.entries(row)) {
+    const k = key.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+
+    // Semaine / date
+    if (!r.semaine && (k.includes('semaine') || k.includes('sem_') || k === 'sem' || k.includes('annee_semaine') || k.includes('annee-semaine'))) {
+      r.semaine = val;
+    }
+    if (!r.semaine && k.includes('date')) r.semaine = val;
+
+    // Catégorie
+    if (!r.categorie && (k.includes('categorie') || k.includes('type_animal') || k.includes('espece') || k === 'type' || k.includes('libelle_categorie') || k.includes('lib_categorie') || k.includes('libelle_type') || k.includes('categ') || k.includes('type_bovin'))) {
+      r.categorie = val;
+    }
+
+    // Conformation (EUROP)
+    if (!r.conformation && (k.includes('conformation') || k.includes('classe') || k === 'conf' || k.includes('qualite') || k.includes('classement'))) {
+      r.conformation = val;
+    }
+
+    // Prix
+    if (!r.prix && (k.includes('prix') || k.includes('cotation') || k.includes('valeur') || k.includes('cours') || k === 'nat' || k.includes('national') || k.includes('moyenne') || k.includes('moy_') || k.includes('cot_nat'))) {
+      const p = parseFloat(String(val).replace(',', '.'));
+      if (!isNaN(p) && p > 0 && p < 50) r.prix = p;
+    }
+
+    // Bassin
+    if (!r.bassin && (k.includes('bassin') || k.includes('region') || k.includes('zone') || k.includes('marche'))) {
+      r.bassin = val;
+    }
+
+    // Engraissement
+    if (!r.engraissement && (k.includes('engraissement') || k.includes('etat') || k.includes('engr'))) {
+      r.engraissement = val;
+    }
+  }
+
+  // Fallback: find plausible price
+  if (!r.prix) {
+    for (const val of Object.values(row)) {
+      const p = parseFloat(String(val).replace(',', '.'));
+      if (!isNaN(p) && p > 1.5 && p < 12) { r.prix = p; break; }
+    }
+  }
+
+  if (!r.prix) return null;
+
+  // Infer category from all values if not explicitly found
+  if (!r.categorie) {
+    const allVals = Object.values(row).join(' ').toLowerCase();
+    if (allVals.includes('vache')) r.categorie = 'Vaches';
+    else if (allVals.includes('genisse') || allVals.includes('génisse')) r.categorie = 'Génisses';
+    else if (allVals.includes('jeune') || allVals.includes('j.b')) r.categorie = 'Jeunes Bovins';
+    else return null;
+  }
+
+  // Normalize category
+  const cat = r.categorie.toLowerCase();
+  if (cat.includes('vache')) r.categorieNorm = 'Vaches';
+  else if (cat.includes('genisse') || cat.includes('génisse')) r.categorieNorm = 'Génisses';
+  else if (cat.includes('jeune') || cat.includes('jb') || cat.includes('j.b')) r.categorieNorm = 'Jeunes Bovins';
+  else if (cat.includes('boeuf') || cat.includes('bœuf')) r.categorieNorm = 'Bœufs';
+  else if (cat.includes('taureau')) r.categorieNorm = 'Taureaux';
+  else r.categorieNorm = r.categorie;
+
+  // Clean conformation
+  if (r.conformation) {
+    const c = r.conformation.toUpperCase().trim();
+    if (/^[EUROP]/.test(c)) r.conformation = c.charAt(0);
+  }
+
+  return r;
+}
+
+// === FILE IMPORT ===
+function handleFileImport(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  setStatus('loading', `Import de ${file.name}...`);
+  log(`📁 Import : ${file.name} (${(file.size / 1024).toFixed(1)} Ko)`, 'info');
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const data = parseCSV(e.target.result);
+    if (data.length > 0) {
+      marketData.cotations = data;
+      marketData.lastUpdate = new Date().toISOString();
+      marketData.source = `Import CSV (${file.name})`;
+      saveToCache();
+      renderAll();
+      setStatus('ok', `<strong>Import réussi ✓</strong> — ${data.length} cotations depuis « ${file.name} »`);
+      document.getElementById('import-result').innerHTML = `<span class="badge b-green">✓ ${data.length} cotations importées</span>`;
+      setTimeout(() => document.querySelector('[data-tab="cotations"]').click(), 500);
+    } else {
+      setStatus('err', 'Format CSV non reconnu.');
+      document.getElementById('import-result').innerHTML = `<span class="badge b-red">✗ Format non reconnu</span>`;
+    }
+  };
+  reader.readAsText(file, 'utf-8');
+}
+
+// === CACHE ===
+function saveToCache() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(marketData)); } catch (e) {}
+  updateCacheInfo();
+}
+function loadFromCache() {
+  try {
+    const d = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    return (d && d.cotations?.length > 0) ? d : null;
+  } catch (e) { return null; }
+}
+function clearCache() {
+  localStorage.removeItem(STORAGE_KEY);
+  marketData = { cotations: [], lastUpdate: null, source: null };
+  document.getElementById('tbody-cotations').innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--ink3);padding:32px">Cache vidé</td></tr>';
+  document.getElementById('data-count').textContent = '0 cotations';
+  if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+  ['vache-r','vache-o','jb-r','lait'].forEach(id => {
+    document.getElementById(`kpi-${id}`).innerHTML = `<span class="kpi-empty">—</span><span class="kpi-unit">${id==='lait'?'€/1000L':'€/kg'}</span>`;
+    document.getElementById(`trend-${id}`).textContent = '';
+    document.getElementById(`date-${id}`).textContent = '';
+  });
+  updateCacheInfo();
+  setStatus('idle', 'Cache vidé. Cliquez « 🔄 Actualiser les cours » pour recharger.');
+}
+function updateCacheInfo() {
+  const el = document.getElementById('cache-info');
+  const c = loadFromCache();
+  if (c?.lastUpdate) {
+    const hrs = Math.round((Date.now() - new Date(c.lastUpdate).getTime()) / 3600000);
+    const age = hrs < 24 ? `${hrs}h` : `${Math.round(hrs / 24)}j`;
+    el.textContent = `${c.cotations.length} cotations — ${age}`;
+    el.className = hrs < 168 ? 'badge b-green' : 'badge b-amber';
+  } else {
+    el.textContent = 'Pas de cache';
+    el.className = 'badge b-blue';
+  }
+}
+
+// === SETTINGS ===
+function saveSettings() {
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify({
+    mainCategory: document.getElementById('sel-main-category').value,
+    milkPrice: document.getElementById('inp-milk-price').value
+  }));
+  renderKPIs();
+}
+function loadSettings() {
+  try {
+    const s = JSON.parse(localStorage.getItem(SETTINGS_KEY));
+    if (s?.mainCategory) document.getElementById('sel-main-category').value = s.mainCategory;
+    if (s?.milkPrice) document.getElementById('inp-milk-price').value = s.milkPrice;
+  } catch (e) {}
+}
+
+// === RENDER ===
+function renderAll() {
+  renderKPIs();
+  renderTable();
+  updateChart();
+  updateCacheInfo();
+}
+
+function renderKPIs() {
+  const data = marketData.cotations;
+  if (!data?.length) return;
+
+  function fillKPI(id, catNorm, confPrefix) {
+    const sorted = data
+      .filter(r => r.categorieNorm === catNorm && (!confPrefix || r.conformation === confPrefix))
+      .sort((a, b) => String(b.semaine || '').localeCompare(String(a.semaine || '')));
+
+    const el = document.getElementById(`kpi-${id}`);
+    const trend = document.getElementById(`trend-${id}`);
+    const dateEl = document.getElementById(`date-${id}`);
+
+    if (sorted.length > 0) {
+      el.innerHTML = `${sorted[0].prix.toFixed(2)}<span class="kpi-unit">€/kg</span>`;
+      dateEl.textContent = sorted[0].semaine ? `Sem. ${sorted[0].semaine}` : '';
+
+      if (sorted.length > 1) {
+        const diff = sorted[0].prix - sorted[1].prix;
+        const pct = ((diff / sorted[1].prix) * 100).toFixed(1);
+        trend.className = 'kpi-trend ' + (diff > 0.01 ? 'up' : diff < -0.01 ? 'down' : 'stable');
+        trend.textContent = diff > 0.01 ? `▲ +${diff.toFixed(2)} (+${pct}%)` : diff < -0.01 ? `▼ ${diff.toFixed(2)} (${pct}%)` : '= Stable';
+      }
+    }
+  }
+
+  fillKPI('vache-r', 'Vaches', 'R');
+  fillKPI('vache-o', 'Vaches', 'O');
+  fillKPI('jb-r', 'Jeunes Bovins', 'R');
+
+  const mp = document.getElementById('inp-milk-price').value;
+  if (mp) {
+    document.getElementById('kpi-lait').innerHTML = `${parseFloat(mp).toFixed(0)}<span class="kpi-unit">€/1000L</span>`;
+    document.getElementById('trend-lait').textContent = 'Prix personnalisé';
+    document.getElementById('trend-lait').className = 'kpi-trend stable';
+  }
+}
+
+function sortTable(key) {
+  if (currentSort.key === key) currentSort.dir = currentSort.dir === 'desc' ? 'asc' : 'desc';
+  else { currentSort.key = key; currentSort.dir = 'desc'; }
+  renderTable();
+}
+
+function renderTable() {
+  const tbody = document.getElementById('tbody-cotations');
+  const data = marketData.cotations;
+  if (!data?.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--ink3);padding:32px">Aucune donnée</td></tr>';
+    document.getElementById('data-count').textContent = '0 cotations';
+    return;
+  }
+
+  const filter = document.getElementById('sel-categorie').value;
+  let filtered = filter === 'all' ? [...data] : data.filter(r => r.categorieNorm === filter);
+
+  const sk = currentSort.key;
+  const sd = currentSort.dir === 'asc' ? 1 : -1;
+  filtered.sort((a, b) => {
+    const va = sk === 'prix' ? (a.prix || 0) : String(a[sk] || '');
+    const vb = sk === 'prix' ? (b.prix || 0) : String(b[sk] || '');
+    return (va < vb ? -1 : va > vb ? 1 : 0) * sd;
+  });
+
+  const display = filtered.slice(0, 200);
+
+  // Build price history lookup
+  const byKey = {};
+  [...data].sort((a, b) => String(a.semaine || '').localeCompare(String(b.semaine || ''))).forEach(r => {
+    const k = `${r.categorieNorm}|${r.conformation}`;
+    (byKey[k] = byKey[k] || []).push(r);
+  });
+
+  const catColors = { 'Vaches': 'b-amber', 'Génisses': 'b-green', 'Jeunes Bovins': 'b-blue', 'Bœufs': 'b-teal', 'Taureaux': 'b-red' };
+
+  tbody.innerHTML = display.map(row => {
+    const k = `${row.categorieNorm}|${row.conformation}`;
+    const series = byKey[k] || [];
+    const idx = series.findIndex(r => r.semaine === row.semaine && r.prix === row.prix);
+    let evo = '';
+    if (idx > 0) {
+      const diff = row.prix - series[idx - 1].prix;
+      if (diff > 0.005) evo = `<span style="color:#22c55e;font-weight:600">▲ +${diff.toFixed(2)}</span>`;
+      else if (diff < -0.005) evo = `<span style="color:var(--red);font-weight:600">▼ ${diff.toFixed(2)}</span>`;
+      else evo = '<span style="color:var(--ink4)">—</span>';
+    }
+    return `<tr>
+      <td style="font-variant-numeric:tabular-nums">${row.semaine || '—'}</td>
+      <td><span class="badge ${catColors[row.categorieNorm] || ''}">${row.categorieNorm}</span></td>
+      <td><strong>${row.conformation || '—'}</strong>${row.engraissement ? ' · ' + row.engraissement : ''}</td>
+      <td class="num"><strong>${row.prix.toFixed(2)}</strong></td>
+      <td class="num">${evo}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('data-count').textContent = `${filtered.length} cotations${display.length < filtered.length ? ` (${display.length} affichées)` : ''}`;
+}
+
+// === CHART ===
+function updateChart() {
+  const data = marketData.cotations;
+  if (!data?.length) return;
+
+  const [catNorm, conf] = (document.getElementById('sel-chart-type').value || 'Vaches|R').split('|');
+  const filtered = data
+    .filter(r => r.categorieNorm === catNorm && (!conf || r.conformation === conf))
+    .sort((a, b) => String(a.semaine || '').localeCompare(String(b.semaine || '')));
+
+  const recent = filtered.slice(-52);
+  if (recent.length < 2) return;
+
+  const ctx = document.getElementById('chart-cotations');
+  if (chartInstance) chartInstance.destroy();
+
+  const grd = ctx.getContext('2d').createLinearGradient(0, 0, 0, 300);
+  grd.addColorStop(0, 'rgba(45,106,79,.15)');
+  grd.addColorStop(1, 'rgba(45,106,79,0)');
+
+  chartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: recent.map(r => r.semaine || '?'),
+      datasets: [{
+        label: `${catNorm} ${conf} (€/kg)`,
+        data: recent.map(r => r.prix),
+        borderColor: '#2D6A4F',
+        backgroundColor: grd,
+        borderWidth: 2.5,
+        pointRadius: recent.length > 30 ? 1.5 : 3,
+        pointHoverRadius: 6,
+        pointBackgroundColor: '#2D6A4F',
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true, position: 'top', labels: { font: { family: 'DM Sans', size: 12 }, padding: 16 } },
+        tooltip: {
+          callbacks: { label: c => `${c.parsed.y.toFixed(2)} €/kg` },
+          backgroundColor: '#1B4332',
+          titleFont: { family: 'DM Sans' },
+          bodyFont: { family: 'DM Sans' }
+        }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { family: 'DM Sans', size: 10 }, maxRotation: 45, maxTicksLimit: 15 } },
+        y: { grid: { color: '#E3DED4' }, ticks: { font: { family: 'DM Sans', size: 11 }, callback: v => v.toFixed(2) + ' €' } }
+      },
+      interaction: { intersect: false, mode: 'index' }
+    }
+  });
+}
+
+// === BOOT ===
+loadSettings();
+updateCacheInfo();
+const cached = loadFromCache();
+if (cached) {
+  marketData = cached;
+  renderAll();
+  const hrs = Math.round((Date.now() - new Date(cached.lastUpdate).getTime()) / 3600000);
+  setStatus(hrs < 168 ? 'ok' : 'warn',
+    `<strong>Données en cache</strong> — ${cached.cotations.length} cotations du ${new Date(cached.lastUpdate).toLocaleDateString('fr-FR')} (${cached.source})${hrs >= 168 ? ' · <a href="#" onclick="refreshData();return false">⟳ Actualiser</a>' : ''}`
+  );
+} else {
+  // Auto-fetch on first visit
+  refreshData();
+}
+</script>
+</body>
+</html>

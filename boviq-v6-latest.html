@@ -1349,6 +1349,7 @@ function normBoucle(s){
   if(n.startsWith('0250')&&n.length>=14) n='FR'+n.slice(4);
   return n;
 }
+function debounce(fn,ms){let t;return function(...args){clearTimeout(t);t=setTimeout(()=>fn.apply(this,args),ms);}}
 const debouncedSearchAnimaux=debounce(()=>renderAnimaux(),CONST.DEBOUNCE_MS);
 
 // ========================================
