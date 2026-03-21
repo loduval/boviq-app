@@ -408,9 +408,9 @@ function loadCoursKPIs(){
     const lastSem=semaines[0];
     const lastCots=cots.filter(c=>c.semaine===lastSem);
 
-    const vr=lastCots.find(c=>c.categorie==='Vaches'&&c.conf==='R'&&c.grade===3);
-    const vo=lastCots.find(c=>c.categorie==='Vaches'&&c.conf==='O'&&c.grade===3);
-    const jbr=lastCots.find(c=>c.categorie==='Jeunes Bovins'&&c.conf==='R'&&c.grade===3);
+    const vr=lastCots.find(c=>(c.categorie==='Vaches'||c.categorieNorm==='Vaches')&&c.conformation==='R'&&(c.engraissement===3||c.engraissement==='3'));
+    const vo=lastCots.find(c=>(c.categorie==='Vaches'||c.categorieNorm==='Vaches')&&c.conformation==='O'&&(c.engraissement===3||c.engraissement==='3'));
+    const jbr=lastCots.find(c=>(c.categorie==='Jeunes Bovins'||c.categorieNorm==='Jeunes Bovins')&&c.conformation==='R'&&(c.engraissement===3||c.engraissement==='3'));
 
     if(vr)document.getElementById('kpi-vr').textContent=vr.prix.toFixed(2);
     if(vo)document.getElementById('kpi-vo').textContent=vo.prix.toFixed(2);
