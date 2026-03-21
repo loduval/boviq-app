@@ -1,0 +1,31 @@
+# Backups & archives (pas besoin sur le repo)
+_backups-v6/
+_backups-ami/
+_archives/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp files
+~$*
+*.tmp
+
+# Bilans comptables (données sensibles)
+data/bilan/*.pdf
+
+# Données marché DG AGRI (fichiers locaux volumineux)
+data/*.xlsx
+data/market/*.xlsx
+
+# Fichiers de travail expérimentaux
+boviq-*-backup.html
+boviq-*-v2.html
+boviq-*-v3.html
+boviq-*-v4.html
+boviq-v6-bilan-*.html
+boviq-bilan-*.html
+
+# Credentials
+scripts/.env
+.env
