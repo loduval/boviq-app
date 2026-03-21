@@ -1567,6 +1567,7 @@ function goTo(p){
   document.getElementById('topbar-title').textContent=document.querySelector('.nav-btn[data-p="'+p+'"]')?.textContent.trim()||'';
   if(p==='planning')renderPlanning();
   if(p==='milklic')renderMilklic();
+  if(p==='dashboard')initMeteo();
   if(window.innerWidth<768){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('open')}
 }
 navBtns.forEach(b=>b.addEventListener('click',()=>goTo(b.dataset.p)));
