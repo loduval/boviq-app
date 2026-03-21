@@ -1,102 +1,117 @@
 # BOVIQ — MEMORY SESSION
 
-Dernière mise à jour : 20/03/2026 (session PM — fix scanner desktop + audit complet + fix B1 journal)
+Dernière mise à jour : 21/03/2026 (session — BOVIQ MILKLIC : analyse CSV + fusion données + onglet contrôle laitier + fix layout + debug TDZ)
 
 ---
 
 ## État du projet
 
-**boviq-v6-latest.html** — 4791 lignes  
-Dernier commit : `a7fcbe0` — 🏛️ BDNI fix EDE + disclaimer  
+**boviq-v6-latest.html** — 5749 lignes, 439 KB  
+Dernier commit : `181e9db` — fix: page p-milklic repositionnée dans .content  
+**boviq-milklic.html** — 511 lignes, 36 KB (module MilKlic standalone)  
 **Repo GitHub** : `loduval/boviq-app` (public)  
 **GitHub Pages** : `loduval.github.io/boviq-app/`  
-**Page d'accueil** : `index.html` (landing page 2 cartes)  
-**App principale** : `boviq-v6-latest.html`  
+**Page d'accueil** : `index.html` (landing page 3 cartes : BOVIQ V6 + Cours + MilKlic)  
 **Working tree** : ✅ propre (clean)
 
 ---
 
-## Session 20/03/2026 PM — fix scanner + audit + corrections
+## Session 21/03/2026 — BOVIQ MILKLIC
 
-### Fix scanner index.html (`14504f9`)
-- `lancerScan()` redirigait silencieusement vers boviq-v6-latest.html sur desktop
-- Correction : détection userAgent → popup "Fonction mobile uniquement" sur desktop
-- Popup "Navigateur non compatible" sur mobile sans BarcodeDetector
-- cache-bust 20260320-6
+### Analyse complète des 8 CSV MilKlic
 
-### Audit complet (`af91dad`)
-- Syntaxe JS : 0 erreur (`node --check`)
-- IDs HTML : 2 anomalies → 1 faux positif (querySelector class), 1 bug réel
-- **B1 corrigé** : `jv-type` → `jn-type` dans `renderJournal()` (clic "+ Ajouter" dans module journal vide)
-- Intégrité données : 0 référence orpheline (animaux/repros/sante)
-- Doublons sanitaire : 0
-- **B2 data** (à valider avec ami) : Oxygène a 2 repros avec velageReel=2026-02-28 (doublon saillie)
-- **B3 data** (à valider avec ami) : Larousse a 2 saillies actives sans vêlage (2025-09-12 + 2025-05-21)
-- B4 mineur : 133 entrées sante[] conservent champs legacy top-level (nettoyés à load(), non bloquant)
+Fichiers récupérés dans `DERNIERE-VERSION/` (sync tâche planifiée Windows lundi 7h) :
 
-### État fichiers actifs
-- `boviq-v6-latest.html` : 5579 lignes
-- `index.html` : 267 lignes (landing 3 cartes + météo)
-- Dernier commit : `af91dad`
+| Fichier | Contenu | Animaux |
+|---|---|---|
+| 01-ResultatsBruts | Dernier contrôle : lait 24h, TB, TP, leucos, urée | 93 VL + statuts |
+| 02-ValoriseIndividuel | Vue complète : repro, conseils IA, évolution | 95 animaux |
+| 03-HistoLait | Courbe lait 12 contrôles (avr.24→mar.26) | 75 VL |
+| 04-HistoTB | Idem TB | 75 VL |
+| 05-HistoTP | Idem TP | 75 VL |
+| 06-HistoCellules | SDIR + leucos 5 contrôles | 83 VL |
+| 07-Inventaire | Registre complet VL/GL/GV/MA | ~155 animaux |
+| 09-Gestation | Vide (crash serveur 08) | — |
 
+**Clé de jointure** : `Trav` (4 derniers chiffres N° travail) ↔ `boucle` BOVIQ normalisée (`s.replace(/\s/g,'')`)
 
+### Fusion données réalisée
 
-### Audit code (matin)
-- **Double check** : 0 bug fonctionnel, 0 ID orphelin, 0 modal sans fermeture
-- **Fonctions mortes supprimées** : `noTravailFn` (doublon closure), `calcIVVTroupeau` (jamais appelée)
-- **Fix** : select `a-type` manquait option "Veau" (4 animaux dans données) → `6bc634d`
-- **commit** nettoyage fonctions mortes → `0c8987d`
+Script Python `processBruts + processValorise + processInventaire` :
+- 160 animaux fusionnés (152 BOVIQ + 8 nouveaux inventaire)
+- 82 VL avec données contrôle (`_ml_lait24`, `_ml_tb`, `_ml_tp`, `_ml_leucos`, `_ml_uree`)
+- 49 dates d'IA avec tarissements prévus
+- 19 conseils IA (déconseillée / à inséminér / possible)
+- Champs `_ml_*` ajoutés dans chaque animal BOVIQ
 
-### Bilan financier 2024 EARL La Rousselière
-- PDF Gecagri = **scan** (image) → parseur pdf.js ne peut pas lire — détection BOVIQ correcte
-- Données extraites manuellement + injectées en dur dans `load()` (migration propre) → `3441422`
-- **Benchmarks Simmental** : `SEUIL_LAIT_VL` 5000→4500, `BENCH.laitVL` 7200→4500 → `b9d625f`
-- **3 conseils ciblés** dans "Pistes et conseils" → `36c9d61` :
-  1. "La structure économique est saine" (résultat courant +38 730 € positif)
-  2. "+29 911 € de CA accessibles" (objectif 3 500 L/VL sans investissement)
-  3. "Production -15% vs 2023 — à investiguer" (chute individuelle malgré +6 VL)
+**`_dataVersion: 20260321`** — à incrémenter à chaque regénération
 
-### BDNI
-- Lien EDE Mayenne cassé (`mayenne.chambagri.fr`) → remplacé par `id-bovin.fr` (national)
-- Disclaimer ajouté : BOVIQ = outil suivi privé, non certifié BDNI, Boviclic/Oribase obligatoires → `a7fcbe0`
+### Onglet "🥛 Contrôle Laitier" dans BOVIQ V6
 
-### Investigation Seenovia / Mil'Klic
-- Mil'Klic = extranet SIEL, accès via `seenovia.fr` (Seenovia = membre réseau SIEL dép. 53)
-- **Pas d'API publique** ni export CSV documenté côté éleveur — consultation seulement + imprimer
-- Données proviennent de : agent de pesée Seenovia (1×/mois, smartphone, + labo TB/TP/cellules)
-- **Plan** : attendre que l'ami exporte un fichier depuis Mil'Klic desktop pour construire parseur
+- Nav button ajouté après "Analyse financière"
+- Page `id="p-milklic"` avec KPIs, alertes cellules, conseils IA, table filtrable
+- `goTo('milklic')` → `renderMilklic()` — filtre : all / alert / conseil / tar / vide
+- Lien vers `boviq-milklic.html` pour module standalone avec courbes
+
+### Module boviq-milklic.html (standalone)
+
+Fichier indépendant — import CSV côté client (windows-1252) :
+- Drop-zone multi-fichiers
+- Parse 8 types de CSV auto-détectés par nom
+- localStorage `BOVIQ_MILKLIC` (clé partagée avec BOVIQ V6)
+- Dashboard : KPIs, alertes, repro, signaux faibles
+- Page Cellules : tableau classé leucos + SDIR + seuil filtrable
+- Page Repro : IA déconseillée / à inséminér / tarissements / vaches vides FV/TFV
+- Page Courbes : Chart.js lait/TB/TP/cellules par animal
+- Page Intégration : instructions bridge localStorage + statut correspondances
+
+### Infrastructure Git — problèmes résolus
+
+**Situation initiale** : deux repos (Mac `~/Desktop/01-Projects/BOVIQ` + Windows `C:\BOVIQ`) en conflit.
+- Mac = source de vérité ✅
+- Windows = clone pour tâche planifiée MilKlic uniquement (pas de commits directs)
+- `index.html` perdu lors rebase → restauré depuis `git show f9040e0:index.html`
+- `DERNIERE-VERSION/` (CSV MilKlic) committé dans le repo (à déplacer dans .gitignore si lourd)
+
+**Partage réseau Mac→Windows** :
+- `\\192.168.1.50\laurentduval` = home Mac (symlinks Desktop non traversables)
+- `\\192.168.1.50\Macintosh HD` = disque Mac complet (X:)
+- `\\192.168.1.50\01-Projects` = partage dédié (accessible)
+- Écriture fichiers Mac depuis filesystem MCP via `/Users/laurentduval/...` ✅
+
+### Bug critique identifié (non résolu)
+
+**Erreur TDZ** : `Cannot access 'pages' before initialization` à la ligne 1564 (goTo)  
+Cause probable : variable `const pages` déclarée dans le scope global ET dans `renderMilklic` (code injecté)  
+Symptôme : tous les onglets cassés, données ne s'affichent pas  
+**Workaround** : vider le localStorage `boviq` dans le navigateur → INIT_DATA 20260321 se charge  
+**Fix définitif à faire** : audit `const pages` dans renderMilklic → renommer en `mlAnimals` ou `filteredAnimals`
 
 ---
 
-## Commits session 20/03/2026
+## Commits session 21/03/2026
 
 | Commit | Description |
 |--------|-------------|
-| `6bc634d` | Fix select a-type option "Veau" |
-| `9ace1de` | MEMORY.md màj audit |
-| `0c8987d` | Suppression fonctions mortes (noTravailFn, calcIVVTroupeau) |
-| `3441422` | Bilan 2024 EARL La Rousselière injecté en dur |
-| `b9d625f` | Benchmarks Simmental: seuils lait/VL |
-| `36c9d61` | 3 conseils ciblés analyse financière |
-| `a7fcbe0` | BDNI: fix EDE + disclaimer Boviclic/Oribase |
+| `91f33b1` | docs: MEMORY.md + INDEX.md mis à jour session 21/03 (MilKlic sync + fixes) |
+| `b98cb4e` | feat: module contrôle laitier MilKlic standalone |
+| `d7cb48c` | chore: sync .gitignore + merge Windows commits |
+| `d51e207` | restore: boviq-v6-latest.html (5627L) + backup |
+| `ad95083` | restore: index.html (landing page) + lien MilKlic |
+| `290ba0a` | feat: onglet Contrôle Laitier + fusion données MilKlic 21/03/26 |
+| `181e9db` | fix: page p-milklic repositionnée dans .content + padding + goTo hook |
 
 ---
 
-## Chiffres clés bilan 2024 EARL La Rousselière (injectés)
+## Données réelles intégrées
 
-| Indicateur | 2024 | 2023 |
-|---|---|---|
-| VL | 96 | 90 |
-| Lait produit | 259 659 L | 285 146 L |
-| Lait/VL | **2 705 L** | 3 168 L (-15%) |
-| Quota contractuel | 320 000 L | — |
-| Sous-quota | **60 549 L** = -29 911 € CA | — |
-| Prix lait | 0,494 €/L | — |
-| EBE | 56 912 € | 77 352 € |
-| Résultat courant | +38 730 € | +61 898 € |
-| Résultat net | **-13 429 €** | +11 498 € |
-| Rémunération associés | 50 400 € | 50 400 € |
-| Annuités 2025 (prévu) | 25 351 € | 20 197 € |
+`_dataVersion: 20260321` — 163 animaux EARL La Rousselière  
+- ~96 VL en lactation, génisses U/V/A, veaux récents
+- 82 VL avec données contrôle MilKlic du 04/03/26
+- 3 taureaux : U40 (Holstein Red), Ucello (Simmental), Sirocco (Normande)
+- 134 actes sanitaires (dont campagne FCO 17/03/26)
+- 28 repros actives
+- Bilan 2024 injecté (id: `bilan2024-rousseliere`)
 
 ---
 
@@ -104,35 +119,43 @@ Dernier commit : `a7fcbe0` — 🏛️ BDNI fix EDE + disclaimer
 
 ```
 BOVIQ/
-├── index.html
-├── boviq-v6-latest.html        ← 4791 lignes
+├── index.html                  ← landing 3 cartes
+├── boviq-v6-latest.html        ← 5749 lignes, 439 KB
+├── boviq-milklic.html          ← 511 lignes, module MilKlic
 ├── boviq-cours-marche.html
-├── manifest.json + sw.js       ← PWA
-├── icons/ (180/192/512)
+├── manifest.json + sw.js
+├── icons/
+├── DERNIERE-VERSION/           ← CSV MilKlic 21/03/26
 ├── docs/ (MEMORY/INDEX/ROADMAP/BOVIQ-COURS-NOTES)
-├── data/bilan/                 ← 2024_BILAN.pdf (scan)
+├── data/bilan/
 ├── data/market/
-├── scripts/
-├── _backups-v6/
-├── _backups-ami/
+├── scripts/                    ← milklic-sync.py (Windows)
+├── _backups-v6/                ← boviq-v6-20260321-avant-milklic.html
+├── _backups-ami/               ← boviq_backup_20260321.json
 └── _archives/
 ```
 
 ---
 
-## Données réelles intégrées
+## À faire session suivante (BUG PRIORITAIRE)
 
-`_dataVersion: 20260318` — ~155 animaux EARL La Rousselière  
-Troupeau Simmental + quelques Holstein, Mayenne (53), La Chapelle Rainsouin  
-3 taureaux : U40 (Holstein Red), Ucello (Simmental), Sirocco (Normande)  
-Bilan 2024 : injecté via migration `load()` (id: `bilan2024-rousseliere`)
+1. **Fix TDZ `const pages`** dans `renderMilklic()` — renommer variable locale
+2. Tester l'onglet Contrôle Laitier avec données réelles dans le navigateur ami
+3. Enrichir fiches animaux individuelles avec données `_ml_*` (section dans modal animal)
+4. Mettre à jour ROADMAP.md
 
 ---
 
-## Mot-clé reprise
+## Mots-clé reprise
 
-**`BOVIQ V6 REPRISE`**  
-Actions : 1) `git log --oneline -5 && git status && wc -l boviq-v6-latest.html`  
-2) Comparer avec fichier uploadé si présent  
-3) Push corrections si nécessaire  
-4) Màj MEMORY.md + docs
+**`BOVIQ V6 REPRISE`** — reprise sur Mac  
+Actions : `cd ~/Desktop/01-Projects/BOVIQ && git log --oneline -5 && git status && wc -l boviq-v6-latest.html`
+
+**`BOVIQ MILKLIC`** — module contrôle laitier  
+Script sync : `C:\BOVIQ\scripts\milklic-sync.py` (Windows, lundi 7h)  
+Bug TDZ à corriger : `const pages` dans `renderMilklic()`
+
+**`BOVIQ AMI`** — tests éleveur ami  
+localStorage à vider manuellement (version 20260318 → forcer 20260321)
+
+**`BOVIQ MILKLIC FIX`** — corriger bug TDZ + tester onglet complet
