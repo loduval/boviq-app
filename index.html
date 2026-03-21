@@ -6,33 +6,85 @@
 <title>BOVIQ — Gestion de troupeau laitier</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐄</text></svg>">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2D6A4F">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Boviq">
-<link rel="apple-touch-icon" href="icons/boviq-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#1B4332">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--brand:#1B4332;--brand2:#2D6A4F;--brand3:#40916C;--bg:#F4F1EB;--card:#fff;--ink:#1E1B16;--ink2:#4A4538;--ink3:#8C8474}
-body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px}
-.hero{text-align:center;max-width:640px;margin-bottom:48px}
-.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;color:var(--brand);margin-bottom:8px;letter-spacing:-1px}
-.hero p{font-size:1.1rem;color:var(--ink2);line-height:1.6}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;max-width:700px;width:100%}
-.card{background:var(--card);border-radius:16px;padding:32px 28px;box-shadow:0 2px 12px rgba(30,27,22,.06);border:1px solid rgba(30,27,22,.06);transition:all .2s;text-decoration:none;color:inherit}
-.card:hover{transform:translateY(-4px);box-shadow:0 8px 30px rgba(30,27,22,.12)}
-.card-icon{font-size:2.4rem;margin-bottom:16px}
-.card h2{font-size:1.25rem;font-weight:700;color:var(--brand);margin-bottom:8px}
-.card p{font-size:.95rem;color:var(--ink3);line-height:1.5}
-.card .tag{display:inline-block;margin-top:16px;padding:4px 12px;background:#D8F3DC;color:var(--brand2);border-radius:20px;font-size:.8rem;font-weight:600}
-footer{margin-top:60px;color:var(--ink3);font-size:.85rem;text-align:center}
+:root{
+  --brand:#1B4332;--brand2:#2D6A4F;--brand3:#40916C;
+  --bg:#F4F1EB;--card:#fff;
+  --ink:#1E1B16;--ink2:#4A4538;--ink3:#8C8474;
+  --line:#E3DED4;
+  --sh:0 2px 12px rgba(30,27,22,.07);
+  --sh2:0 8px 32px rgba(30,27,22,.14);
+}
+html{font-size:14px}
+body{
+  font-family:'DM Sans',system-ui,sans-serif;
+  background:var(--bg);color:var(--ink);
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 20px;
+}
+.hero{text-align:center;margin-bottom:48px}
+.hero-logo{font-size:64px;line-height:1;margin-bottom:16px}
+.hero h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2.4rem,5vw,3.6rem);
+  font-weight:700;color:var(--brand);
+  letter-spacing:-1px;margin-bottom:10px;
+}
+.hero p{font-size:15px;color:var(--ink2);line-height:1.6;max-width:480px;margin:0 auto}
+
+/* Grille 3 colonnes strictes */
+.cards{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+  max-width:900px;
+  width:100%;
+}
+@media(max-width:700px){.cards{grid-template-columns:1fr}}
+@media(min-width:480px) and (max-width:700px){.cards{grid-template-columns:1fr 1fr}}
+
+.card{
+  background:var(--card);
+  border-radius:16px;
+  padding:28px 24px;
+  box-shadow:var(--sh);
+  border:1px solid var(--line);
+  transition:transform .2s,box-shadow .2s;
+  text-decoration:none;color:inherit;
+  display:flex;flex-direction:column;
+}
+.card:hover{transform:translateY(-4px);box-shadow:var(--sh2)}
+.card-icon{font-size:2.2rem;margin-bottom:14px;line-height:1}
+.card h2{
+  font-family:'Playfair Display',serif;
+  font-size:1.15rem;font-weight:700;
+  color:var(--brand);margin-bottom:8px;
+}
+.card p{font-size:13px;color:var(--ink3);line-height:1.55;flex:1}
+.tag{
+  display:inline-block;margin-top:16px;
+  padding:4px 11px;
+  background:#D8F3DC;color:var(--brand2);
+  border-radius:20px;font-size:11px;font-weight:600;
+}
+
+footer{margin-top:52px;color:var(--ink3);font-size:12px;text-align:center}
 footer a{color:var(--brand3);text-decoration:none}
+footer a:hover{text-decoration:underline}
 </style>
 </head>
 <body>
 <div class="hero">
-  <h1>🐄 BOVIQ</h1>
+  <div class="hero-logo">🐄</div>
+  <h1>BOVIQ</h1>
   <p>Outils de gestion pour éleveurs laitiers français.<br>100% local, zéro serveur, données privées.</p>
 </div>
+
 <div class="cards">
   <a href="boviq-v6-latest.html" class="card">
     <div class="card-icon">📋</div>
@@ -43,7 +95,7 @@ footer a{color:var(--brand3);text-decoration:none}
   <a href="boviq-cours-marche.html" class="card">
     <div class="card-icon">📈</div>
     <h2>Cours du marché</h2>
-    <p>Prix lait, viande bovine et céréales en temps réel. Données DG AGRI, mise à jour Excel.</p>
+    <p>Prix lait, viande bovine en temps réel. Données DG AGRI, mise à jour automatique.</p>
     <span class="tag">Données DG AGRI</span>
   </a>
   <a href="boviq-milklic.html" class="card">
@@ -53,8 +105,9 @@ footer a{color:var(--brand3);text-decoration:none}
     <span class="tag">MilKlic · Seenergi</span>
   </a>
 </div>
+
 <footer>
-  Projet open-source — <a href="https://github.com/loduval/boviq-app">GitHub</a>
+  Projet open-source — <a href="https://github.com/loduval/boviq-app" target="_blank">GitHub</a>
 </footer>
 </body>
 </html>

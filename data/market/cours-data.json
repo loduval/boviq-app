@@ -1,0 +1,186 @@
+{
+  "meta": {
+    "generated": "2026-03-16T08:05:00.716399+00:00",
+    "source": "DG AGRI — Commission Européenne",
+    "country": "France",
+    "milk_unit": "EUR/100kg",
+    "beef_unit": "EUR/100kg carcasse"
+  },
+  "milk": {
+    "latest": {
+      "period": "2026m02",
+      "price": 44.93
+    },
+    "prices": [
+      {
+        "period": "2023m03",
+        "price": 48.51
+      },
+      {
+        "period": "2023m04",
+        "price": 46.93
+      },
+      {
+        "period": "2023m05",
+        "price": 45.37
+      },
+      {
+        "period": "2023m06",
+        "price": 45.63
+      },
+      {
+        "period": "2023m07",
+        "price": 45.9
+      },
+      {
+        "period": "2023m08",
+        "price": 46.49
+      },
+      {
+        "period": "2023m09",
+        "price": 46.83
+      },
+      {
+        "period": "2023m10",
+        "price": 47.45
+      },
+      {
+        "period": "2023m11",
+        "price": 47.38
+      },
+      {
+        "period": "2023m12",
+        "price": 47.34
+      },
+      {
+        "period": "2024m01",
+        "price": 47.04
+      },
+      {
+        "period": "2024m02",
+        "price": 46.84
+      },
+      {
+        "period": "2024m03",
+        "price": 46.57
+      },
+      {
+        "period": "2024m04",
+        "price": 46.04
+      },
+      {
+        "period": "2024m05",
+        "price": 45.76
+      },
+      {
+        "period": "2024m06",
+        "price": 45.94
+      },
+      {
+        "period": "2024m07",
+        "price": 46.54
+      },
+      {
+        "period": "2024m08",
+        "price": 46.38
+      },
+      {
+        "period": "2024m09",
+        "price": 48.36
+      },
+      {
+        "period": "2024m10",
+        "price": 48.81
+      },
+      {
+        "period": "2024m11",
+        "price": 49.7
+      },
+      {
+        "period": "2024m12",
+        "price": 49.87
+      },
+      {
+        "period": "2025m01",
+        "price": 50.24
+      },
+      {
+        "period": "2025m02",
+        "price": 51.0
+      },
+      {
+        "period": "2025m03",
+        "price": 49.74
+      },
+      {
+        "period": "2025m04",
+        "price": 49.19
+      },
+      {
+        "period": "2025m05",
+        "price": 49.17
+      },
+      {
+        "period": "2025m06",
+        "price": 48.9
+      },
+      {
+        "period": "2025m07",
+        "price": 49.18
+      },
+      {
+        "period": "2025m08",
+        "price": 49.75
+      },
+      {
+        "period": "2025m09",
+        "price": 51.12
+      },
+      {
+        "period": "2025m10",
+        "price": 51.69
+      },
+      {
+        "period": "2025m11",
+        "price": 50.58
+      },
+      {
+        "period": "2025m12",
+        "price": 50.01
+      },
+      {
+        "period": "2026m01",
+        "price": 48.62
+      },
+      {
+        "period": "2026m02",
+        "price": 44.93
+      }
+    ]
+  },
+  "beef": {
+    "week_date": "12.03.2026",
+    "prices": {
+      "jb_u2": 795.0,
+      "jb_u3": 773.0,
+      "jb_r2": 771.0,
+      "jb_r3": 753.0,
+      "jb_o2": 705.0,
+      "jb_o3": 693.0,
+      "boeuf_r3": 752.0,
+      "boeuf_o3": 679.0,
+      "vache_r3": 766.0,
+      "vache_r4": 757.0,
+      "vache_o2": 713.0,
+      "vache_o3": 668.0,
+      "vache_o4": 648.0,
+      "vache_p2": 622.0,
+      "vache_p3": 640.0,
+      "genisse_u3": 808.0,
+      "genisse_r2": 755.0,
+      "genisse_r3": 768.0,
+      "genisse_r4": 749.0,
+      "genisse_o3": 710.0
+    }
+  }
+}

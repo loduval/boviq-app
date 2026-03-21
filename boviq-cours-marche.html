@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BOVIQ — Cours du Marché</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
@@ -16,30 +17,110 @@
   --blue:#1D4ED8;--blue-l:#DBEAFE;
   --amber:#D97706;--amber-l:#FEF3C7;
   --red:#DC2626;--red-l:#FEE2E2;
+  --purple:#7C3AED;--purple-l:#EDE9FE;
   --teal:#0D9488;--teal-l:#CCFBF1;
   --r:10px;--r2:14px;
-  --sh:0 1px 3px rgba(30,27,22,.05),0 1px 2px rgba(30,27,22,.03);
+  --sh:0 1px 3px rgba(30,27,22,.06),0 2px 6px rgba(30,27,22,.04);
   --sh2:0 4px 16px rgba(30,27,22,.08);
+  --sh3:0 12px 40px rgba(30,27,22,.12);
 }
 html{font-size:14px}
-body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100dvh;padding:24px}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100dvh}
 
-.page{max-width:1100px;margin:0 auto}
-.page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
-.page-head h2{font-family:'Playfair Display',serif;font-size:22px;font-weight:700}
-.page-head .subtitle{font-size:13px;color:var(--ink3);margin-top:2px}
+/* === HERO HEADER === */
+.hero{
+  background:linear-gradient(135deg,var(--brand3) 0%,#264D3B 40%,var(--brand) 100%);
+  color:white;padding:0 24px;position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;top:-50%;right:-20%;width:500px;height:500px;
+  background:radial-gradient(circle,rgba(255,255,255,.04) 0%,transparent 70%);
+  border-radius:50%;pointer-events:none;
+}
+.hero::after{
+  content:'';position:absolute;bottom:-30%;left:-10%;width:400px;height:400px;
+  background:radial-gradient(circle,rgba(255,255,255,.03) 0%,transparent 70%);
+  border-radius:50%;pointer-events:none;
+}
+.hero-inner{max-width:1100px;margin:0 auto;padding:28px 0 24px;position:relative;z-index:1}
+.hero-top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.hero-brand{display:flex;align-items:center;gap:14px}
+.hero-home{
+  display:flex;align-items:center;justify-content:center;
+  width:42px;height:42px;border-radius:12px;
+  background:rgba(255,255,255,.1);backdrop-filter:blur(8px);
+  text-decoration:none;font-size:1.5rem;
+  transition:all .2s;border:1px solid rgba(255,255,255,.08);
+}
+.hero-home:hover{background:rgba(255,255,255,.18);transform:scale(1.05)}
+.hero-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;letter-spacing:-.3px}
+.hero-sub{font-size:12.5px;opacity:.55;margin-top:3px;font-weight:400}
+.hero-actions{display:flex;gap:8px;flex-wrap:wrap}
+.hero-btn{
+  font:600 13px/1 'DM Sans',sans-serif;border:none;padding:9px 18px;border-radius:9px;
+  cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
+}
+.hero-btn-p{background:white;color:var(--brand3)}.hero-btn-p:hover{background:rgba(255,255,255,.9);transform:translateY(-1px)}
+.hero-btn-o{background:rgba(255,255,255,.1);color:white;border:1px solid rgba(255,255,255,.15)}
+.hero-btn-o:hover{background:rgba(255,255,255,.18)}
+.hero-btn:disabled{opacity:.5;cursor:not-allowed}
 
-.card{background:var(--card);border-radius:var(--r2);box-shadow:var(--sh);overflow:hidden;margin-bottom:16px}
+/* === STATUS BAR === */
+.status-bar{
+  margin-top:16px;padding:12px 16px;border-radius:10px;
+  background:rgba(255,255,255,.08);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.06);
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+}
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.status-dot.ok{background:#4ade80;box-shadow:0 0 8px rgba(74,222,128,.5)}
+.status-dot.warn{background:#fbbf24;box-shadow:0 0 8px rgba(251,191,36,.5)}
+.status-dot.err{background:#f87171;box-shadow:0 0 8px rgba(248,113,113,.5)}
+.status-dot.loading{background:#60a5fa;animation:pulse 1s infinite}
+.status-dot.idle{background:rgba(255,255,255,.3)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.status-text{font-size:12.5px;color:rgba(255,255,255,.7);flex:1}
+.status-text strong{color:white}
+.status-text a{color:#86efac;font-weight:600;text-decoration:none}
+.status-text a:hover{text-decoration:underline}
+
+/* === PAGE LAYOUT === */
+.page{max-width:1100px;margin:0 auto;padding:20px 24px 40px}
+
+/* === KPI CARDS === */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:-36px 0 20px;position:relative;z-index:2}
+.kpi{
+  padding:20px;border-radius:14px;background:var(--card);
+  border:1px solid var(--line);
+  box-shadow:var(--sh2);
+  text-align:center;position:relative;overflow:hidden;
+  transition:all .25s cubic-bezier(.4,0,.2,1);
+}
+.kpi:hover{transform:translateY(-4px);box-shadow:var(--sh3)}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.kpi.meat::before{background:linear-gradient(90deg,#ef4444,var(--amber))}
+.kpi.milk::before{background:linear-gradient(90deg,var(--blue),var(--teal))}
+.kpi-icon{font-size:28px;margin-bottom:6px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.1))}
+.kpi-label{font-size:10.5px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.kpi-val{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--ink)}
+.kpi-unit{font-size:12px;font-weight:400;color:var(--ink3);margin-left:2px}
+.kpi-trend{font-size:11.5px;font-weight:600;margin-top:6px}
+.kpi-trend.up{color:#16a34a}.kpi-trend.down{color:var(--red)}.kpi-trend.stable{color:var(--ink4)}
+.kpi-date{font-size:10px;color:var(--ink4);margin-top:3px}
+.kpi-empty{color:var(--ink4);font-size:20px}
+
+/* === CARD === */
+.card{background:var(--card);border-radius:var(--r2);box-shadow:var(--sh);overflow:hidden;margin-bottom:16px;border:1px solid rgba(0,0,0,.03)}
 .card-head{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .card-head h3{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
 .card-body{padding:16px 18px}
 
-.btn{font:600 13px/1 'DM Sans',sans-serif;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+/* === BUTTONS & BADGES === */
+.btn{font:600 13px/1 'DM Sans',sans-serif;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .btn-p{background:var(--brand);color:white}.btn-p:hover{background:var(--brand3)}
 .btn-o{background:transparent;color:var(--ink2);border:1px solid var(--line2)}.btn-o:hover{background:var(--bg2)}
 .btn-s{padding:5px 10px;font-size:12px}
 .btn:disabled{opacity:.5;cursor:not-allowed}
-
 .badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px}
 .b-green{background:var(--brand-light);color:var(--brand)}
 .b-amber{background:var(--amber-l);color:var(--amber)}
@@ -47,107 +128,127 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .b-blue{background:var(--blue-l);color:var(--blue)}
 .b-teal{background:var(--teal-l);color:var(--teal)}
 
-/* STATUS */
-.status-panel{padding:14px 18px;background:var(--card2);display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.status-dot.ok{background:#22c55e;box-shadow:0 0 6px rgba(34,197,94,.4)}
-.status-dot.warn{background:var(--amber);box-shadow:0 0 6px rgba(217,119,6,.4)}
-.status-dot.err{background:var(--red);box-shadow:0 0 6px rgba(220,38,38,.4)}
-.status-dot.loading{background:var(--blue);animation:pulse 1s infinite}
-.status-dot.idle{background:var(--ink4)}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.status-text{font-size:13px;color:var(--ink2);flex:1}
-.status-text strong{color:var(--ink)}
-.status-text a{color:var(--brand);font-weight:600;text-decoration:none}
-.status-text a:hover{text-decoration:underline}
-
-/* KPI */
-.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px}
-.kpi{padding:16px;border-radius:var(--r);background:var(--card);border:1px solid var(--line);text-align:center;position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s}
-.kpi:hover{transform:translateY(-2px);box-shadow:var(--sh2)}
-.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
-.kpi.meat::before{background:linear-gradient(90deg,var(--red),var(--amber))}
-.kpi.milk::before{background:linear-gradient(90deg,var(--blue),var(--teal))}
-.kpi-icon{font-size:22px;margin-bottom:4px}
-.kpi-label{font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-.kpi-val{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--ink)}
-.kpi-unit{font-size:12px;font-weight:400;color:var(--ink3);margin-left:2px}
-.kpi-trend{font-size:12px;font-weight:600;margin-top:4px}
-.kpi-trend.up{color:#22c55e}.kpi-trend.down{color:var(--red)}.kpi-trend.stable{color:var(--ink3)}
-.kpi-date{font-size:10px;color:var(--ink4);margin-top:2px}
-.kpi-empty{color:var(--ink4);font-size:20px}
-
-/* TABS */
-.tab-row{display:flex;gap:4px;padding:0 18px;border-bottom:1px solid var(--line);background:var(--card2);overflow-x:auto}
-.tab-btn{font:500 12px/1 'DM Sans',sans-serif;padding:10px 14px;border:none;background:transparent;color:var(--ink3);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;margin-bottom:-1px;white-space:nowrap}
-.tab-btn:hover{color:var(--ink2)}
-.tab-btn.active{color:var(--brand);border-bottom-color:var(--brand);font-weight:600}
+/* === TABS === */
+.tab-row{display:flex;gap:2px;padding:4px 14px;background:var(--bg2);overflow-x:auto}
+.tab-btn{
+  font:500 12.5px/1 'DM Sans',sans-serif;padding:10px 16px;border:none;
+  background:transparent;color:var(--ink3);cursor:pointer;
+  border-radius:8px;transition:all .2s;white-space:nowrap;
+}
+.tab-btn:hover{color:var(--ink2);background:rgba(255,255,255,.5)}
+.tab-btn.active{color:var(--brand3);background:var(--card);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.06)}
 .tab-panel{display:none;padding:16px 18px}
 .tab-panel.active{display:block}
 
-/* TABLE */
+/* === TABLE === */
 .data-table{width:100%;border-collapse:collapse;font-size:13px}
-.data-table th{text-align:left;font-weight:600;color:var(--ink3);padding:8px 10px;border-bottom:2px solid var(--line);font-size:11px;text-transform:uppercase;letter-spacing:.3px;cursor:pointer;user-select:none}
-.data-table th:hover{color:var(--ink)}
-.data-table td{padding:8px 10px;border-bottom:1px solid var(--line)}
+.data-table th{text-align:left;font-weight:600;color:var(--ink3);padding:10px 10px;border-bottom:2px solid var(--line);font-size:11px;text-transform:uppercase;letter-spacing:.3px;cursor:pointer;user-select:none;transition:color .15s}
+.data-table th:hover{color:var(--brand)}
+.data-table td{padding:9px 10px;border-bottom:1px solid var(--line);transition:background .15s}
 .data-table tr:hover td{background:var(--brand-pale)}
 .data-table .num{text-align:right;font-variant-numeric:tabular-nums}
 
-/* CHART */
+/* === CHART === */
 .chart-container{position:relative;height:300px;margin:8px 0}
 
-/* DROP ZONE */
-.fallback-zone{border:2px dashed var(--line2);border-radius:var(--r2);padding:28px;text-align:center;background:var(--card2);transition:all .2s;margin-top:16px}
-.fallback-zone.dragover{border-color:var(--brand);background:var(--brand-pale)}
-.fallback-zone p{font-size:13px;color:var(--ink3);margin-bottom:8px}
+/* === DROP ZONE === */
+.fallback-zone{border:2px dashed var(--line2);border-radius:var(--r2);padding:32px;text-align:center;background:var(--card2);transition:all .25s}
+.fallback-zone.dragover{border-color:var(--brand);background:var(--brand-pale);transform:scale(1.01)}
+.fallback-zone p{font-size:14px;color:var(--ink2);margin-bottom:12px}
+.fallback-zone .hint{font-size:11px;color:var(--ink4);margin-top:10px}
 input[type="file"]{display:none}
 
-/* SETTINGS */
-.setting-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+/* === STEPS === */
+.steps{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.step{flex:1;min-width:180px;padding:18px;border-radius:12px;border:1px solid var(--line);background:var(--card2);text-align:center;transition:all .2s}
+.step:hover{border-color:var(--brand-light);background:var(--brand-pale)}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--brand);color:white;font-size:13px;font-weight:700;margin-bottom:10px}
+.step-text{font-size:12px;color:var(--ink2);line-height:1.6}
+.step a{color:var(--brand);font-weight:600;text-decoration:none}
+.step a:hover{text-decoration:underline}
+
+/* === LOG === */
+.log{max-height:180px;overflow-y:auto;font-family:'SF Mono',Consolas,monospace;font-size:11px;background:#0f172a;color:#94a3b8;padding:14px;border-radius:10px;line-height:1.8}
+.log .ok{color:#4ade80}.log .warn{color:#fbbf24}.log .err{color:#f87171}.log .info{color:#60a5fa}
+
+/* === TEST GRID === */
+.test-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+@media(max-width:600px){.test-grid{grid-template-columns:1fr}}
+.test-item{padding:12px;border-radius:var(--r);border:1px solid var(--line);background:var(--card2);transition:all .3s}
+.test-item.success{border-color:#4ade80;background:#f0fdf4}
+.test-item.fail{border-color:#f87171;background:var(--red-l)}
+.test-item.testing{border-color:#60a5fa;background:var(--blue-l)}
+.test-label{font-size:12px;font-weight:600;color:var(--ink3);margin-bottom:3px}
+.test-value{font-size:12px;color:var(--ink)}
+.test-value code{font-family:'SF Mono',Consolas,monospace;font-size:10px;background:rgba(0,0,0,.06);padding:1px 4px;border-radius:3px}
+
+/* === SETTINGS === */
+.setting-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
 .setting-row:last-child{border-bottom:none}
 .setting-label{flex:1;font-size:13px}
 .setting-label small{display:block;font-size:11px;color:var(--ink3);margin-top:2px}
-select.form-select{font:400 13px 'DM Sans',sans-serif;padding:6px 10px;border:1px solid var(--line2);border-radius:6px;background:var(--card);color:var(--ink)}
+select.form-select{font:400 13px 'DM Sans',sans-serif;padding:6px 10px;border:1px solid var(--line2);border-radius:8px;background:var(--card);color:var(--ink);transition:border-color .15s}
+select.form-select:focus{outline:none;border-color:var(--brand)}
 
 .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* LOG */
-.log{max-height:160px;overflow-y:auto;font-family:'SF Mono',Consolas,monospace;font-size:11px;background:#1a1a2e;color:#a8b2d1;padding:12px;border-radius:var(--r);line-height:1.8}
-.log .ok{color:#22c55e}.log .warn{color:var(--amber)}.log .err{color:#ef4444}.log .info{color:#60a5fa}
+/* === ENTRANCE ANIMATIONS === */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.kpi{animation:fadeUp .5s ease-out both}
+.kpi:nth-child(1){animation-delay:.05s}
+.kpi:nth-child(2){animation-delay:.1s}
+.kpi:nth-child(3){animation-delay:.15s}
+.kpi:nth-child(4){animation-delay:.2s}
+.card{animation:fadeUp .4s ease-out both;animation-delay:.25s}
 
-.last-update{font-size:11px;color:var(--ink4);text-align:center;margin-top:6px}
+/* === FOOTER === */
+.footer{text-align:center;padding:20px;font-size:11px;color:var(--ink4)}
+.footer a{color:var(--brand2);text-decoration:none;font-weight:500}
+.footer a:hover{text-decoration:underline}
+
+/* === RESPONSIVE === */
+@media(max-width:600px){
+  .hero-inner{padding:20px 0 18px}
+  .hero-title{font-size:20px}
+  .kpi-row{grid-template-columns:1fr 1fr;margin-top:-28px;gap:10px}
+  .kpi{padding:14px}
+  .kpi-val{font-size:22px}
+  .page{padding:16px 16px 32px}
+}
 </style>
 </head>
 <body>
 
-<div class="page">
-  <div class="page-head">
-    <div style="display:flex;align-items:center;gap:14px">
-      <a href="boviq-v6-latest.html" title="Retour BOVIQ" style="font-size:28px;text-decoration:none;line-height:1;flex-shrink:0">🐄</a>
-      <div>
-        <h2>📈 Cours du Marché</h2>
-        <div class="subtitle">Cotations viande bovine & prix du lait — données FranceAgriMer (mise à jour automatique chaque mardi)</div>
+<!-- HERO HEADER -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-top">
+      <div class="hero-brand">
+        <a href="index.html" class="hero-home" title="Retour accueil BOVIQ" style="font-size:28px;text-decoration:none">🐄</a>
+        <div>
+          <div class="hero-title">Cours du Marché</div>
+          <div class="hero-sub">Cotations viande bovine & prix du lait — DG AGRI, Commission Européenne</div>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <button class="hero-btn hero-btn-p" id="btn-refresh" onclick="refreshAllData()">🔄 Actualiser</button>
+        <button class="hero-btn hero-btn-o" onclick="clearCache()">🗑️ Cache</button>
       </div>
     </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn btn-p" id="btn-refresh" onclick="refreshData()">🔄 Actualiser les cours</button>
-      <button class="btn btn-o btn-s" onclick="clearCache()">🗑️ Vider le cache</button>
-    </div>
-  </div>
-
-  <!-- STATUS -->
-  <div class="card">
-    <div class="status-panel" id="status-bar">
+    <!-- STATUS -->
+    <div class="status-bar" id="status-bar">
       <div class="status-dot idle" id="status-dot"></div>
       <div class="status-text" id="status-text">
-        Cliquez sur « 🔄 Actualiser les cours » pour charger les cotations (mises à jour automatiquement chaque mardi).
+        Cliquez sur « Actualiser » pour récupérer les dernières cotations, ou <a href="#" onclick="loadDemoData();return false">charger les données démo</a>.
       </div>
     </div>
   </div>
+</div>
 
+<div class="page">
   <!-- KPIs -->
-  <div class="kpi-row">
+  <div class="kpi-row" id="kpi-row">
     <div class="kpi meat">
       <div class="kpi-icon">🥩</div>
       <div class="kpi-label">Vache R</div>
@@ -178,12 +279,13 @@ select.form-select{font:400 13px 'DM Sans',sans-serif;padding:6px 10px;border:1p
     </div>
   </div>
 
-  <!-- MAIN CARD -->
+  <!-- MAIN CARD WITH TABS -->
   <div class="card">
     <div class="tab-row">
       <button class="tab-btn active" data-tab="cotations">📊 Cotations</button>
       <button class="tab-btn" data-tab="graphique">📈 Tendance</button>
       <button class="tab-btn" data-tab="import">📥 Import CSV</button>
+      <button class="tab-btn" data-tab="diagnostic">🔧 Diagnostic</button>
     </div>
 
     <!-- TAB: COTATIONS -->
@@ -215,7 +317,7 @@ select.form-select{font:400 13px 'DM Sans',sans-serif;padding:6px 10px;border:1p
           </thead>
           <tbody id="tbody-cotations">
             <tr><td colspan="5" style="text-align:center;color:var(--ink3);padding:32px">
-              Cliquez sur « 🔄 Actualiser les cours » pour charger les données
+              Cliquez sur « 🔄 Actualiser » ou importez un CSV
             </td></tr>
           </tbody>
         </table>
@@ -233,29 +335,77 @@ select.form-select{font:400 13px 'DM Sans',sans-serif;padding:6px 10px;border:1p
           <option value="Jeunes Bovins|R">Jeune Bovin R</option>
           <option value="Jeunes Bovins|U">Jeune Bovin U</option>
           <option value="Génisses|R">Génisse R</option>
+          <option value="LAIT">🥛 Lait conventionnel (mensuel)</option>
         </select>
       </div>
       <div class="chart-container">
         <canvas id="chart-cotations"></canvas>
       </div>
-      <div class="last-update">Source : FranceAgriMer — cotations hebdomadaires entrée abattoir (€/kg carcasse)</div>
+      <div style="font-size:11px;color:var(--ink4);text-align:center;margin-top:6px">
+        Source : DG AGRI — Commission Européenne (cotations viande hebdo + prix lait mensuel)
+      </div>
     </div>
 
-    <!-- TAB: IMPORT CSV (fallback) -->
+    <!-- TAB: IMPORT CSV -->
     <div class="tab-panel" id="tab-import">
-      <p style="font-size:13px;color:var(--ink2);margin-bottom:12px">
-        Méthode alternative : si le téléchargement automatique ne fonctionne pas, vous pouvez télécharger le CSV manuellement et le glisser ici.
-      </p>
-      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-        <a href="https://www.data.gouv.fr/fr/datasets/r/52055779-875e-4940-b2ce-93a2160e748e" target="_blank" class="btn btn-o btn-s">⬇️ Télécharger CSV entrée abattoir</a>
-        <a href="https://www.data.gouv.fr/fr/datasets/r/04f61a99-d5d1-4a35-b8a4-2f3be5e3a5a3" target="_blank" class="btn btn-o btn-s">⬇️ Télécharger CSV bovins vifs</a>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-text">
+            Téléchargez le CSV depuis<br>
+            <a href="https://www.data.gouv.fr/datasets/cotations-gros-bovins-entree-abattoir" target="_blank">📄 Cotations entrée abattoir</a>
+            <br>ou<br>
+            <a href="https://www.data.gouv.fr/datasets/cotations-gros-bovins-vifs" target="_blank">📄 Cotations bovins vifs</a>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-text">
+            Glissez le fichier<br>dans la zone ci-dessous<br>ou cliquez « Parcourir »
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-text">
+            Les cours se mettent à jour<br>automatiquement et sont<br>gardés en cache offline
+          </div>
+        </div>
       </div>
-      <div class="fallback-zone" id="drop-zone" style="margin-top:0">
+
+      <div class="fallback-zone" id="drop-zone">
         <p>📄 Glissez un fichier CSV FranceAgriMer ici</p>
-        <button class="btn btn-o btn-s" onclick="document.getElementById('file-input').click()">📂 Parcourir...</button>
-        <input type="file" id="file-input" accept=".csv,.txt" onchange="handleFileImport(event)">
+        <button class="btn btn-p btn-s" onclick="document.getElementById('file-input').click()">📂 Parcourir...</button>
+        <input type="file" id="file-input" accept=".csv,.txt,.xls,.xlsx" onchange="handleFileImport(event)">
+        <div class="hint">Formats acceptés : CSV des cotations gros bovins (FranceAgriMer / data.gouv.fr)</div>
       </div>
-      <div id="import-result" style="margin-top:10px"></div>
+      <div id="import-result" style="margin-top:12px"></div>
+    </div>
+
+    <!-- TAB: DIAGNOSTIC -->
+    <div class="tab-panel" id="tab-diagnostic">
+      <p style="font-size:13px;color:var(--ink2);margin-bottom:14px">
+        Test de connectivité vers les sources open data. Résultats spécifiques à votre navigateur et protocole (<code id="protocol-info"></code>).
+      </p>
+      <div class="test-grid" id="test-grid">
+        <div class="test-item" id="test-proxy1">
+          <div class="test-label">🔀 Proxy CORS #1 (corsproxy.io)</div>
+          <div class="test-value">En attente...</div>
+        </div>
+        <div class="test-item" id="test-proxy2">
+          <div class="test-label">🔀 Proxy CORS #2 (allorigins)</div>
+          <div class="test-value">En attente...</div>
+        </div>
+        <div class="test-item" id="test-direct">
+          <div class="test-label">📡 Accès direct data.gouv.fr</div>
+          <div class="test-value">En attente...</div>
+        </div>
+        <div class="test-item" id="test-tabular">
+          <div class="test-label">📊 API tabulaire data.gouv.fr</div>
+          <div class="test-value">En attente...</div>
+        </div>
+      </div>
+      <button class="btn btn-p" onclick="runDiagnostic()">▶️ Lancer le diagnostic complet</button>
+      <div class="log" id="log" style="margin-top:12px"></div>
     </div>
   </div>
 
@@ -266,7 +416,7 @@ select.form-select{font:400 13px 'DM Sans',sans-serif;padding:6px 10px;border:1p
       <div class="setting-row">
         <div class="setting-label">
           Catégorie de vente principale
-          <small>Pour les KPIs et le pré-remplissage du bilan financier</small>
+          <small>Pour les KPIs et le pré-remplissage du bilan</small>
         </div>
         <select class="form-select" id="sel-main-category" onchange="saveSettings()">
           <option value="Vaches|R">Vache R (standard laitière)</option>
@@ -280,56 +430,72 @@ select.form-select{font:400 13px 'DM Sans',sans-serif;padding:6px 10px;border:1p
       <div class="setting-row">
         <div class="setting-label">
           Prix du lait personnalisé
-          <small>Votre paie de lait réelle (remplace le prix moyen national)</small>
+          <small>Votre paie de lait réelle (remplace le prix national)</small>
         </div>
         <div style="display:flex;align-items:center;gap:6px">
-          <input type="number" id="inp-milk-price" placeholder="ex: 480" style="font:400 13px 'DM Sans';padding:6px 10px;border:1px solid var(--line2);border-radius:6px;width:100px;text-align:right" onchange="saveSettings()">
+          <input type="number" id="inp-milk-price" placeholder="ex: 480" style="font:400 13px 'DM Sans';padding:7px 10px;border:1px solid var(--line2);border-radius:8px;width:100px;text-align:right;transition:border-color .15s" onfocus="this.style.borderColor='var(--brand)'" onblur="this.style.borderColor='var(--line2)'" onchange="saveSettings()">
           <span style="font-size:12px;color:var(--ink3)">€/1000L</span>
         </div>
       </div>
       <div class="setting-row">
         <div class="setting-label">
           Cache local
-          <small>Les cours sont conservés localement pour un accès instantané</small>
+          <small>Données conservées pour un accès hors-ligne</small>
         </div>
         <span class="badge b-blue" id="cache-info">Pas de cache</span>
       </div>
     </div>
   </div>
 
-  <!-- LOG (hidden by default) -->
-  <details>
-    <summary style="font-size:12px;color:var(--ink3);cursor:pointer;padding:4px">📋 Journal technique</summary>
-    <div class="log" id="log" style="margin-top:4px"></div>
-  </details>
+  <div class="footer">
+    Données : <a href="https://agriculture.ec.europa.eu/data-and-analysis/markets/overviews/market-observatories/milk_en" target="_blank">DG AGRI</a> · Mise à jour automatique chaque lundi · <a href="https://github.com/loduval/boviq-app" target="_blank">BOVIQ</a>
+  </div>
 </div>
 
 <script>
 // ============================================================
-// BOVIQ — COURS DU MARCHÉ v4
-// Optimisé pour GitHub Pages (https://)
-// Fetch direct depuis data.gouv.fr — zéro config
+// BOVIQ — MODULE COURS DU MARCHÉ v2
+// Sources : DG AGRI (Commission Européenne) via JSON pré-généré
+// Stratégie : JSON local (même domaine) → cache → import CSV manuel
 // ============================================================
 
-// CSV hébergés dans le même repo (mis à jour chaque mardi par GitHub Actions)
-const CSV_URL = './data/cotations-abattoir.csv';
-const CSV_URL_VIFS = './data/cotations-vifs.csv';
-const META_URL = './data/meta.json';
-const STORAGE_KEY = 'boviq_market_v4';
-const SETTINGS_KEY = 'boviq_market_settings_v4';
+// JSON généré par scripts/update-cours-data.py (mis à jour via GitHub Actions)
+const JSON_DATA_URL = 'data/market/cours-data.json';
 
+const RESOURCES = {
+  abattoir: {
+    id: '52055779-875e-4940-b2ce-93a2160e748e',
+    label: 'Cotations entrée abattoir',
+    directUrl: 'https://www.data.gouv.fr/fr/datasets/r/52055779-875e-4940-b2ce-93a2160e748e'
+  },
+  vifs: {
+    id: '04f61a99-d5d1-4a35-b8a4-2f3be5e3a5a3',
+    label: 'Cotations bovins vifs',
+    directUrl: 'https://www.data.gouv.fr/fr/datasets/r/04f61a99-d5d1-4a35-b8a4-2f3be5e3a5a3'
+  }
+};
+
+// CORS proxies as fallback (rarely works)
+const CORS_PROXIES = [
+  { name: 'corsproxy.io', wrap: url => `https://corsproxy.io/?${encodeURIComponent(url)}` },
+  { name: 'allorigins', wrap: url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}` },
+];
+
+const STORAGE_KEY = 'boviq_market_v2';
+const SETTINGS_KEY = 'boviq_market_settings_v2';
 let chartInstance = null;
-let marketData = { cotations: [], lastUpdate: null, source: null };
+let marketData = { cotations: [], lastUpdate: null, source: null, rawHeaders: null };
 let currentSort = { key: 'semaine', dir: 'desc' };
 
 // === INIT ===
+document.getElementById('protocol-info').textContent = location.protocol;
+
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
-    if (btn.dataset.tab === 'graphique') setTimeout(updateChart, 50);
   });
 });
 
@@ -340,11 +506,13 @@ dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover
 dropZone.addEventListener('drop', e => {
   e.preventDefault();
   dropZone.classList.remove('dragover');
-  if (e.dataTransfer.files.length) handleFileImport({ target: { files: e.dataTransfer.files } });
+  if (e.dataTransfer.files.length) {
+    handleFileImport({ target: { files: e.dataTransfer.files } });
+  }
 });
 
 // === LOGGING ===
-function log(msg, type = 'info') {
+function log(msg, type='info') {
   const el = document.getElementById('log');
   const t = new Date().toLocaleTimeString('fr-FR');
   el.innerHTML += `<div class="${type}">[${t}] ${msg}</div>`;
@@ -356,65 +524,142 @@ function setStatus(state, html) {
   document.getElementById('status-text').innerHTML = html;
 }
 
-// === MAIN FETCH ===
-async function refreshData() {
+// === LOAD FROM JSON (priority source) ===
+function jsonToMarketData(json) {
+  const cotations = [];
+  const beef = json.beef?.prices || {};
+  const weekDate = json.beef?.week_date || '';
+  
+  // Convert week date "26.02.2026" → "2026-S09" (approximate)
+  let semLabel = weekDate;
+  if (weekDate.match(/\d{2}\.\d{2}\.\d{4}/)) {
+    const [d,m,y] = weekDate.split('.');
+    const dt = new Date(+y, +m-1, +d);
+    const weekNum = Math.ceil(((dt - new Date(+y,0,1)) / 86400000 + 1) / 7);
+    semLabel = `${y}-S${String(weekNum).padStart(2,'0')}`;
+  }
+  
+  // Beef categories → cotation entries (EUR/100kg → EUR/kg = ÷100)
+  const beefMap = [
+    ['vache_r3','Vaches','R','3'], ['vache_r4','Vaches','R','4'],
+    ['vache_o3','Vaches','O','3'], ['vache_o4','Vaches','O','4'],
+    ['vache_p2','Vaches','P','2'], ['vache_p3','Vaches','P','3'],
+    ['jb_u2','Jeunes Bovins','U','2'], ['jb_u3','Jeunes Bovins','U','3'],
+    ['jb_r2','Jeunes Bovins','R','2'], ['jb_r3','Jeunes Bovins','R','3'],
+    ['jb_o2','Jeunes Bovins','O','2'], ['jb_o3','Jeunes Bovins','O','3'],
+    ['genisse_u3','Génisses','U','3'], ['genisse_r2','Génisses','R','2'],
+    ['genisse_r3','Génisses','R','3'], ['genisse_r4','Génisses','R','4'],
+    ['genisse_o3','Génisses','O','3'],
+    ['boeuf_r3','Bœufs','R','3'], ['boeuf_o3','Bœufs','O','3'],
+  ];
+  
+  for (const [key, cat, conf, eng] of beefMap) {
+    if (beef[key]) {
+      cotations.push({
+        semaine: semLabel,
+        categorie: cat,
+        categorieNorm: cat,
+        conformation: conf,
+        engraissement: eng,
+        prix: Math.round(beef[key]) / 100  // EUR/100kg → EUR/kg
+      });
+    }
+  }
+  
+  // Auto-fill milk price (EUR/100kg → EUR/1000L ≈ ×10)
+  const milkLatest = json.milk?.latest;
+  if (milkLatest) {
+    const milkPer1000L = Math.round(milkLatest.price * 10);
+    const inp = document.getElementById('inp-milk-price');
+    if (inp && !inp.value) inp.value = milkPer1000L;
+  }
+  
+  // Store milk history for chart
+  window._milkHistory = json.milk?.prices || [];
+  window._jsonMeta = json.meta || {};
+  
+  return {
+    cotations,
+    lastUpdate: json.meta?.generated || new Date().toISOString(),
+    source: `DG AGRI (${weekDate || 'Commission Européenne'})`,
+    rawHeaders: null
+  };
+}
+
+// === FETCH WITH CASCADE ===
+async function refreshAllData() {
   const btn = document.getElementById('btn-refresh');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Chargement...';
-  setStatus('loading', 'Connexion à data.gouv.fr...');
+  setStatus('loading', 'Récupération des cotations en cours...');
 
+  // ── 1) TRY LOCAL JSON (same-origin, no CORS) ──
+  try {
+    log('📡 Chargement données JSON pré-générées...', 'info');
+    const resp = await fetch(JSON_DATA_URL, { signal: AbortSignal.timeout(8000) });
+    if (resp.ok) {
+      const json = await resp.json();
+      const beefCount = Object.keys(json.beef?.prices || {}).length;
+      const milkCount = json.milk?.prices?.length || 0;
+      if (beefCount > 0 || milkCount > 0) {
+        marketData = jsonToMarketData(json);
+        saveToCache();
+        renderAll();
+        setStatus('ok', `<strong>Cours à jour ✓</strong> — ${marketData.cotations.length} cotations viande + ${milkCount} mois lait — Source : DG AGRI (${json.beef?.week_date || ''})`);
+        log(`✅ JSON chargé : ${beefCount} prix viande, ${milkCount} mois lait`, 'ok');
+        btn.disabled = false;
+        btn.innerHTML = '🔄 Actualiser les cours';
+        return;
+      }
+    }
+  } catch (e) {
+    log(`⚠️ JSON local : ${e.message}`, 'warn');
+  }
+
+  // ── 2) TRY CORS PROXIES (legacy CSV) ──
+  const targetUrl = RESOURCES.abattoir.directUrl;
   let csvText = null;
   let source = null;
 
-  // Attempt 1: Cotations entrée abattoir (primary source)
-  try {
-    log('📡 Chargement cotations entrée abattoir...', 'info');
-
-    // Check last update date
+  for (const proxy of CORS_PROXIES) {
     try {
-      const metaResp = await fetch(META_URL, { signal: AbortSignal.timeout(5000), cache: 'no-cache' });
-      if (metaResp.ok) {
-        const meta = await metaResp.json();
-        log(`📅 Dernière MAJ serveur : ${new Date(meta.lastUpdate).toLocaleDateString('fr-FR')}`, 'info');
-      }
-    } catch(e) {}
-
-    const resp = await fetch(CSV_URL, { signal: AbortSignal.timeout(15000), cache: 'no-cache' });
-    if (resp.ok) {
-      const text = await resp.text();
-      if (text.length > 200 && (text.includes(';') || text.includes(','))) {
-        csvText = text;
-        source = 'FranceAgriMer — entrée abattoir';
-        log(`✅ Téléchargé : ${(text.length / 1024).toFixed(1)} Ko`, 'ok');
-      } else {
-        log('⚠️ Réponse inattendue (non-CSV)', 'warn');
-      }
-    } else {
-      log(`⚠️ HTTP ${resp.status}`, 'warn');
-    }
-  } catch (e) {
-    log(`⚠️ Entrée abattoir : ${e.message}`, 'warn');
-  }
-
-  // Attempt 2: Cotations bovins vifs (fallback)
-  if (!csvText) {
-    try {
-      log('📡 Tentative cotations bovins vifs...', 'info');
-      const resp = await fetch(CSV_URL_VIFS, { signal: AbortSignal.timeout(15000), cache: 'no-cache' });
+      log(`📡 Tentative via ${proxy.name}...`, 'info');
+      const url = proxy.wrap(targetUrl);
+      const resp = await fetch(url, { signal: AbortSignal.timeout(10000) });
       if (resp.ok) {
         const text = await resp.text();
         if (text.length > 200 && (text.includes(';') || text.includes(','))) {
           csvText = text;
-          source = 'FranceAgriMer — bovins vifs';
-          log(`✅ Téléchargé : ${(text.length / 1024).toFixed(1)} Ko`, 'ok');
+          source = `data.gouv.fr via ${proxy.name}`;
+          log(`✅ Succès via ${proxy.name} (${(text.length/1024).toFixed(1)} Ko)`, 'ok');
+          break;
+        } else {
+          log(`⚠️ ${proxy.name} : réponse non-CSV (${text.length} octets)`, 'warn');
         }
+      } else {
+        log(`⚠️ ${proxy.name} : HTTP ${resp.status}`, 'warn');
       }
     } catch (e) {
-      log(`⚠️ Bovins vifs : ${e.message}`, 'warn');
+      log(`⚠️ ${proxy.name} : ${e.message}`, 'warn');
     }
   }
 
-  // Parse results
+  // 3) Try direct
+  if (!csvText) {
+    try {
+      log('📡 Tentative accès direct...', 'info');
+      const resp = await fetch(targetUrl, { signal: AbortSignal.timeout(8000) });
+      if (resp.ok) {
+        csvText = await resp.text();
+        source = 'data.gouv.fr (accès direct)';
+        log(`✅ Accès direct OK (${(csvText.length/1024).toFixed(1)} Ko)`, 'ok');
+      }
+    } catch (e) {
+      log(`⚠️ Accès direct : ${e.message}`, 'warn');
+    }
+  }
+
+  // 4) Parse CSV if we got it
   if (csvText) {
     const data = parseCSV(csvText);
     if (data.length > 0) {
@@ -423,29 +668,30 @@ async function refreshData() {
       marketData.source = source;
       saveToCache();
       renderAll();
-      setStatus('ok', `<strong>Cours à jour ✓</strong> — ${data.length} cotations (${source}) — mis à jour le ${new Date().toLocaleDateString('fr-FR')} à ${new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`);
+      setStatus('ok', `<strong>Cours à jour ✓</strong> — ${data.length} cotations (${source}) — ${new Date().toLocaleDateString('fr-FR')} à ${new Date().toLocaleTimeString('fr-FR')}`);
     } else {
-      log('❌ CSV récupéré mais format non reconnu', 'err');
-      tryCache('Format CSV non reconnu');
+      log('❌ CSV récupéré mais aucune donnée exploitable', 'err');
+      tryCache();
     }
   } else {
-    tryCache('Impossible de contacter data.gouv.fr');
+    log('❌ Aucun accès réseau. Tentative cache...', 'warn');
+    tryCache();
   }
 
   btn.disabled = false;
   btn.innerHTML = '🔄 Actualiser les cours';
 }
 
-function tryCache(reason) {
+function tryCache() {
   const cached = loadFromCache();
   if (cached) {
     marketData = cached;
     renderAll();
     const d = new Date(cached.lastUpdate);
-    setStatus('warn', `<strong>Mode hors-ligne</strong> — ${reason}. Affichage du cache du ${d.toLocaleDateString('fr-FR')} (${cached.cotations.length} cotations).`);
-    log('📦 Données chargées depuis le cache', 'warn');
+    setStatus('warn', `<strong>Mode hors-ligne</strong> — Cache du ${d.toLocaleDateString('fr-FR')} (${cached.cotations.length} cotations). <a href="#" onclick="document.querySelector('[data-tab=import]').click();return false">Importer un CSV frais →</a>`);
+    log('📦 Données chargées depuis le cache local', 'warn');
   } else {
-    setStatus('err', `<strong>${reason}</strong> — Essayez l'<a href="#" onclick="document.querySelector('[data-tab=import]').click();return false">import CSV manuel →</a>`);
+    setStatus('err', `<strong>Aucune donnée</strong> — <a href="#" onclick="document.querySelector('[data-tab=import]').click();return false">Importez un CSV manuellement →</a> ou <a href="#" onclick="loadDemoData();return false">chargez la démo</a>`);
   }
 }
 
@@ -454,11 +700,13 @@ function parseCSV(text) {
   const lines = text.trim().split(/\r?\n/);
   if (lines.length < 2) return [];
 
-  const sep = (lines[0].match(/;/g) || []).length > (lines[0].match(/,/g) || []).length ? ';' : ',';
-  const headers = lines[0].split(sep).map(h => h.trim().replace(/^"|"$/g, '').replace(/^\uFEFF/, ''));
-
-  log(`📋 ${lines.length} lignes, séparateur « ${sep} »`, 'info');
+  const sep = (lines[0].match(/;/g)||[]).length > (lines[0].match(/,/g)||[]).length ? ';' : ',';
+  const headers = lines[0].split(sep).map(h => h.trim().replace(/^"|"$/g, ''));
+  
+  log(`📋 CSV : ${lines.length} lignes, séparateur "${sep}"`, 'info');
   log(`📋 Colonnes : ${headers.join(' | ')}`, 'info');
+  
+  marketData.rawHeaders = headers;
 
   const results = [];
   for (let i = 1; i < lines.length; i++) {
@@ -466,73 +714,67 @@ function parseCSV(text) {
     const vals = lines[i].split(sep).map(v => v.trim().replace(/^"|"$/g, ''));
     const row = {};
     headers.forEach((h, idx) => row[h] = vals[idx] || '');
-    const normalized = normalizeRow(row);
+    
+    const normalized = normalizeRow(row, headers);
     if (normalized) results.push(normalized);
   }
 
-  log(`✅ ${results.length} cotations exploitables`, results.length > 0 ? 'ok' : 'warn');
+  log(`✅ ${results.length} cotations extraites sur ${lines.length - 1} lignes`, results.length > 0 ? 'ok' : 'warn');
   return results;
 }
 
-function normalizeRow(row) {
-  const r = {};
-
+function normalizeRow(row, headers) {
+  const r = { _raw: row };
+  
+  // Smart field detection
   for (const [key, val] of Object.entries(row)) {
-    const k = key.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
-
-    // Semaine / date
-    if (!r.semaine && (k.includes('semaine') || k.includes('sem_') || k === 'sem' || k.includes('annee_semaine') || k.includes('annee-semaine'))) {
+    const k = key.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    
+    // Semaine
+    if (k.includes('semaine') || k.includes('sem_') || k === 'sem' || k.includes('week') || k.includes('annee_semaine')) {
       r.semaine = val;
     }
-    if (!r.semaine && k.includes('date')) r.semaine = val;
-
+    // Date
+    if (k.includes('date') && !r.semaine) {
+      r.semaine = val;
+    }
     // Catégorie
-    if (!r.categorie && (k.includes('categorie') || k.includes('type_animal') || k.includes('espece') || k === 'type' || k.includes('libelle_categorie') || k.includes('lib_categorie') || k.includes('libelle_type') || k.includes('categ') || k.includes('type_bovin'))) {
+    if (k.includes('categorie') || k.includes('type_animal') || k.includes('espece') || k.includes('type_bovin') || k === 'type' || k.includes('libelle_categorie') || k.includes('lib_categorie')) {
       r.categorie = val;
     }
-
-    // Conformation (EUROP)
-    if (!r.conformation && (k.includes('conformation') || k.includes('classe') || k === 'conf' || k.includes('qualite') || k.includes('classement'))) {
+    // Conformation (EUROP grid)
+    if (k.includes('conformation') || k.includes('classe') || k.includes('conf') || k.includes('qualite')) {
       r.conformation = val;
     }
-
-    // Prix
-    if (!r.prix && (k.includes('prix') || k.includes('cotation') || k.includes('valeur') || k.includes('cours') || k === 'nat' || k.includes('national') || k.includes('moyenne') || k.includes('moy_') || k.includes('cot_nat'))) {
+    // Prix - try several common column names
+    if ((k.includes('prix') || k.includes('cotation') || k.includes('valeur') || k.includes('cours') || k === 'nat' || k.includes('national') || k.includes('moyenne')) && !r.prix) {
       const p = parseFloat(String(val).replace(',', '.'));
-      if (!isNaN(p) && p > 0 && p < 50) r.prix = p;
+      if (!isNaN(p) && p > 0 && p < 50) r.prix = p; // bovine prices are 2-10 €/kg range
     }
-
     // Bassin
-    if (!r.bassin && (k.includes('bassin') || k.includes('region') || k.includes('zone') || k.includes('marche'))) {
+    if (k.includes('bassin') || k.includes('region') || k.includes('zone')) {
       r.bassin = val;
     }
-
     // Engraissement
-    if (!r.engraissement && (k.includes('engraissement') || k.includes('etat') || k.includes('engr'))) {
+    if (k.includes('engraissement') || k.includes('etat') || k.includes('engr')) {
       r.engraissement = val;
     }
   }
-
-  // Fallback: find plausible price
+  
+  // If no prix found yet, try each numeric value
   if (!r.prix) {
     for (const val of Object.values(row)) {
       const p = parseFloat(String(val).replace(',', '.'));
-      if (!isNaN(p) && p > 1.5 && p < 12) { r.prix = p; break; }
+      if (!isNaN(p) && p > 1.5 && p < 12) { // plausible price range
+        r.prix = p;
+        break;
+      }
     }
   }
 
-  if (!r.prix) return null;
+  if (!r.prix || !r.categorie) return null;
 
-  // Infer category from all values if not explicitly found
-  if (!r.categorie) {
-    const allVals = Object.values(row).join(' ').toLowerCase();
-    if (allVals.includes('vache')) r.categorie = 'Vaches';
-    else if (allVals.includes('genisse') || allVals.includes('génisse')) r.categorie = 'Génisses';
-    else if (allVals.includes('jeune') || allVals.includes('j.b')) r.categorie = 'Jeunes Bovins';
-    else return null;
-  }
-
-  // Normalize category
+  // Normalize category names
   const cat = r.categorie.toLowerCase();
   if (cat.includes('vache')) r.categorieNorm = 'Vaches';
   else if (cat.includes('genisse') || cat.includes('génisse')) r.categorieNorm = 'Génisses';
@@ -541,7 +783,7 @@ function normalizeRow(row) {
   else if (cat.includes('taureau')) r.categorieNorm = 'Taureaux';
   else r.categorieNorm = r.categorie;
 
-  // Clean conformation
+  // Clean conformation (keep first letter from EUROP)
   if (r.conformation) {
     const c = r.conformation.toUpperCase().trim();
     if (/^[EUROP]/.test(c)) r.conformation = c.charAt(0);
@@ -554,61 +796,114 @@ function normalizeRow(row) {
 function handleFileImport(event) {
   const file = event.target.files?.[0];
   if (!file) return;
+
   setStatus('loading', `Import de ${file.name}...`);
-  log(`📁 Import : ${file.name} (${(file.size / 1024).toFixed(1)} Ko)`, 'info');
+  log(`📁 Import : ${file.name} (${(file.size/1024).toFixed(1)} Ko)`, 'info');
 
   const reader = new FileReader();
-  reader.onload = function (e) {
+  reader.onload = function(e) {
     const data = parseCSV(e.target.result);
     if (data.length > 0) {
       marketData.cotations = data;
       marketData.lastUpdate = new Date().toISOString();
-      marketData.source = `Import CSV (${file.name})`;
+      marketData.source = `CSV (${file.name})`;
       saveToCache();
       renderAll();
       setStatus('ok', `<strong>Import réussi ✓</strong> — ${data.length} cotations depuis « ${file.name} »`);
       document.getElementById('import-result').innerHTML = `<span class="badge b-green">✓ ${data.length} cotations importées</span>`;
-      setTimeout(() => document.querySelector('[data-tab="cotations"]').click(), 500);
+      document.querySelector('[data-tab="cotations"]').click();
     } else {
-      setStatus('err', 'Format CSV non reconnu.');
-      document.getElementById('import-result').innerHTML = `<span class="badge b-red">✗ Format non reconnu</span>`;
+      setStatus('err', `Format non reconnu dans « ${file.name} ». Colonnes détectées : ${marketData.rawHeaders?.join(', ') || 'aucune'}`);
+      document.getElementById('import-result').innerHTML = `<span class="badge b-red">✗ Aucune donnée exploitable</span><br><small style="color:var(--ink3);margin-top:4px;display:block">Colonnes trouvées : ${marketData.rawHeaders?.join(', ') || '—'}</small>`;
     }
   };
   reader.readAsText(file, 'utf-8');
 }
 
+// === DIAGNOSTIC ===
+async function runDiagnostic() {
+  document.getElementById('log').innerHTML = '';
+  log(`🔍 Diagnostic démarré (protocole : ${location.protocol})`, 'info');
+  
+  const targetUrl = RESOURCES.abattoir.directUrl;
+
+  // Test proxy 1
+  await testEndpoint('test-proxy1', CORS_PROXIES[0].wrap(targetUrl), CORS_PROXIES[0].name);
+  // Test proxy 2
+  await testEndpoint('test-proxy2', CORS_PROXIES[1].wrap(targetUrl), CORS_PROXIES[1].name);
+  // Test direct
+  await testEndpoint('test-direct', targetUrl, 'Accès direct');
+  // Test tabular API
+  await testEndpoint('test-tabular', `https://tabular-api.data.gouv.fr/api/resources/${RESOURCES.abattoir.id}/`, 'API tabulaire');
+
+  // Summary
+  const oks = document.querySelectorAll('.test-item.success').length;
+  if (oks > 0) {
+    log(`🎉 ${oks} méthode(s) fonctionnelle(s) — le bouton "Actualiser" utilisera la meilleure.`, 'ok');
+  } else {
+    log('❌ Aucun accès automatique. Utilisez l\'import CSV (onglet 📥).', 'err');
+  }
+}
+
+async function testEndpoint(elId, url, label) {
+  const el = document.getElementById(elId);
+  el.className = 'test-item testing';
+  el.querySelector('.test-value').textContent = '⏳ Test en cours...';
+
+  try {
+    const t0 = performance.now();
+    const resp = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    const ms = Math.round(performance.now() - t0);
+
+    if (resp.ok) {
+      const text = await resp.text();
+      const isCSV = text.length > 100 && (text.includes(';') || text.includes(','));
+      if (isCSV) {
+        el.className = 'test-item success';
+        el.querySelector('.test-value').innerHTML = `✅ <strong>OK</strong> — ${ms}ms, ${(text.length/1024).toFixed(0)} Ko CSV`;
+        log(`✅ ${label} : OK (${ms}ms, ${(text.length/1024).toFixed(1)} Ko)`, 'ok');
+        return true;
+      } else {
+        el.className = 'test-item fail';
+        el.querySelector('.test-value').innerHTML = `⚠️ Réponse non-CSV (${text.length} octets)`;
+        log(`⚠️ ${label} : réponse non-CSV`, 'warn');
+      }
+    } else {
+      el.className = 'test-item fail';
+      el.querySelector('.test-value').innerHTML = `❌ HTTP ${resp.status} (${ms}ms)`;
+      log(`❌ ${label} : HTTP ${resp.status}`, 'err');
+    }
+  } catch (e) {
+    el.className = 'test-item fail';
+    el.querySelector('.test-value').innerHTML = `❌ ${e.message.includes('timeout') ? 'Timeout (8s)' : 'Bloqué (CORS)'}`;
+    log(`❌ ${label} : ${e.message}`, 'err');
+  }
+  return false;
+}
+
 // === CACHE ===
 function saveToCache() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(marketData)); } catch (e) {}
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(marketData)); } catch(e) {}
   updateCacheInfo();
 }
 function loadFromCache() {
   try {
     const d = JSON.parse(localStorage.getItem(STORAGE_KEY));
     return (d && d.cotations?.length > 0) ? d : null;
-  } catch (e) { return null; }
+  } catch(e) { return null; }
 }
 function clearCache() {
   localStorage.removeItem(STORAGE_KEY);
   marketData = { cotations: [], lastUpdate: null, source: null };
-  document.getElementById('tbody-cotations').innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--ink3);padding:32px">Cache vidé</td></tr>';
-  document.getElementById('data-count').textContent = '0 cotations';
-  if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
-  ['vache-r','vache-o','jb-r','lait'].forEach(id => {
-    document.getElementById(`kpi-${id}`).innerHTML = `<span class="kpi-empty">—</span><span class="kpi-unit">${id==='lait'?'€/1000L':'€/kg'}</span>`;
-    document.getElementById(`trend-${id}`).textContent = '';
-    document.getElementById(`date-${id}`).textContent = '';
-  });
-  updateCacheInfo();
-  setStatus('idle', 'Cache vidé. Cliquez « 🔄 Actualiser les cours » pour recharger.');
+  renderAll();
+  setStatus('idle', 'Cache vidé. <a href="#" onclick="refreshAllData();return false">Actualiser</a> ou <a href="#" onclick="loadDemoData();return false">charger la démo</a>.');
 }
 function updateCacheInfo() {
   const el = document.getElementById('cache-info');
   const c = loadFromCache();
   if (c?.lastUpdate) {
     const hrs = Math.round((Date.now() - new Date(c.lastUpdate).getTime()) / 3600000);
-    const age = hrs < 24 ? `${hrs}h` : `${Math.round(hrs / 24)}j`;
-    el.textContent = `${c.cotations.length} cotations — ${age}`;
+    el.textContent = `${c.cotations.length} cotations — ${new Date(c.lastUpdate).toLocaleDateString('fr-FR')} (${hrs < 24 ? hrs + 'h' : Math.round(hrs/24) + 'j'})`;
     el.className = hrs < 168 ? 'badge b-green' : 'badge b-amber';
   } else {
     el.textContent = 'Pas de cache';
@@ -629,7 +924,7 @@ function loadSettings() {
     const s = JSON.parse(localStorage.getItem(SETTINGS_KEY));
     if (s?.mainCategory) document.getElementById('sel-main-category').value = s.mainCategory;
     if (s?.milkPrice) document.getElementById('inp-milk-price').value = s.milkPrice;
-  } catch (e) {}
+  } catch(e) {}
 }
 
 // === RENDER ===
@@ -647,21 +942,25 @@ function renderKPIs() {
   function fillKPI(id, catNorm, confPrefix) {
     const sorted = data
       .filter(r => r.categorieNorm === catNorm && (!confPrefix || r.conformation === confPrefix))
-      .sort((a, b) => String(b.semaine || '').localeCompare(String(a.semaine || '')));
-
+      .sort((a, b) => String(b.semaine||'').localeCompare(String(a.semaine||'')));
+    
     const el = document.getElementById(`kpi-${id}`);
     const trend = document.getElementById(`trend-${id}`);
     const dateEl = document.getElementById(`date-${id}`);
 
     if (sorted.length > 0) {
-      el.innerHTML = `${sorted[0].prix.toFixed(2)}<span class="kpi-unit">€/kg</span>`;
+      const cur = sorted[0].prix;
+      el.innerHTML = `${cur.toFixed(2)}<span class="kpi-unit">€/kg</span>`;
       dateEl.textContent = sorted[0].semaine ? `Sem. ${sorted[0].semaine}` : '';
 
       if (sorted.length > 1) {
-        const diff = sorted[0].prix - sorted[1].prix;
+        const diff = cur - sorted[1].prix;
         const pct = ((diff / sorted[1].prix) * 100).toFixed(1);
         trend.className = 'kpi-trend ' + (diff > 0.01 ? 'up' : diff < -0.01 ? 'down' : 'stable');
         trend.textContent = diff > 0.01 ? `▲ +${diff.toFixed(2)} (+${pct}%)` : diff < -0.01 ? `▼ ${diff.toFixed(2)} (${pct}%)` : '= Stable';
+      } else {
+        trend.className = 'kpi-trend stable';
+        trend.textContent = '';
       }
     }
   }
@@ -670,6 +969,7 @@ function renderKPIs() {
   fillKPI('vache-o', 'Vaches', 'O');
   fillKPI('jb-r', 'Jeunes Bovins', 'R');
 
+  // Milk
   const mp = document.getElementById('inp-milk-price').value;
   if (mp) {
     document.getElementById('kpi-lait').innerHTML = `${parseFloat(mp).toFixed(0)}<span class="kpi-unit">€/1000L</span>`;
@@ -696,24 +996,28 @@ function renderTable() {
   const filter = document.getElementById('sel-categorie').value;
   let filtered = filter === 'all' ? [...data] : data.filter(r => r.categorieNorm === filter);
 
+  // Sort
   const sk = currentSort.key;
   const sd = currentSort.dir === 'asc' ? 1 : -1;
   filtered.sort((a, b) => {
-    const va = sk === 'prix' ? (a.prix || 0) : String(a[sk] || '');
-    const vb = sk === 'prix' ? (b.prix || 0) : String(b[sk] || '');
+    const va = sk === 'prix' ? (a.prix||0) : String(a[sk]||'');
+    const vb = sk === 'prix' ? (b.prix||0) : String(b[sk]||'');
     return (va < vb ? -1 : va > vb ? 1 : 0) * sd;
   });
 
-  const display = filtered.slice(0, 200);
+  const display = filtered.slice(0, 150);
 
-  // Build price history lookup
+  // Build prev-price lookup for evolution
   const byKey = {};
-  [...data].sort((a, b) => String(a.semaine || '').localeCompare(String(b.semaine || ''))).forEach(r => {
+  data.sort((a,b) => String(a.semaine||'').localeCompare(String(b.semaine||''))).forEach(r => {
     const k = `${r.categorieNorm}|${r.conformation}`;
     (byKey[k] = byKey[k] || []).push(r);
   });
 
-  const catColors = { 'Vaches': 'b-amber', 'Génisses': 'b-green', 'Jeunes Bovins': 'b-blue', 'Bœufs': 'b-teal', 'Taureaux': 'b-red' };
+  const catColors = {
+    'Vaches': 'b-amber', 'Génisses': 'b-green', 'Jeunes Bovins': 'b-blue',
+    'Bœufs': 'b-teal', 'Taureaux': 'b-red'
+  };
 
   tbody.innerHTML = display.map(row => {
     const k = `${row.categorieNorm}|${row.conformation}`;
@@ -721,15 +1025,15 @@ function renderTable() {
     const idx = series.findIndex(r => r.semaine === row.semaine && r.prix === row.prix);
     let evo = '';
     if (idx > 0) {
-      const diff = row.prix - series[idx - 1].prix;
+      const diff = row.prix - series[idx-1].prix;
       if (diff > 0.005) evo = `<span style="color:#22c55e;font-weight:600">▲ +${diff.toFixed(2)}</span>`;
       else if (diff < -0.005) evo = `<span style="color:var(--red);font-weight:600">▼ ${diff.toFixed(2)}</span>`;
       else evo = '<span style="color:var(--ink4)">—</span>';
     }
     return `<tr>
-      <td style="font-variant-numeric:tabular-nums">${row.semaine || '—'}</td>
-      <td><span class="badge ${catColors[row.categorieNorm] || ''}">${row.categorieNorm}</span></td>
-      <td><strong>${row.conformation || '—'}</strong>${row.engraissement ? ' · ' + row.engraissement : ''}</td>
+      <td style="font-variant-numeric:tabular-nums">${row.semaine||'—'}</td>
+      <td><span class="badge ${catColors[row.categorieNorm]||''}">${row.categorieNorm}</span></td>
+      <td><strong>${row.conformation||'—'}</strong>${row.engraissement ? ' · '+row.engraissement : ''}</td>
       <td class="num"><strong>${row.prix.toFixed(2)}</strong></td>
       <td class="num">${evo}</td>
     </tr>`;
@@ -744,9 +1048,10 @@ function updateChart() {
   if (!data?.length) return;
 
   const [catNorm, conf] = (document.getElementById('sel-chart-type').value || 'Vaches|R').split('|');
+
   const filtered = data
     .filter(r => r.categorieNorm === catNorm && (!conf || r.conformation === conf))
-    .sort((a, b) => String(a.semaine || '').localeCompare(String(b.semaine || '')));
+    .sort((a, b) => String(a.semaine||'').localeCompare(String(b.semaine||'')));
 
   const recent = filtered.slice(-52);
   if (recent.length < 2) return;
@@ -754,7 +1059,7 @@ function updateChart() {
   const ctx = document.getElementById('chart-cotations');
   if (chartInstance) chartInstance.destroy();
 
-  const grd = ctx.getContext('2d').createLinearGradient(0, 0, 0, 300);
+  const grd = ctx.getContext('2d').createLinearGradient(0, 0, 0, 280);
   grd.addColorStop(0, 'rgba(45,106,79,.15)');
   grd.addColorStop(1, 'rgba(45,106,79,0)');
 
@@ -763,7 +1068,7 @@ function updateChart() {
     data: {
       labels: recent.map(r => r.semaine || '?'),
       datasets: [{
-        label: `${catNorm} ${conf} (€/kg)`,
+        label: `${catNorm} ${conf} (€/kg carcasse)`,
         data: recent.map(r => r.prix),
         borderColor: '#2D6A4F',
         backgroundColor: grd,
@@ -796,21 +1101,39 @@ function updateChart() {
   });
 }
 
+// === DEMO DATA ===
+function loadDemoData() {
+  const cats = [
+    { cat: 'Vaches', confs: [['E',6.20],['U',5.80],['R',5.35],['O',4.65],['P',3.95]] },
+    { cat: 'Génisses', confs: [['U',5.90],['R',5.55],['O',4.95]] },
+    { cat: 'Jeunes Bovins', confs: [['U',5.85],['R',5.45],['O',4.85]] },
+    { cat: 'Bœufs', confs: [['U',6.10],['R',5.70],['O',5.10]] },
+    { cat: 'Taureaux', confs: [['R',5.00],['O',4.40]] },
+  ];
+  const demo = [];
+  for (let w = 1; w <= 8; w++) {
+    const sem = `2026-S${String(w).padStart(2,'0')}`;
+    for (const c of cats) {
+      for (const [conf, base] of c.confs) {
+        demo.push({
+          semaine: sem, categorie: c.cat, categorieNorm: c.cat,
+          conformation: conf,
+          prix: Math.round((base + (Math.random()-.4)*.12 + w*0.008)*100)/100
+        });
+      }
+    }
+  }
+  marketData = { cotations: demo, lastUpdate: new Date().toISOString(), source: 'Données de démonstration' };
+  saveToCache();
+  renderAll();
+  setStatus('warn', '<strong>Mode démo</strong> — Données simulées. <a href="#" onclick="document.querySelector(\'[data-tab=import]\').click();return false">Importez un vrai CSV →</a> pour les cours réels.');
+}
+
 // === BOOT ===
 loadSettings();
 updateCacheInfo();
-const cached = loadFromCache();
-if (cached) {
-  marketData = cached;
-  renderAll();
-  const hrs = Math.round((Date.now() - new Date(cached.lastUpdate).getTime()) / 3600000);
-  setStatus(hrs < 168 ? 'ok' : 'warn',
-    `<strong>Données en cache</strong> — ${cached.cotations.length} cotations du ${new Date(cached.lastUpdate).toLocaleDateString('fr-FR')} (${cached.source})${hrs >= 168 ? ' · <a href="#" onclick="refreshData();return false">⟳ Actualiser</a>' : ''}`
-  );
-} else {
-  // Auto-fetch on first visit
-  refreshData();
-}
+// Auto-load: try JSON first, then cache
+refreshAllData();
 </script>
 </body>
 </html>
