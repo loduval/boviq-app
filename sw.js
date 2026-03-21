@@ -1,3 +1,5 @@
+// BOVIQ Service Worker — stratégie Network-First
+// Toujours tente le réseau ; cache uniquement si offline
 const CACHE = 'boviq-v20260321';
 const ASSETS = [
   './boviq-v6-latest.html',
@@ -20,8 +22,16 @@ self.addEventListener('activate', e => {
   );
 });
 
+// Network-first : réseau en priorité, cache en fallback offline uniquement
 self.addEventListener('fetch', e => {
   e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request).catch(() => cached))
+    fetch(e.request)
+      .then(response => {
+        // Mettre à jour le cache avec la nouvelle version
+        const clone = response.clone();
+        caches.open(CACHE).then(c => c.put(e.request, clone));
+        return response;
+      })
+      .catch(() => caches.match(e.request)) // Offline → sert le cache
   );
 });
