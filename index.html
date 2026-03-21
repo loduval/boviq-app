@@ -7,471 +7,369 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐄</text></svg>">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <meta name="theme-color" content="#1B4332">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#F4F1EB;--bg2:#EDE9E0;
-  --card:#FFFFFF;--card2:#F9F7F3;
   --brand:#1B4332;--brand2:#2D6A4F;--brand3:#40916C;
-  --ink:#1E1B16;--ink2:#3A3830;--ink3:#7A7468;
-  --amber:#C47A00;--red:#C0392B;
+  --bg:#F4F1EB;--card:#FFFFFF;
+  --ink:#1E1B16;--ink2:#3D3A34;--ink3:#8C8474;
+  --green:#2D6A4F;--amber:#B45309;--red:#B91C1C;
   --line:#E3DED4;
-  --sh:0 2px 12px rgba(30,27,22,.07);
-  --r:12px;--r2:16px;
+  --sh:0 1px 8px rgba(30,27,22,.08),0 4px 16px rgba(30,27,22,.05);
+  --r:14px;
 }
 html{font-size:14px}
-body{
-  font-family:'DM Sans',system-ui,sans-serif;
-  background:var(--bg);color:var(--ink);
-  min-height:100vh;
-  padding:0;
-}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
 
 /* HEADER */
-.header{
+.hdr{
+  background:#fff;border-bottom:1px solid var(--line);
+  padding:0 32px;height:56px;
   display:flex;align-items:center;justify-content:space-between;
-  padding:18px 32px 16px;
-  border-bottom:1px solid var(--line);
-  background:#fff;
-  position:sticky;top:0;z-index:10;
-  box-shadow:0 1px 4px rgba(30,27,22,.06);
+  position:sticky;top:0;z-index:20;
+  box-shadow:0 1px 0 var(--line);
 }
-.header-logo{display:flex;align-items:center;gap:12px}
-.header-logo span{font-size:28px}
-.header-logo h1{
-  font-family:'Cormorant Garamond',serif;
-  font-size:1.6rem;font-weight:700;
-  color:var(--brand);letter-spacing:-0.5px;
-}
-.header-date{font-size:12px;color:var(--ink3)}
+.hdr-left{display:flex;align-items:center;gap:10px}
+.hdr-left span{font-size:26px;line-height:1}
+.hdr-left h1{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--brand);letter-spacing:-0.5px}
+.hdr-right{font-size:12px;color:var(--ink3);font-weight:500}
 
-/* MAIN LAYOUT */
-.main{padding:24px 32px;max-width:1400px;margin:0 auto}
-@media(max-width:768px){.main{padding:16px}}
+/* LAYOUT */
+.page{padding:28px 32px;max-width:1280px;margin:0 auto}
+@media(max-width:700px){.page{padding:16px}}
 
 /* MÉTÉO */
-.meteo-card{
-  background:linear-gradient(135deg,#1B5E34 0%,#0F3D20 50%,#163328 100%);
-  border-radius:var(--r2);
-  border:1px solid rgba(27,67,50,.2);
-  overflow:hidden;margin-bottom:24px;
-  box-shadow:0 4px 20px rgba(27,67,50,.15);
+.meteo{
+  background:linear-gradient(130deg,#14532D 0%,#166534 40%,#15803D 100%);
+  border-radius:var(--r);margin-bottom:28px;
+  overflow:hidden;color:#fff;
+  box-shadow:0 4px 24px rgba(20,83,45,.25);
 }
-.meteo-inner{padding:20px 24px;display:flex;flex-direction:column;gap:14px}
-.meteo-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.meteo-current{display:flex;align-items:center;gap:16px}
-.meteo-icon{font-size:52px;line-height:1}
-.meteo-temp{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:700;color:#fff;line-height:1}
-.meteo-desc{font-size:13px;color:rgba(255,255,255,.75);margin-top:3px;text-transform:capitalize}
-.meteo-meta{font-size:11px;color:rgba(255,255,255,.5);margin-top:4px;display:flex;gap:10px}
-.meteo-loc{font-size:11px;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:4px;margin-bottom:6px}
+.meteo-body{padding:22px 28px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:start}
+.meteo-loc{font-size:11px;opacity:.65;display:flex;align-items:center;gap:4px;margin-bottom:10px;letter-spacing:.4px;text-transform:uppercase}
+.meteo-main{display:flex;align-items:center;gap:14px}
+.meteo-ico{font-size:52px;line-height:1}
+.meteo-temp{font-family:'Playfair Display',serif;font-size:46px;line-height:1;font-weight:700}
+.meteo-info{margin-left:2px}
+.meteo-desc{font-size:14px;opacity:.85;text-transform:capitalize;margin-bottom:3px}
+.meteo-sub{font-size:11px;opacity:.55;display:flex;gap:10px}
 .meteo-verdict{
-  background:rgba(255,255,255,.12);
-  backdrop-filter:blur(8px);
-  border-radius:10px;padding:12px 18px;min-width:160px;text-align:center;
-  border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.15);backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:12px;padding:14px 18px;text-align:center;min-width:155px;
 }
-.meteo-verdict.vert{background:rgba(78,216,122,.18);border-color:rgba(78,216,122,.35)}
-.meteo-verdict.amber{background:rgba(245,166,35,.18);border-color:rgba(245,166,35,.35)}
-.mv-label{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:rgba(255,255,255,.6);margin-bottom:5px}
-.mv-icon{font-size:26px;margin-bottom:4px}
-.mv-text{font-size:13px;font-weight:600;color:#fff}
-.meteo-forecast{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
-.meteo-slot{
-  background:rgba(255,255,255,.08);border-radius:8px;
-  padding:7px 4px;text-align:center;
-  border:1px solid rgba(255,255,255,.08);
+.meteo-verdict.ok{background:rgba(134,239,172,.18);border-color:rgba(134,239,172,.3)}
+.meteo-verdict.warn{background:rgba(253,224,71,.15);border-color:rgba(253,224,71,.3)}
+.mv-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.8px;opacity:.6;margin-bottom:6px}
+.mv-ico{font-size:28px;margin-bottom:4px}
+.mv-txt{font-size:12px;font-weight:600}
+.meteo-slots{
+  display:grid;grid-template-columns:repeat(6,1fr);gap:5px;
+  padding:0 28px 18px;
 }
-.meteo-slot.now{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.3)}
-.ms-time{font-size:10px;color:rgba(255,255,255,.55);margin-bottom:2px}
-.ms-ico{font-size:20px;margin:2px 0}
-.ms-temp{font-size:12px;font-weight:600;color:#fff}
-.ms-rain{font-size:10px;color:rgba(255,255,255,.55);margin-top:1px}
-.meteo-footer{font-size:10px;color:rgba(255,255,255,.35);text-align:right;margin-top:-4px}
-.meteo-error{padding:20px;text-align:center;color:rgba(255,255,255,.6);font-size:13px}
-@media(max-width:600px){.meteo-forecast{grid-template-columns:repeat(3,1fr)}.meteo-top{flex-direction:column}.meteo-verdict{min-width:unset;width:100%}}
+.slot{background:rgba(255,255,255,.1);border-radius:8px;padding:7px 4px;text-align:center;border:1px solid rgba(255,255,255,.08)}
+.slot.now{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.3)}
+.slot-t{font-size:9px;opacity:.55;margin-bottom:2px}
+.slot-i{font-size:19px;margin:2px 0}
+.slot-v{font-size:12px;font-weight:600}
+.slot-r{font-size:9px;opacity:.5;margin-top:1px}
+.meteo-foot{font-size:9px;opacity:.35;text-align:right;padding:0 28px 10px}
+.meteo-err{padding:24px;text-align:center;opacity:.7;font-size:13px}
+@media(max-width:600px){
+  .meteo-body{grid-template-columns:1fr}
+  .meteo-slots{grid-template-columns:repeat(3,1fr)}
+}
 
-/* SECTION TITLE */
-.section-title{
-  font-family:'Cormorant Garamond',serif;
-  font-size:1.05rem;font-weight:600;color:var(--ink2);
-  letter-spacing:.3px;margin-bottom:12px;
+/* SECTION */
+.sec{margin-bottom:28px}
+.sec-head{
   display:flex;align-items:center;gap:8px;
-  padding-bottom:8px;
-  border-bottom:1px solid var(--line);
+  margin-bottom:14px;padding-bottom:10px;
+  border-bottom:2px solid var(--brand3);
 }
-.section-title span{font-size:1.1em}
+.sec-head h2{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--brand);font-weight:700}
+.sec-head .badge{font-size:10px;color:var(--ink3);font-weight:500;margin-left:auto}
 
 /* KPI GRID */
-.kpi-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
-  gap:12px;
-  margin-bottom:24px;
-}
-.kpi-card{
-  background:var(--card);
-  border-radius:var(--r);
-  padding:16px 16px 14px;
-  border:1px solid var(--line);
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:12px}
+.kpi{
+  background:var(--card);border-radius:var(--r);
+  padding:18px 16px 14px;border:1px solid var(--line);
   box-shadow:var(--sh);
   transition:transform .15s,box-shadow .15s;
 }
-.kpi-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(30,27,22,.1)}
-.kpi-label{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);margin-bottom:8px;font-weight:600}
-.kpi-val{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;line-height:1;color:var(--brand)}
+.kpi:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(30,27,22,.1)}
+.kpi-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--ink3);margin-bottom:10px}
+.kpi-val{font-family:'Playfair Display',serif;font-size:2.3rem;line-height:1;color:var(--green)}
+.kpi-val.dark{color:var(--ink)}
 .kpi-val.amber{color:var(--amber)}
 .kpi-val.red{color:var(--red)}
-.kpi-val.white{color:var(--ink)}
-.kpi-sub{font-size:11px;color:var(--ink3);margin-top:5px}
+.kpi-sub{font-size:11px;color:var(--ink3);margin-top:6px}
 
-/* MODULE CARDS */
-.modules-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:16px;
-  margin-bottom:28px;
-}
-@media(max-width:680px){.modules-grid{grid-template-columns:1fr}}
-.module-card{
-  background:var(--card);
-  border-radius:var(--r2);
-  padding:22px 20px;
-  border:1px solid var(--line);
+/* MODULES */
+.modules{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:680px){.modules{grid-template-columns:1fr}}
+.mod{
+  background:var(--card);border-radius:var(--r);
+  padding:22px 20px;border:1px solid var(--line);
   box-shadow:var(--sh);
   text-decoration:none;color:inherit;
   display:flex;flex-direction:column;
   transition:transform .2s,box-shadow .2s;
   position:relative;overflow:hidden;
 }
-.module-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:3px;
-  background:var(--brand);
-  transition:background .2s;
-}
-.module-card:hover{transform:translateY(-4px);box-shadow:0 10px 32px rgba(30,27,22,.12)}
-.module-card h2{
-  font-family:'Cormorant Garamond',serif;
-  font-size:1.15rem;font-weight:700;
-  color:var(--brand);margin-bottom:8px;
-}
-.module-card p{font-size:12px;color:var(--ink3);line-height:1.55;flex:1}
-.module-tag{
-  display:inline-flex;align-items:center;gap:5px;
-  margin-top:14px;padding:4px 10px;
+.mod::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--brand3)}
+.mod:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(30,27,22,.12)}
+.mod-ico{font-size:2rem;margin-bottom:12px}
+.mod h3{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--brand);margin-bottom:8px}
+.mod p{font-size:12px;color:var(--ink3);line-height:1.6;flex:1}
+.mod-tag{
+  margin-top:14px;display:inline-flex;align-items:center;gap:6px;
+  padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;
   background:#D8F3DC;color:var(--brand2);
-  border-radius:20px;font-size:11px;font-weight:600;
 }
-.module-tag.amber{background:#FEF3CD;color:var(--amber)}
-.status-dot{
-  width:6px;height:6px;border-radius:50%;
-  background:var(--brand3);display:inline-block;
-  animation:pulse 2s infinite;
-}
-.status-dot.amber{background:var(--amber)}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.mod-tag.amber{background:#FEF3C7;color:var(--amber)}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--brand3);display:inline-block;animation:blink 2s infinite}
+.dot.amber{background:var(--amber)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
-footer{
-  text-align:center;padding:20px;
-  font-size:11px;color:var(--ink3);
-  border-top:1px solid var(--line);
-  background:#fff;
-}
+footer{text-align:center;padding:20px;font-size:11px;color:var(--ink3);border-top:1px solid var(--line)}
 footer a{color:var(--brand2);text-decoration:none}
-footer a:hover{text-decoration:underline}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="header-logo">
+<header class="hdr">
+  <div class="hdr-left">
     <span>🐄</span>
     <h1>BOVIQ</h1>
   </div>
-  <div class="header-date" id="header-date"></div>
-</div>
+  <div class="hdr-right" id="hdr-date"></div>
+</header>
 
-<div class="main">
+<main class="page">
 
-  <!-- MÉTÉO -->
-  <div id="dash-meteo"></div>
+  <div id="meteo-zone"></div>
 
-  <!-- KPIs TROUPEAU -->
-  <div class="section-title"><span>🐄</span> Troupeau — EARL La Rousselière</div>
-  <div class="kpi-grid" id="kpi-troupeau">
-    <div class="kpi-card"><div class="kpi-label">Animaux</div><div class="kpi-val white" id="kpi-animaux">—</div><div class="kpi-sub">total</div></div>
-    <div class="kpi-card"><div class="kpi-label">Gestantes</div><div class="kpi-val" id="kpi-gestantes">—</div><div class="kpi-sub">IA en cours</div></div>
-    <div class="kpi-card"><div class="kpi-label">Terme dépassé</div><div class="kpi-val" id="kpi-terme" style="color:var(--amber)">—</div><div class="kpi-sub">vêlages urgents</div></div>
-    <div class="kpi-card"><div class="kpi-label">Vêlages 30j</div><div class="kpi-val" id="kpi-velages">—</div><div class="kpi-sub">à prévoir</div></div>
-    <div class="kpi-card"><div class="kpi-label">Alertes BDNI</div><div class="kpi-val" id="kpi-bdni" style="color:var(--amber)">—</div><div class="kpi-sub">à déclarer</div></div>
-    <div class="kpi-card"><div class="kpi-label">Actes sanitaires</div><div class="kpi-val white" id="kpi-sante">—</div><div class="kpi-sub">total enregistrés</div></div>
-  </div>
+  <!-- TROUPEAU -->
+  <section class="sec">
+    <div class="sec-head">
+      <h2>🐄 Troupeau — EARL La Rousselière</h2>
+      <span class="badge" id="troupeau-ver"></span>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="kpi-lbl">Animaux</div><div class="kpi-val dark" id="k-animaux">160</div><div class="kpi-sub">total</div></div>
+      <div class="kpi"><div class="kpi-lbl">IA en cours</div><div class="kpi-val" id="k-gest">24</div><div class="kpi-sub">gestantes probables</div></div>
+      <div class="kpi"><div class="kpi-lbl">Terme dépassé</div><div class="kpi-val amber" id="k-terme">4</div><div class="kpi-sub">vêlages urgents</div></div>
+      <div class="kpi"><div class="kpi-lbl">Vêlages 30j</div><div class="kpi-val" id="k-vel30">7</div><div class="kpi-sub">à prévoir</div></div>
+      <div class="kpi"><div class="kpi-lbl">Alertes BDNI</div><div class="kpi-val amber" id="k-bdni">4</div><div class="kpi-sub">à déclarer</div></div>
+      <div class="kpi"><div class="kpi-lbl">Actes sanitaires</div><div class="kpi-val dark" id="k-sante">134</div><div class="kpi-sub">total enregistrés</div></div>
+    </div>
+  </section>
 
-  <!-- KPIs LAIT -->
-  <div class="section-title"><span>🥛</span> Contrôle laitier</div>
-  <div class="kpi-grid" id="kpi-lait">
-    <div class="kpi-card"><div class="kpi-label">Vaches contrôlées</div><div class="kpi-val white" id="kpi-ml-ctrl">—</div><div class="kpi-sub" id="kpi-ml-date">—</div></div>
-    <div class="kpi-card"><div class="kpi-label">Lait moyen</div><div class="kpi-val" id="kpi-ml-lait">—</div><div class="kpi-sub">L/j par vache</div></div>
-    <div class="kpi-card"><div class="kpi-label">TB / TP moyens</div><div class="kpi-val white" id="kpi-ml-tbtp">—</div><div class="kpi-sub">g/kg</div></div>
-    <div class="kpi-card"><div class="kpi-label">Leucos >400k</div><div class="kpi-val" id="kpi-ml-leucos">—</div><div class="kpi-sub">vaches en alerte</div></div>
-    <div class="kpi-card"><div class="kpi-label">À inséminer</div><div class="kpi-val amber" id="kpi-ml-ia">—</div><div class="kpi-sub">conseillées</div></div>
-  </div>
+  <!-- CONTRÔLE LAITIER -->
+  <section class="sec">
+    <div class="sec-head">
+      <h2>🥛 Contrôle laitier</h2>
+      <span class="badge" id="ml-badge">Contrôle 04/03/26</span>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="kpi-lbl">VL contrôlées</div><div class="kpi-val dark" id="k-ctrl">82</div><div class="kpi-sub">en traite</div></div>
+      <div class="kpi"><div class="kpi-lbl">Lait moyen</div><div class="kpi-val" id="k-lait">9.4</div><div class="kpi-sub">L/j par vache</div></div>
+      <div class="kpi"><div class="kpi-lbl">TB / TP</div><div class="kpi-val dark" id="k-tbtp">35.8<small style="font-size:.45em">/28.0</small></div><div class="kpi-sub">g/kg moyens</div></div>
+      <div class="kpi"><div class="kpi-lbl">Leucos &gt;400k</div><div class="kpi-val" id="k-leucos">11</div><div class="kpi-sub">vaches en alerte</div></div>
+      <div class="kpi"><div class="kpi-lbl">À inséminer</div><div class="kpi-val amber" id="k-ia">13</div><div class="kpi-sub">conseillées</div></div>
+    </div>
+  </section>
 
-  <!-- KPIs COURS -->
-  <div class="section-title"><span>📈</span> Cours du marché <span id="cours-src" style="font-size:.85rem;font-weight:400;color:var(--ink3)"></span></div>
-  <div class="kpi-grid" id="kpi-cours">
-    <div class="kpi-card"><div class="kpi-label">Vache R</div><div class="kpi-val" id="kpi-vr">—</div><div class="kpi-sub">€/kg carc.</div></div>
-    <div class="kpi-card"><div class="kpi-label">Vache O</div><div class="kpi-val white" id="kpi-vo">—</div><div class="kpi-sub">€/kg carc.</div></div>
-    <div class="kpi-card"><div class="kpi-label">Jeune bovin R</div><div class="kpi-val" id="kpi-jbr">—</div><div class="kpi-sub">€/kg carc.</div></div>
-    <div class="kpi-card"><div class="kpi-label">Lait conv.</div><div class="kpi-val white" id="kpi-lait-prix">449</div><div class="kpi-sub">€/1000 L</div></div>
-  </div>
+  <!-- COURS -->
+  <section class="sec">
+    <div class="sec-head">
+      <h2>📈 Cours du marché</h2>
+      <span class="badge" id="cours-badge">DG AGRI</span>
+    </div>
+    <div class="kpis" style="grid-template-columns:repeat(4,1fr)">
+      <div class="kpi"><div class="kpi-lbl">Vache R·3</div><div class="kpi-val" id="k-vr">—</div><div class="kpi-sub">€/kg carc.</div></div>
+      <div class="kpi"><div class="kpi-lbl">Vache O·3</div><div class="kpi-val dark" id="k-vo">—</div><div class="kpi-sub">€/kg carc.</div></div>
+      <div class="kpi"><div class="kpi-lbl">JB R·3</div><div class="kpi-val" id="k-jbr">—</div><div class="kpi-sub">€/kg carc.</div></div>
+      <div class="kpi"><div class="kpi-lbl">Lait conv.</div><div class="kpi-val dark" id="k-laitpx">449</div><div class="kpi-sub">€/1 000 L</div></div>
+    </div>
+  </section>
 
-  <!-- MODULES NAVIGATION -->
-  <div class="section-title"><span>🔧</span> Modules</div>
-  <div class="modules-grid">
-    <a href="boviq-v6-latest.html" class="module-card">
-      <div class="module-icon">📋</div>
-      <h2>Gestion de troupeau</h2>
-      <p>Animaux, reproduction, sanitaire, vaccinations, tableau de bord, bilan financier, export JSON/CSV.</p>
-      <span class="module-tag"><span class="status-dot"></span> V6 — App principale</span>
-    </a>
-    <a href="boviq-cours-marche.html" class="module-card">
-      <div class="module-icon">📈</div>
-      <h2>Cours du marché</h2>
-      <p>Prix lait et viande bovine. Données DG AGRI, mise à jour automatique chaque lundi. Import CSV manuel possible.</p>
-      <span class="module-tag amber"><span class="status-dot amber"></span> Données DG AGRI</span>
-    </a>
-    <a href="boviq-milklic.html" class="module-card">
-      <div class="module-icon">🥛</div>
-      <h2>Contrôle laitier</h2>
-      <p>Import CSV MilKlic/Seenergi, tableau de bord cellules, conseils IA reproduction, courbes historiques.</p>
-      <span class="module-tag"><span class="status-dot"></span> MilKlic · Seenergi</span>
-    </a>
-  </div>
+  <!-- MODULES -->
+  <section class="sec">
+    <div class="sec-head"><h2>🔧 Modules</h2></div>
+    <div class="modules">
+      <a href="boviq-v6-latest.html" class="mod">
+        <div class="mod-ico">📋</div>
+        <h3>Gestion de troupeau</h3>
+        <p>Animaux, reproduction, sanitaire, vaccinations, tableau de bord, bilan financier, export JSON/CSV.</p>
+        <span class="mod-tag"><span class="dot"></span>V6 — App principale</span>
+      </a>
+      <a href="boviq-cours-marche.html" class="mod">
+        <div class="mod-ico">📈</div>
+        <h3>Cours du marché</h3>
+        <p>Prix lait et viande bovine. Données DG AGRI, mise à jour automatique chaque lundi. Import CSV manuel.</p>
+        <span class="mod-tag amber"><span class="dot amber"></span>Données DG AGRI</span>
+      </a>
+      <a href="boviq-milklic.html" class="mod">
+        <div class="mod-ico">🥛</div>
+        <h3>Contrôle laitier</h3>
+        <p>Import CSV MilKlic/Seenergi, tableau de bord cellules, conseils IA reproduction, courbes historiques.</p>
+        <span class="mod-tag"><span class="dot"></span>MilKlic · Seenergi</span>
+      </a>
+    </div>
+  </section>
 
-</div>
+</main>
 
-<footer>BOVIQ v1.2 — 100% local, données privées &nbsp;·&nbsp; <a href="https://github.com/loduval/boviq-app" target="_blank">GitHub</a></footer>
+<footer>BOVIQ v1.2 · 100% local, données privées &nbsp;·&nbsp; <a href="https://github.com/loduval/boviq-app" target="_blank">GitHub</a></footer>
 
 <script>
 // ── DATE ──
 (function(){
   const d=new Date();
-  const j=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
-  const m=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
-  document.getElementById('header-date').textContent=j[d.getDay()]+' '+d.getDate()+' '+m[d.getMonth()]+' '+d.getFullYear();
+  const J=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  const M=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+  document.getElementById('hdr-date').textContent=J[d.getDay()]+' '+d.getDate()+' '+M[d.getMonth()]+' '+d.getFullYear();
 })();
 
 // ── MÉTÉO ──
-const METEO={lat:47.95,lng:-0.65,lieu:'La Rousselière'};
-const WMO_ICONS={0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌦️',53:'🌦️',55:'🌧️',61:'🌧️',63:'🌧️',65:'🌧️',71:'🌨️',73:'🌨️',75:'🌨️',77:'🌨️',80:'🌦️',81:'🌧️',82:'🌧️',95:'⛈️',96:'⛈️',99:'⛈️'};
-function wmoIcon(c){return WMO_ICONS[c]||'🌤️'}
-function wmoDesc(c){const m={0:'Ciel Dégagé',1:'Peu nuageux',2:'Partiellement nuageux',3:'Couvert',45:'Brouillard',48:'Brouillard givrant',51:'Bruine légère',53:'Bruine',55:'Bruine forte',61:'Pluie légère',63:'Pluie',65:'Pluie forte',71:'Neige légère',73:'Neige',75:'Neige forte',80:'Averses légères',81:'Averses',82:'Averses fortes',95:'Orage',96:'Orage avec grêle',99:'Orage fort'};return m[c]||'—'}
-function meteoVerdict(wmo,rain,wind){
-  if(wmo<=1&&rain<0.5&&wind<40)return{cls:'vert',ico:'🌿',txt:'Sortie au pré possible'};
-  if(wmo<=3&&rain<2&&wind<60)return{cls:'amber',ico:'⚠️',txt:'Conditions moyennes'};
+const MCFG={lat:47.95,lng:-0.65,lieu:'La Rousselière'};
+const WI={0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌦️',53:'🌦️',55:'🌧️',61:'🌧️',63:'🌧️',65:'🌧️',71:'🌨️',73:'🌨️',75:'🌨️',80:'🌦️',81:'🌧️',82:'🌧️',95:'⛈️',96:'⛈️',99:'⛈️'};
+const WD={0:'Ciel Dégagé',1:'Peu nuageux',2:'Partiellement nuageux',3:'Couvert',45:'Brouillard',61:'Pluie légère',63:'Pluie',65:'Pluie forte',80:'Averses légères',81:'Averses',95:'Orage'};
+const wi=c=>WI[c]||'🌤️';
+const wd=c=>WD[c]||'Variable';
+function verdict(wmo,rain,wind){
+  if(wmo<=1&&rain<0.5&&wind<40)return{cls:'ok',ico:'🌿',txt:'Sortie au pré ✓'};
+  if(wmo<=3&&rain<2&&wind<60)return{cls:'warn',ico:'⚠️',txt:'Conditions moyennes'};
   return{cls:'',ico:'🚫',txt:'Sortie déconseillée'};
 }
-
-let _metCache=null,_metTime=0;
+let _mc=null,_mt=0;
 function loadMeteo(){
-  const el=document.getElementById('dash-meteo');
-  if(_metCache&&(Date.now()-_metTime)<1800000){renderMeteo(_metCache);return}
-  el.innerHTML=`<div class="meteo-card"><div class="meteo-error">🌤️ Chargement météo…</div></div>`;
-  fetch(`https://api.open-meteo.com/v1/forecast?latitude=${METEO.lat}&longitude=${METEO.lng}&current=temperature_2m,weathercode,windspeed_10m,precipitation&hourly=temperature_2m,weathercode,precipitation,windspeed_10m&forecast_days=2&timezone=Europe%2FParis`)
-    .then(r=>r.json()).then(d=>{_metCache=d;_metTime=Date.now();renderMeteo(d)})
-    .catch(()=>{el.innerHTML=`<div class="meteo-card"><div class="meteo-error">🌤️ Météo indisponible</div></div>`});
+  const z=document.getElementById('meteo-zone');
+  if(_mc&&(Date.now()-_mt)<1800000){renderMeteo(_mc);return}
+  z.innerHTML=`<div class="meteo"><div class="meteo-err">🌤️ Chargement météo…</div></div>`;
+  fetch(`https://api.open-meteo.com/v1/forecast?latitude=${MCFG.lat}&longitude=${MCFG.lng}&current=temperature_2m,weathercode,windspeed_10m,precipitation&hourly=temperature_2m,weathercode,precipitation,windspeed_10m&forecast_days=2&timezone=Europe%2FParis`)
+    .then(r=>r.json()).then(d=>{_mc=d;_mt=Date.now();renderMeteo(d)})
+    .catch(()=>{z.innerHTML=`<div class="meteo"><div class="meteo-err">🌤️ Météo indisponible — vérifiez la connexion</div></div>`});
 }
-
 function renderMeteo(data){
-  const el=document.getElementById('dash-meteo');if(!el)return;
-  const cur=data.current;
-  const now=new Date();const nowH=now.getHours();
-  const tz=data.hourly.time.map(t=>new Date(t));
+  const z=document.getElementById('meteo-zone');if(!z)return;
+  const c=data.current;const now=new Date();
   const slots=[];
   for(let i=0;i<data.hourly.time.length&&slots.length<6;i++){
-    const h=tz[i];if(h<now)continue;
-    slots.push({time:h.getHours()+'h',wmo:data.hourly.weathercode[i],temp:Math.round(data.hourly.temperature_2m[i]),rain:data.hourly.precipitation[i],wind:data.hourly.windspeed_10m[i],now:slots.length===0});
+    const h=new Date(data.hourly.time[i]);if(h<now)continue;
+    slots.push({t:h.getHours()+'h',wmo:data.hourly.weathercode[i],temp:Math.round(data.hourly.temperature_2m[i]),rain:data.hourly.precipitation[i],first:slots.length===0});
   }
-  const v=meteoVerdict(cur.weathercode,cur.precipitation,cur.windspeed_10m);
-  el.innerHTML=`
-  <div class="meteo-card"><div class="meteo-inner">
-    <div class="meteo-loc">📍 ${METEO.lieu}</div>
-    <div class="meteo-top">
-      <div class="meteo-current">
-        <div class="meteo-icon">${wmoIcon(cur.weathercode)}</div>
-        <div>
-          <div class="meteo-temp">${Math.round(cur.temperature_2m)}<sup style="font-size:.5em">°C</sup></div>
-          <div class="meteo-desc">${wmoDesc(cur.weathercode)}</div>
-          <div class="meteo-meta"><span>💨 ${Math.round(cur.windspeed_10m)} km/h</span><span>🌧 ${cur.precipitation} mm</span></div>
+  const v=verdict(c.weathercode,c.precipitation,c.windspeed_10m);
+  z.innerHTML=`<div class="meteo">
+<div class="meteo-body">
+  <div>
+    <div class="meteo-loc">📍 ${MCFG.lieu}</div>
+    <div class="meteo-main">
+      <div class="meteo-ico">${wi(c.weathercode)}</div>
+      <div>
+        <div class="meteo-temp">${Math.round(c.temperature_2m)}<sup style="font-size:.4em;vertical-align:top;padding-top:.4em">°C</sup></div>
+        <div class="meteo-info">
+          <div class="meteo-desc">${wd(c.weathercode)}</div>
+          <div class="meteo-sub"><span>💨 ${Math.round(c.windspeed_10m)} km/h</span><span>🌧 ${c.precipitation} mm</span></div>
         </div>
       </div>
-      <div class="meteo-verdict ${v.cls}">
-        <div class="mv-label">SORTIE AU PRÉ</div>
-        <div class="mv-icon">${v.ico}</div>
-        <div class="mv-text">${v.txt}</div>
-      </div>
     </div>
-    <div class="meteo-forecast">${slots.map(s=>`
-      <div class="meteo-slot${s.now?' now':''}">
-        <div class="ms-time">${s.now?'Maintenant':s.time}</div>
-        <div class="ms-ico">${wmoIcon(s.wmo)}</div>
-        <div class="ms-temp">${s.temp}°</div>
-        <div class="ms-rain">${s.rain>0?s.rain+' mm':'—'}</div>
-      </div>`).join('')}
-    </div>
-    <div class="meteo-footer">Open-Meteo · ${now.getHours()}h${String(now.getMinutes()).padStart(2,'0')}</div>
-  </div></div>`;
+  </div>
+  <div class="meteo-verdict ${v.cls}">
+    <div class="mv-lbl">Sortie au pré</div>
+    <div class="mv-ico">${v.ico}</div>
+    <div class="mv-txt">${v.txt}</div>
+  </div>
+</div>
+<div class="meteo-slots">${slots.map(s=>`
+  <div class="slot${s.first?' now':''}">
+    <div class="slot-t">${s.first?'Maintenant':s.t}</div>
+    <div class="slot-i">${wi(s.wmo)}</div>
+    <div class="slot-v">${s.temp}°</div>
+    <div class="slot-r">${s.rain>0?s.rain+'mm':'—'}</div>
+  </div>`).join('')}
+</div>
+<div class="meteo-foot">Open-Meteo · ${now.getHours()}h${String(now.getMinutes()).padStart(2,'0')}</div>
+</div>`;
 }
 
-// ── TROUPEAU KPIs ──
-function loadTroupeauKPIs(){
-  try{
-    const d=JSON.parse(localStorage.getItem('boviq')||'{}');
-    const animaux=d.animaux||[];
-    const repros=d.repros||[];
-    const sante=d.sante||[];
-    const today=new Date();
-
-    // Animaux total
-    document.getElementById('kpi-animaux').textContent=animaux.length||'—';
-
-    // Gestantes (repros sans velageReel = IA en cours)
-    const gestantes=repros.filter(r=>!r.velageReel&&r.dateSaillie);
-    document.getElementById('kpi-gestantes').textContent=gestantes.length||0;
-
-    // Termes dépassés (tar_prev < today)
-    let termeDep=0,velages30=0;
-    animaux.forEach(a=>{
-      if(!a._ml_tar_prev)return;
-      const tar=new Date(a._ml_tar_prev);
-      const diff=(tar-today)/(1000*86400);
-      if(diff<0)termeDep++;
-      else if(diff<=30)velages30++;
-    });
-    document.getElementById('kpi-terme').textContent=termeDep;
-    document.getElementById('kpi-velages').textContent=velages30;
-
-    // BDNI (placeholder — utilise le badge V6)
-    const bdni=d.bdniDeclares?Object.keys(d.bdniDeclares).length:0;
-    document.getElementById('kpi-bdni').textContent=bdni||0;
-
-    // Sanitaire
-    document.getElementById('kpi-sante').textContent=sante.length||0;
-  }catch(e){console.warn('KPI troupeau',e)}
-}
-
-// ── MILKLIC KPIs ──
-function loadMilklicKPIs(){
-  try{
-    // Données inline dans boviq (champs _ml_*)
-    const d=JSON.parse(localStorage.getItem('boviq')||'{}');
-    const ml=JSON.parse(localStorage.getItem('BOVIQ_MILKLIC')||'{}');
-    const animaux=d.animaux||[];
-    const vl=animaux.filter(a=>a._categ_ml==='VL'&&a._ml_lait24>0);
-
-    if(vl.length>0){
-      const laitMoy=(vl.reduce((s,a)=>s+(a._ml_lait24||0),0)/vl.length).toFixed(1);
-      const tbMoy=(vl.filter(a=>a._ml_tb>0).reduce((s,a)=>s+(a._ml_tb||0),0)/vl.filter(a=>a._ml_tb>0).length).toFixed(1);
-      const tpMoy=(vl.filter(a=>a._ml_tp>0).reduce((s,a)=>s+(a._ml_tp||0),0)/vl.filter(a=>a._ml_tp>0).length).toFixed(1);
-      const alrtLeucos=vl.filter(a=>a._ml_leucos>400).length;
-      const aInsem=animaux.filter(a=>a._ml_conseil_ia==='A inséminér').length;
-
-      document.getElementById('kpi-ml-ctrl').textContent=vl.length;
-      document.getElementById('kpi-ml-date').textContent=d._mlControleDate?'Contrôle '+d._mlControleDate:'en traite';
-      document.getElementById('kpi-ml-lait').textContent=laitMoy;
-      document.getElementById('kpi-ml-tbtp').textContent=tbMoy+'/'+tpMoy;
-      document.getElementById('kpi-ml-leucos').textContent=alrtLeucos;
-      if(alrtLeucos>0)document.getElementById('kpi-ml-leucos').className='kpi-val red';
-      document.getElementById('kpi-ml-ia').textContent=aInsem;
-    } else if(ml.controleDate){
-      document.getElementById('kpi-ml-date').textContent='Contrôle '+ml.controleDate;
-    }
-  }catch(e){console.warn('KPI milklic',e)}
-}
-
-// ── COURS KPIs ──
-function loadCoursKPIs(){
-  try{
-    const m=JSON.parse(localStorage.getItem('boviq_market_v2')||'{}');
-    if(!m.cotations)return fetchCoursFromRepo();
-
-    // cotations est un tableau (d'après le stockage cours-marche)
-    const cots=m.cotations;
-    if(!Array.isArray(cots)||!cots.length){fetchCoursFromRepo();return}
-
-    // Trouver dernière semaine
-    const semaines=[...new Set(cots.map(c=>c.semaine))].sort().reverse();
-    const lastSem=semaines[0];
-    const lastCots=cots.filter(c=>c.semaine===lastSem);
-
-    const vr=lastCots.find(c=>(c.categorie==='Vaches'||c.categorieNorm==='Vaches')&&c.conformation==='R'&&(c.engraissement===3||c.engraissement==='3'));
-    const vo=lastCots.find(c=>(c.categorie==='Vaches'||c.categorieNorm==='Vaches')&&c.conformation==='O'&&(c.engraissement===3||c.engraissement==='3'));
-    const jbr=lastCots.find(c=>(c.categorie==='Jeunes Bovins'||c.categorieNorm==='Jeunes Bovins')&&c.conformation==='R'&&(c.engraissement===3||c.engraissement==='3'));
-
-    if(vr)document.getElementById('kpi-vr').textContent=vr.prix.toFixed(2);
-    if(vo)document.getElementById('kpi-vo').textContent=vo.prix.toFixed(2);
-    if(jbr)document.getElementById('kpi-jbr').textContent=jbr.prix.toFixed(2);
-
-    if(m.source){
-      document.getElementById('cours-src').textContent='— '+m.source;
-    }
-  }catch(e){fetchCoursFromRepo()}
-}
-
-function fetchCoursFromRepo(){
-  fetch('data/market/cours-data.json')
-    .then(r=>r.json())
-    .then(data=>{
-      // Stocker en localStorage pour la prochaine fois
-      if(data.cotations){
-        localStorage.setItem('boviq_market_v2',JSON.stringify({
-          cotations:data.cotations,
-          lastUpdate:data.meta?.generated,
-          source:data.meta?.source_label||'DG AGRI',
-          rawHeaders:[]
-        }));
-        loadCoursKPIs();
-      }
-    })
-    .catch(()=>{});
-}
-
-// ── INIT — charge INIT_DATA si localStorage vide (même logique que V6) ──
+// ── TROUPEAU — surcharge si localStorage disponible ──
 (function(){
   try{
-    const raw = localStorage.getItem('boviq');
-    const D = raw ? JSON.parse(raw) : null;
-    const localVer = D?._dataVersion || 0;
-    // Récupère INIT_DATA depuis V6 via fetch (même origin)
-    if(!D || !D.animaux || !D.animaux.length){
-      fetch('boviq-v6-latest.html')
-        .then(r=>r.text())
-        .then(html=>{
-          const m = html.match(/const INIT_DATA=(\{.+?\});[\r\n]/s) ||
-                    html.match(/const INIT_DATA=(\{[\s\S]+?\});\s*\/\//);
-          if(m){
-            try{
-              const init = JSON.parse(m[1]);
-              const existing = JSON.parse(localStorage.getItem('boviq')||'{}');
-              if(!existing.animaux || !existing.animaux.length){
-                localStorage.setItem('boviq', JSON.stringify(init));
-                loadTroupeauKPIs();
-                loadMilklicKPIs();
-              }
-            }catch(e){}
-          }
-        }).catch(()=>{});
+    const d=JSON.parse(localStorage.getItem('boviq')||'null');
+    if(!d||!d.animaux||!d.animaux.length)return; // garde les valeurs par défaut
+    const today=new Date();
+    const animaux=d.animaux||[];
+    const repros=d.repros||[];
+    let terme=0,vel30=0;
+    animaux.forEach(a=>{
+      if(!a._ml_tar_prev)return;
+      const diff=(new Date(a._ml_tar_prev)-today)/86400000;
+      if(diff<0)terme++;else if(diff<=30)vel30++;
+    });
+    const gest=repros.filter(r=>!r.velageReel&&r.dateSaillie).length;
+    const bdni=d.bdniDeclares?Object.keys(d.bdniDeclares).length:0;
+    document.getElementById('k-animaux').textContent=animaux.length;
+    document.getElementById('k-gest').textContent=gest;
+    document.getElementById('k-terme').textContent=terme;
+    document.getElementById('k-vel30').textContent=vel30;
+    document.getElementById('k-bdni').textContent=bdni;
+    document.getElementById('k-sante').textContent=(d.sante||[]).length;
+    document.getElementById('troupeau-ver').textContent='v'+d._dataVersion;
+    // ML
+    const vl=animaux.filter(a=>a._categ_ml==='VL'&&a._ml_lait24>0);
+    if(vl.length){
+      const lait=(vl.reduce((s,a)=>s+a._ml_lait24,0)/vl.length).toFixed(1);
+      const tbA=vl.filter(a=>a._ml_tb>0),tpA=vl.filter(a=>a._ml_tp>0);
+      const tb=tbA.length?(tbA.reduce((s,a)=>s+a._ml_tb,0)/tbA.length).toFixed(1):0;
+      const tp=tpA.length?(tpA.reduce((s,a)=>s+a._ml_tp,0)/tpA.length).toFixed(1):0;
+      const leuc=vl.filter(a=>a._ml_leucos>400).length;
+      const ia=animaux.filter(a=>a._ml_conseil_ia==='A inséminér').length;
+      document.getElementById('k-ctrl').textContent=vl.length;
+      document.getElementById('k-lait').textContent=lait;
+      document.getElementById('k-tbtp').innerHTML=tb+'<small style="font-size:.45em">/'+tp+'</small>';
+      document.getElementById('k-leucos').textContent=leuc;
+      if(leuc>0)document.getElementById('k-leucos').className='kpi-val red';
+      document.getElementById('k-ia').textContent=ia;
+      if(d._mlControleDate)document.getElementById('ml-badge').textContent='Contrôle '+d._mlControleDate;
     }
   }catch(e){}
 })();
 
+// ── COURS ──
+(function(){
+  // 1. Essai localStorage
+  try{
+    const m=JSON.parse(localStorage.getItem('boviq_market_v2')||'null');
+    if(m&&Array.isArray(m.cotations)&&m.cotations.length){parseCours(m);return}
+  }catch(e){}
+  // 2. Fallback : fetch JSON du repo (même origin GitHub Pages)
+  fetch('data/market/cours-data.json')
+    .then(r=>r.json())
+    .then(data=>{
+      if(!data.cotations)return;
+      try{localStorage.setItem('boviq_market_v2',JSON.stringify({cotations:data.cotations,lastUpdate:data.meta?.generated,source:data.meta?.source_label||'DG AGRI ('+data.meta?.source_week+')'}))}catch(e){}
+      parseCours({cotations:data.cotations,source:data.meta?.source_label||'DG AGRI'});
+    }).catch(()=>{});
+})();
+function parseCours(m){
+  const cots=m.cotations;
+  const semaines=[...new Set(cots.map(c=>c.semaine))].sort().reverse();
+  const last=cots.filter(c=>c.semaine===semaines[0]);
+  const find=(cat,conf,eng)=>last.find(c=>(c.categorie===cat||c.categorieNorm===cat)&&c.conformation===conf&&(c.engraissement===eng||c.engraissement===String(eng)));
+  const vr=find('Vaches','R',3),vo=find('Vaches','O',3),jbr=find('Jeunes Bovins','R',3);
+  if(vr)document.getElementById('k-vr').textContent=vr.prix.toFixed(2);
+  if(vo)document.getElementById('k-vo').textContent=vo.prix.toFixed(2);
+  if(jbr)document.getElementById('k-jbr').textContent=jbr.prix.toFixed(2);
+  if(m.source)document.getElementById('cours-badge').textContent=m.source;
+}
+
 loadMeteo();
-loadTroupeauKPIs();
-loadMilklicKPIs();
-loadCoursKPIs();
 </script>
 </body>
 </html>
