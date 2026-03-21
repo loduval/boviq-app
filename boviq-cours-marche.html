@@ -123,9 +123,12 @@ select.form-select{font:400 13px 'DM Sans',sans-serif;padding:6px 10px;border:1p
 
 <div class="page">
   <div class="page-head">
-    <div>
-      <h2>📈 Cours du Marché</h2>
-      <div class="subtitle">Cotations viande bovine & prix du lait — données FranceAgriMer (mise à jour automatique chaque mardi)</div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <a href="boviq-v6-latest.html" title="Retour BOVIQ" style="font-size:28px;text-decoration:none;line-height:1;flex-shrink:0">🐄</a>
+      <div>
+        <h2>📈 Cours du Marché</h2>
+        <div class="subtitle">Cotations viande bovine & prix du lait — données FranceAgriMer (mise à jour automatique chaque mardi)</div>
+      </div>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn btn-p" id="btn-refresh" onclick="refreshData()">🔄 Actualiser les cours</button>

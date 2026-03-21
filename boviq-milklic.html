@@ -26,8 +26,9 @@ html{font-size:14px}
 body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100dvh}
 .app{display:flex;min-height:100dvh}
 .sidebar{width:220px;background:var(--brand3);color:#fff;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50}
-.sidebar-brand{padding:20px 18px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.08)}
-.sidebar-brand svg{width:28px;height:28px;fill:#fff;opacity:.9;flex-shrink:0}
+.sidebar-brand{padding:20px 18px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.08);text-decoration:none;color:inherit;transition:opacity .15s}
+.sidebar-brand:hover{opacity:.85}
+.sidebar-brand .cow-icon{font-size:32px;line-height:1;flex-shrink:0}
 .sidebar-brand div h1{font-family:'Playfair Display',serif;font-size:20px;font-weight:700}
 .sidebar-brand div span{font-size:11px;opacity:.45;display:block;margin-top:1px}
 .sidebar-nav{flex:1;padding:10px;display:flex;flex-direction:column;gap:2px}
@@ -75,7 +76,7 @@ tr:last-child td{border-bottom:none}
 tr:hover td{background:var(--bg)}
 .td-nom{font-weight:600;color:var(--ink)}
 .td-trav{font-size:11px;color:var(--ink3);font-family:monospace}
-.drop-zone{border:2px dashed var(--line2);border-radius:var(--r2);padding:40px 24px;text-align:center;cursor:pointer;transition:all .2s;background:var(--card)}
+.drop-zone{display:block;border:2px dashed var(--line2);border-radius:var(--r2);padding:60px 24px;text-align:center;cursor:pointer;transition:all .2s;background:var(--card);width:100%}
 .drop-zone:hover,.drop-zone.drag{border-color:var(--brand2);background:var(--brand-pale)}
 .drop-zone svg{width:44px;height:44px;stroke:var(--ink3);margin-bottom:12px}
 .drop-zone h3{font-size:15px;font-weight:600;color:var(--ink2);margin-bottom:6px}
@@ -115,10 +116,10 @@ tr:hover td{background:var(--bg)}
 <body>
 <div class="app">
 <aside class="sidebar">
-  <div class="sidebar-brand">
-    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+  <a href="boviq-v6-latest.html" class="sidebar-brand" title="Retour au tableau de bord BOVIQ">
+    <span class="cow-icon">🐄</span>
     <div><h1>BOVIQ</h1><span>Contrôle Laitier</span></div>
-  </div>
+  </a>
   <nav class="sidebar-nav">
     <button class="nav-btn active" data-p="import"><span class="icon">🔄</span>Import CSV</button>
     <button class="nav-btn" data-p="dashboard"><span class="icon">📊</span>Tableau de bord</button>
