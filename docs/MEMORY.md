@@ -1,117 +1,108 @@
 # BOVIQ — MEMORY SESSION
 
-Dernière mise à jour : 21/03/2026 (session — BOVIQ MILKLIC : analyse CSV + fusion données + onglet contrôle laitier + fix layout + debug TDZ)
+Dernière mise à jour : 21/03/2026 — session dark mode + données CSV inline + 160 animaux MilKlic
 
 ---
 
 ## État du projet
 
-**boviq-v6-latest.html** — 5749 lignes, 439 KB  
-Dernier commit : `181e9db` — fix: page p-milklic repositionnée dans .content  
-**boviq-milklic.html** — 511 lignes, 36 KB (module MilKlic standalone)  
+**boviq-v6-latest.html** — ~5760 lignes, 439 KB  
+**boviq-milklic.html** — 541 lignes, 140 KB (INIT_ML_DATA inline 160 animaux)  
+**boviq-cours-marche.html** — 1140 lignes, 48 KB  
+**index.html** — landing dark mode (Cormorant Garamond + DM Sans)  
 **Repo GitHub** : `loduval/boviq-app` (public)  
 **GitHub Pages** : `loduval.github.io/boviq-app/`  
-**Page d'accueil** : `index.html` (landing page 3 cartes : BOVIQ V6 + Cours + MilKlic)  
-**Working tree** : ✅ propre (clean)
+**Dernier commit** : `b82de0e` — sw.js cache bust → boviq-v20260321
 
 ---
 
-## Session 21/03/2026 — BOVIQ MILKLIC
+## Sessions 21/03/2026 — Résumé complet
 
-### Analyse complète des 8 CSV MilKlic
+### Bugs corrigés
 
-Fichiers récupérés dans `DERNIERE-VERSION/` (sync tâche planifiée Windows lundi 7h) :
+| Bug | Commit | Fix |
+|-----|--------|-----|
+| `debounce is not defined` crash silencieux | `4f9766b` | Déplacer `function debounce` avant `debouncedSearchAnimaux` |
+| TDZ `const pages` → `navPages` | `68c6c7b` | Conflit jsPDF — renommé `navPages` |
+| boviq-cours-marche.html 404 | `4f9766b` | Restauré depuis commit `1f4847a` |
+| sw.js + manifest.json manquants | `fc03624` | Créés |
+| Logo MilKlic + lien retour | `31b97b0` | `🐄` + `href="index.html"` |
+| Météo dashboard absente | `3f3b1cd` + `39ed491` | Hook `goTo dashboard` + `setTimeout(initMeteo,100)` + fix bulletproof `try/catch` |
+| `renderMeteoWidget` crash silencieux | `ef4bd1f` | Accès sécurisé tous les champs API (idx=-1, hWcode[j]||0) |
+| index.html 3 cartes non alignées | `39ed491` | `grid-template-columns:repeat(3,1fr)` |
+| Logos → index.html | `39ed491` | Tous les modules pointent vers index.html |
+| Cache SW bloque les màj | `b82de0e` | Cache renommé `boviq-v20260321` |
 
-| Fichier | Contenu | Animaux |
-|---|---|---|
-| 01-ResultatsBruts | Dernier contrôle : lait 24h, TB, TP, leucos, urée | 93 VL + statuts |
-| 02-ValoriseIndividuel | Vue complète : repro, conseils IA, évolution | 95 animaux |
-| 03-HistoLait | Courbe lait 12 contrôles (avr.24→mar.26) | 75 VL |
-| 04-HistoTB | Idem TB | 75 VL |
-| 05-HistoTP | Idem TP | 75 VL |
-| 06-HistoCellules | SDIR + leucos 5 contrôles | 83 VL |
-| 07-Inventaire | Registre complet VL/GL/GV/MA | ~155 animaux |
-| 09-Gestation | Vide (crash serveur 08) | — |
+### Dark mode + redesign
 
-**Clé de jointure** : `Trav` (4 derniers chiffres N° travail) ↔ `boucle` BOVIQ normalisée (`s.replace(/\s/g,'')`)
+Commit `ef4bd1f` — palette identique au site landing `boviq-landing.html` :
+- `:root` → `--bg:#0A1810`, `--brand:#4ED87A`, `--ink:#F2EDE4`
+- Police : Cormorant Garamond (titres) + DM Sans (corps)
+- Grain overlay `body::before` (SVG fractalNoise)
+- Sidebar → `#070F09` + border rgba
+- Cards : border `rgba(255,255,255,.07)`, dark inputs/selects/modals
+- Scrollbar CSS dark, `height:100dvh` par page active
+- KPI values : Cormorant Garamond 32px
+- Badges, tabs, vaccin-rows, score-wrap, aide-card → dark
 
-### Fusion données réalisée
+### Données CSV MilKlic inline
 
-Script Python `processBruts + processValorise + processInventaire` :
-- 160 animaux fusionnés (152 BOVIQ + 8 nouveaux inventaire)
-- 82 VL avec données contrôle (`_ml_lait24`, `_ml_tb`, `_ml_tp`, `_ml_leucos`, `_ml_uree`)
-- 49 dates d'IA avec tarissements prévus
-- 19 conseils IA (déconseillée / à inséminér / possible)
-- Champs `_ml_*` ajoutés dans chaque animal BOVIQ
+Commit `ef4bd1f` → `cde9a02` :
 
-**`_dataVersion: 20260321`** — à incrémenter à chaque regénération
+**`boviq-v6-latest.html`** : INIT_DATA enrichi avec les valeurs CSV fraîches 04/03/26  
+(93 animaux avec `_ml_leucos`, `_ml_lait24`, `_ml_tb`, `_ml_tp`, `_ml_sdir` mis à jour)
 
-### Onglet "🥛 Contrôle Laitier" dans BOVIQ V6
+**`boviq-milklic.html`** : `INIT_ML_DATA` inline (102KB→140KB) :
+- **160 animaux** depuis CSV 07 Inventaire comme base (VL:93, GL:50, MA:13, GV:4)
+- Structure objet `{trav: {...}}` indexé comme ML.animaux JS le requiert
+- Vrais noms de champs JS : `histoLait`, `histoTB`, `histoTP`, `histoCell`, `conseilIA`, `numLact`, `tarPrev`, `taureau`, `dateIA`, `joursIA`, `rangIA`, `leucoPrev`
+- Historiques en objets `{"2024-04-22": 13.1}` (pas des arrays)
+- 82 VL avec lait24, 89 avec histoLait, 89 avec histoCell
+- Tarissements, conseils IA, SDIR issus du CSV 02 Valorisé
 
-- Nav button ajouté après "Analyse financière"
-- Page `id="p-milklic"` avec KPIs, alertes cellules, conseils IA, table filtrable
-- `goTo('milklic')` → `renderMilklic()` — filtre : all / alert / conseil / tar / vide
-- Lien vers `boviq-milklic.html` pour module standalone avec courbes
+**`loadML()`** : auto-charge `INIT_ML_DATA` si localStorage vide → 1ère ouverture = données présentes sans action
 
-### Module boviq-milklic.html (standalone)
+**`renderCourbesInit()`** : select groupé par catégorie (VL / Génisses / Mâles)
 
-Fichier indépendant — import CSV côté client (windows-1252) :
-- Drop-zone multi-fichiers
-- Parse 8 types de CSV auto-détectés par nom
-- localStorage `BOVIQ_MILKLIC` (clé partagée avec BOVIQ V6)
-- Dashboard : KPIs, alertes, repro, signaux faibles
-- Page Cellules : tableau classé leucos + SDIR + seuil filtrable
-- Page Repro : IA déconseillée / à inséminér / tarissements / vaches vides FV/TFV
-- Page Courbes : Chart.js lait/TB/TP/cellules par animal
-- Page Intégration : instructions bridge localStorage + statut correspondances
+**`updateSidebar()`** : affiche `160 animaux · 93 VL · 82 contrôlées`
 
-### Infrastructure Git — problèmes résolus
+### Cours du marché
 
-**Situation initiale** : deux repos (Mac `~/Desktop/01-Projects/BOVIQ` + Windows `C:\BOVIQ`) en conflit.
-- Mac = source de vérité ✅
-- Windows = clone pour tâche planifiée MilKlic uniquement (pas de commits directs)
-- `index.html` perdu lors rebase → restauré depuis `git show f9040e0:index.html`
-- `DERNIERE-VERSION/` (CSV MilKlic) committé dans le repo (à déplacer dans .gitignore si lourd)
-
-**Partage réseau Mac→Windows** :
-- `\\192.168.1.50\laurentduval` = home Mac (symlinks Desktop non traversables)
-- `\\192.168.1.50\Macintosh HD` = disque Mac complet (X:)
-- `\\192.168.1.50\01-Projects` = partage dédié (accessible)
-- Écriture fichiers Mac depuis filesystem MCP via `/Users/laurentduval/...` ✅
-
-### Bug critique identifié (non résolu)
-
-**Erreur TDZ** : `Cannot access 'pages' before initialization` à la ligne 1564 (goTo)  
-Cause probable : variable `const pages` déclarée dans le scope global ET dans `renderMilklic` (code injecté)  
-Symptôme : tous les onglets cassés, données ne s'affichent pas  
-**Workaround** : vider le localStorage `boviq` dans le navigateur → INIT_DATA 20260321 se charge  
-**Fix définitif à faire** : audit `const pages` dans renderMilklic → renommer en `mlAnimals` ou `filteredAnimals`
+Commit `39ed491` :
+- boviq-cours-marche.html restauré depuis commit `1f4847a` (lit `data/market/cours-data.json`)
+- Workflow GitHub Actions `.github/workflows/update-market-data.yml` recréé (lundi 8h UTC)
+- `data/market/cours-data.json` présent (données 16/03/2026)
+- Conversion lait ×10 : 44,93 €/100kg → 449 €/1000L
+- Vache R3 : 766 €/100kg → 7,66 €/kg
 
 ---
 
-## Commits session 21/03/2026
+## Commits session chronologiques
 
 | Commit | Description |
 |--------|-------------|
-| `91f33b1` | docs: MEMORY.md + INDEX.md mis à jour session 21/03 (MilKlic sync + fixes) |
-| `b98cb4e` | feat: module contrôle laitier MilKlic standalone |
-| `d7cb48c` | chore: sync .gitignore + merge Windows commits |
-| `d51e207` | restore: boviq-v6-latest.html (5627L) + backup |
-| `ad95083` | restore: index.html (landing page) + lien MilKlic |
-| `290ba0a` | feat: onglet Contrôle Laitier + fusion données MilKlic 21/03/26 |
-| `181e9db` | fix: page p-milklic repositionnée dans .content + padding + goTo hook |
+| `68c6c7b` | fix: renommer const pages → navPages |
+| `4f9766b` | fix: debounce + restore boviq-cours-marche.html |
+| `fc03624` | fix: sw.js + manifest.json |
+| `31b97b0` | fix: logo 🐄 + lien retour + drop-zone |
+| `3f3b1cd` | fix: météo goTo hook + milklic cards |
+| `39ed491` | fix: cours-marche restauré + workflow Actions + data/market + index 3col + météo setTimeout + logos |
+| `ef4bd1f` | feat: dark mode + données MilKlic CSV inline (95→160 animaux v1) + météo bulletproof |
+| `cde9a02` | fix: INIT_ML_DATA 160 animaux structure JS correcte (histoLait obj, vrais noms champs) |
+| `b82de0e` | fix: sw.js cache bust → boviq-v20260321 |
 
 ---
 
-## Données réelles intégrées
+## Données réelles intégrées (EARL La Rousselière)
 
-`_dataVersion: 20260321` — 163 animaux EARL La Rousselière  
-- ~96 VL en lactation, génisses U/V/A, veaux récents
-- 82 VL avec données contrôle MilKlic du 04/03/26
+`_dataVersion: 20260321` dans INIT_DATA V6 :
+- 160 animaux (93 VL + 50 GL + 13 MA + 4 GV)
+- 82 VL contrôlées au 04/03/2026 (données MilKlic Seenergi)
+- 12 dates de contrôle historiques : avr.24 → mar.26
 - 3 taureaux : U40 (Holstein Red), Ucello (Simmental), Sirocco (Normande)
-- 134 actes sanitaires (dont campagne FCO 17/03/26)
+- 134 actes sanitaires dont campagne FCO 130 animaux 17/03/2026
 - 28 repros actives
-- Bilan 2024 injecté (id: `bilan2024-rousseliere`)
+- Bilan EARL 2024 injecté
 
 ---
 
@@ -119,43 +110,60 @@ Symptôme : tous les onglets cassés, données ne s'affichent pas
 
 ```
 BOVIQ/
-├── index.html                  ← landing 3 cartes
-├── boviq-v6-latest.html        ← 5749 lignes, 439 KB
-├── boviq-milklic.html          ← 511 lignes, module MilKlic
-├── boviq-cours-marche.html
-├── manifest.json + sw.js
-├── icons/
-├── DERNIERE-VERSION/           ← CSV MilKlic 21/03/26
-├── docs/ (MEMORY/INDEX/ROADMAP/BOVIQ-COURS-NOTES)
-├── data/bilan/
+├── index.html                  ← landing dark mode (Cormorant + DM Sans)
+├── boviq-v6-latest.html        ← ~5760L, 439KB, dark mode
+├── boviq-milklic.html          ← 541L, 140KB, INIT_ML_DATA 160 animaux
+├── boviq-cours-marche.html     ← 1140L, 48KB
+├── manifest.json               ← PWA
+├── sw.js                       ← cache boviq-v20260321
+├── .github/workflows/
+│   └── update-market-data.yml  ← GitHub Actions lundi 8h UTC
 ├── data/market/
-├── scripts/                    ← milklic-sync.py (Windows)
-├── _backups-v6/                ← boviq-v6-20260321-avant-milklic.html
-├── _backups-ami/               ← boviq_backup_20260321.json
+│   └── cours-data.json         ← données 16/03/2026
+├── docs/
+│   ├── MEMORY.md               ← ce fichier
+│   ├── INDEX.md                ← index fonctions
+│   ├── ROADMAP.md
+│   └── BOVIQ-COURS-NOTES.md
+├── scripts/
+│   ├── milklic-sync.py         ← Windows tâche planifiée lundi 7h
+│   └── update-cours-data.py    ← GitHub Actions DG AGRI
+├── DERNIERE-VERSION/           ← 8 CSV MilKlic 21/03/2026
+├── _backups-v6/
 └── _archives/
 ```
 
 ---
 
-## À faire session suivante (BUG PRIORITAIRE)
+## URLs GitHub Pages
 
-1. **Fix TDZ `const pages`** dans `renderMilklic()` — renommer variable locale
-2. Tester l'onglet Contrôle Laitier avec données réelles dans le navigateur ami
-3. Enrichir fiches animaux individuelles avec données `_ml_*` (section dans modal animal)
-4. Mettre à jour ROADMAP.md
+| Module | URL |
+|--------|-----|
+| Landing | `https://loduval.github.io/boviq-app/` |
+| App principale | `https://loduval.github.io/boviq-app/boviq-v6-latest.html` |
+| Contrôle laitier | `https://loduval.github.io/boviq-app/boviq-milklic.html` |
+| Cours du marché | `https://loduval.github.io/boviq-app/boviq-cours-marche.html` |
 
 ---
 
-## Mots-clé reprise
+## Points en suspens (prochaine session)
 
-**`BOVIQ V6 REPRISE`** — reprise sur Mac  
-Actions : `cd ~/Desktop/01-Projects/BOVIQ && git log --oneline -5 && git status && wc -l boviq-v6-latest.html`
+1. **Météo** — vérifier affichage réel sur GitHub Pages (API open-meteo OK en local)
+2. **Dark mode** — finaliser `.gantt` CSS manquant (`.gantt-wrap` OK mais `.gantt` seul absent)
+3. **Modal animal** — enrichir avec section données MilKlic `_ml_*` (courbes mini Chart.js)
+4. **boviq-milklic.html** — tester renderCourbes() + renderCellules() avec INIT_ML_DATA réel
+5. **Import nouveaux CSV** — quand nouvel export MilKlic arrive, relancer le script Python et pousser
+6. **Sync CSV régulière** — envisager GitHub Actions hebdo (comme cours marché) pour màj automatique MilKlic
 
-**`BOVIQ MILKLIC`** — module contrôle laitier  
-Script sync : `C:\BOVIQ\scripts\milklic-sync.py` (Windows, lundi 7h)  
-Bug TDZ à corriger : `const pages` dans `renderMilklic()`
+---
 
-**`BOVIQ AMI`** — tests éleveur ami  
-localStorage à vider manuellement (version 20260318 → forcer 20260321)
+## Mots-clés reprise
 
-**`BOVIQ MILKLIC FIX`** — corriger bug TDZ + tester onglet complet
+**`BOVIQ V6`** — reprise dev troupeau (app principale)  
+**`BOVIQ BILAN`** — module financier  
+**`BOVIQ ROADMAP`** — roadmap (`docs/ROADMAP.md`)  
+**`BOVIQ COURS`** — cours marché DG AGRI  
+**`BOVIQ AMI`** — retours testeur (ami éleveur)  
+**`BOVIQ MILKLIC`** — module contrôle laitier CSV  
+**`BOVIQ DARK`** — redesign dark mode en cours  
+**`BOVIQ MILKLIC MAJ`** — mise à jour données CSV → relancer `/tmp/gen_milklic_final.py` + injecter dans boviq-milklic.html
