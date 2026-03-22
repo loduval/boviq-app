@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>BOVIQ Diag2</title>
+<style>
+body{font-family:monospace;padding:20px;background:#0d0d0d;color:#ccc;font-size:13px}
+h2{color:#fff;font-family:sans-serif;margin-bottom:6px}
+.ok{color:#4f4}.warn{color:#ff4}.err{color:#f44}.info{color:#4af}.dim{color:#666}
+#log{background:#000;padding:14px;border-radius:8px;min-height:120px;max-height:600px;overflow-y:auto;margin:12px 0;border:1px solid #333;line-height:1.7}
+button{padding:7px 16px;background:#1a1a1a;color:#fff;border:1px solid #444;border-radius:6px;cursor:pointer;font-size:12px;margin:3px;font-family:monospace}
+button:hover{background:#333}
+input[type=file]{color:#ccc;margin:8px 0;background:#1a1a1a;border:1px solid #444;padding:6px;border-radius:4px;width:100%}
+</style>
+</head>
+<body>
+<h2>🔬 BOVIQ Diagnostic Import v2</h2>
+<p class="info">Page de diagnostic avancé — colle les résultats à Laurent</p>
+<div id="log"></div>
+<button onclick="clearLog()">🗑 Effacer</button>
+<button onclick="testLS()">1. localStorage</button>
+<button onclick="testLSSize()">2. Taille localStorage</button>
+<button onclick="testPromise()">3. Promise.all</button>
+<button onclick="testFullPipeline()">4. Pipeline complet (sans fichier)</button>
+<br><br>
+<label class="info">5. Test avec tes vrais CSV :</label>
+<input type="file" id="fi" multiple accept=".csv,.CSV,text/csv" onchange="testWithFiles(event)">
+
+<script>
+var L = document.getElementById('log');
+function log(msg, cls='info'){
+  var t = new Date().toTimeString().substring(0,8);
+  L.innerHTML += '<div class="'+cls+'">['+t+'] '+msg+'</div>';
+  L.scrollTop = L.scrollHeight;
+}
+function clearLog(){ L.innerHTML=''; }
+
+// ── 1. localStorage ──────────────────────────────────────
+function testLS(){
+  log('=== TEST LOCALSTORAGE ===');
+  try {
+    localStorage.setItem('_test_boviq', '1');
+    var v = localStorage.getItem('_test_boviq');
+    localStorage.removeItem('_test_boviq');
+    if(v === '1') log('localStorage read/write OK', 'ok');
+    else log('localStorage: valeur incorrecte: '+v, 'err');
+  } catch(e) { log('localStorage BLOQUÉ: '+e.message, 'err'); }
+
+  var existing = localStorage.getItem('BOVIQ_MILKLIC');
+  if(existing) {
+    try {
+      var d = JSON.parse(existing);
+      log('BOVIQ_MILKLIC existant: '+Object.keys(d.animaux||{}).length+' animaux, date='+d.importDate, 'ok');
+    } catch(e) { log('BOVIQ_MILKLIC corrompu: '+e.message, 'err'); }
+  } else {
+    log('BOVIQ_MILKLIC absent (premier import)', 'warn');
+  }
+}
+
+// ── 2. Taille localStorage ────────────────────────────────
+function testLSSize(){
+  log('=== TAILLE LOCALSTORAGE ===');
+  var total = 0;
+  for(var k in localStorage){
+    if(localStorage.hasOwnProperty(k)){
+      var s = (localStorage.getItem(k)||'').length * 2;
+      total += s;
+      if(s > 50000) log('Clé "'+k+'": '+Math.round(s/1024)+'KB', 'warn');
+    }
+  }
+  var pct = Math.round(total / (5*1024*1024) * 100);
+  log('Total utilisé: '+Math.round(total/1024)+'KB / ~5MB ('+pct+'%)', total > 4000000 ? 'err' : 'ok');
+  if(total > 4000000) log('⚠️ localStorage PRESQUE PLEIN — saveML() va échouer!', 'err');
+}
+
+// ── 3. Promise.all ────────────────────────────────────────
+function testPromise(){
+  log('=== TEST PROMISE.ALL ===');
+  var tasks = [
+    new Promise(function(res){ setTimeout(function(){ res('t1'); }, 10); }),
+    new Promise(function(res){ setTimeout(function(){ res('t2'); }, 20); })
+  ];
+  Promise.all(tasks).then(function(results){
+    log('Promise.all OK: '+results.join(', '), 'ok');
+  }).catch(function(e){
+    log('Promise.all ERREUR: '+e.message, 'err');
+  });
+}
+
+// ── 4. Pipeline complet (simulation sans fichier) ─────────
+function testFullPipeline(){
+  log('=== PIPELINE COMPLET (simulation) ===');
+  // Simuler parseCSV
+  var testCSV = 'Col1;Col2;Col3\n9093;LAZURE;1651\n9117;LAMBADA;1468';
+  var rows = testCSV.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n').map(function(l){ return l.split(';').map(function(c){ return c.trim(); }); });
+  log('parseCSV: '+rows.length+' lignes, '+rows[0].length+' colonnes', 'ok');
+
+  // Simuler detectType
+  var testNames = [
+    '20260321_01-ResultatsBruts_gvResultats.csv',
+    '20260321_02-ValoriseIndividuel_ASPxGridView.csv',
+    '20260321_06-HistoCellules_ASPxGridView.csv',
+    '20260321_07-Inventaire_ASPxGridView.csv'
+  ];
+  testNames.forEach(function(n){
+    var t = detectTypeSim(n);
+    log('detectType("'+n.substring(9,30)+'...") → '+(t||'❌ NON RECONNU'), t ? 'ok' : 'err');
+  });
+
+  // Simuler saveML
+  log('Test saveML simulation...');
+  try {
+    var fakeML = {importDate:'2026-03-22', controleDate:'22/03/26', animaux:{}};
+    for(var i=0; i<50; i++) fakeML.animaux['test'+i] = {trav:'test'+i, nom:'Animal'+i, lait24:10, leucos:200};
+    var str = JSON.stringify(fakeML);
+    localStorage.setItem('_boviq_test_ml', str);
+    var back = localStorage.getItem('_boviq_test_ml');
+    localStorage.removeItem('_boviq_test_ml');
+    if(back === str) log('saveML simulation OK ('+Math.round(str.length/1024)+'KB)', 'ok');
+    else log('saveML simulation: données corrompues', 'err');
+  } catch(e) {
+    log('saveML simulation ERREUR: '+e.message, 'err');
+  }
+}
+
+function detectTypeSim(n){
+  if(/01.Resultat/i.test(n)) return 'bruts';
+  if(/02.Valoris/i.test(n)) return 'valorise';
+  if(/03.Histo.*Lait/i.test(n)) return 'histoLait';
+  if(/04.Histo.*TB/i.test(n)) return 'histoTB';
+  if(/05.Histo.*TP/i.test(n)) return 'histoTP';
+  if(/06.Histo.*Cellule/i.test(n)) return 'histoCell';
+  if(/07.Inventaire/i.test(n)) return 'inventaire';
+  if(/09.Gestation/i.test(n)) return 'gestation';
+  return null;
+}
+
+// ── 5. Test avec vrais fichiers ───────────────────────────
+function testWithFiles(e){
+  var files = Array.from(e.target.files);
+  log('=== TEST AVEC '+files.length+' FICHIERS RÉELS ===');
+  if(!files.length){ log('Aucun fichier sélectionné', 'warn'); return; }
+
+  files.forEach(function(f){ log('Fichier: '+f.name+' ('+f.size+'B)', 'dim'); });
+
+  var tasks = files.map(function(file, idx){
+    return new Promise(function(res){
+      var type = detectTypeSim(file.name);
+      log('['+idx+'] '+file.name.substring(0,40)+' → type: '+(type||'❌ inconnu'), type ? 'info' : 'err');
+
+      if(!type){ res({ok:false, name:file.name, msg:'type inconnu'}); return; }
+
+      var r = new FileReader();
+      r.onload = function(ev){
+        var txt = ev.target.result;
+        var lines = txt.split('\n').length;
+        log('['+idx+'] ✅ Lu: '+lines+' lignes, '+txt.length+' chars', 'ok');
+        res({ok:true, name:file.name, type:type, lines:lines});
+      };
+      r.onerror = function(ev){
+        log('['+idx+'] ❌ FileReader error: '+ev.target.error, 'err');
+        res({ok:false, name:file.name, msg:'FileReader error'});
+      };
+      r.onabort = function(){
+        log('['+idx+'] ❌ FileReader annulé', 'err');
+        res({ok:false, name:file.name, msg:'abort'});
+      };
+      log('['+idx+'] Lecture en cours...', 'dim');
+      r.readAsText(file, 'windows-1252');
+    });
+  });
+
+  Promise.all(tasks).then(function(results){
+    var ok = results.filter(function(r){ return r.ok; }).length;
+    log('=== RÉSULTAT: '+ok+'/'+results.length+' fichiers lus avec succès ===', ok === results.length ? 'ok' : 'err');
+
+    // Test saveML final
+    log('Test écriture localStorage avec données réelles...');
+    var fakeData = JSON.stringify({test:true, count:ok, ts:Date.now()});
+    try {
+      localStorage.setItem('_boviq_diag_final', fakeData);
+      localStorage.removeItem('_boviq_diag_final');
+      log('localStorage final OK', 'ok');
+    } catch(e) {
+      log('localStorage final ERREUR: '+e.message, 'err');
+    }
+  });
+
+  // Reset input
+  setTimeout(function(){ e.target.value=''; }, 100);
+}
+
+// Auto
+window.onload = function(){
+  log('Navigateur: '+navigator.userAgent.substring(0,60), 'dim');
+  testLS();
+  testLSSize();
+};
+</script>
+</body>
+</html>
