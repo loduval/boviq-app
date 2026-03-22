@@ -167,3 +167,10 @@ BOVIQ/
 **`BOVIQ MILKLIC`** — module contrôle laitier CSV  
 **`BOVIQ DARK`** — redesign dark mode en cours  
 **`BOVIQ MILKLIC MAJ`** — mise à jour données CSV → relancer `/tmp/gen_milklic_final.py` + injecter dans boviq-milklic.html
+
+## Session 2026-03-22
+- Light mode complet : --bg:#F6FAF7, --brand:#2D6A4F, sidebar sombre brand3
+- Blocs dark neutralisés : inputs/forms, tables, modals, color-scheme:light
+- Météo : bandeau compact 44px full-width dans .content (avant toutes les pages)
+- Fiche animal / sanitaire : chaque ligne traitement enrichie (type+badge, produit bold, intervenant, posologie, délais actif/terminé en couleur)
+- Commit: 5e48057
