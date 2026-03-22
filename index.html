@@ -39,10 +39,11 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .page{padding:28px 36px 40px;max-width:1280px;margin:0 auto}
 @media(max-width:700px){.page{padding:16px}}
 
-/* ═══ MODULES — EN HAUT ═══ */
-.modules{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:32px}
+/* ═══ GRILLE UNIVERSELLE 6 COLONNES ═══ */
+.modules{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:32px}
 @media(max-width:680px){.modules{grid-template-columns:1fr}}
 .mod{
+  grid-column:span 2;
   background:var(--card);border-radius:var(--r);
   padding:20px 20px 18px;border:1px solid var(--line);
   box-shadow:var(--sh);
@@ -119,7 +120,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .sec-hd .sub{font-size:11px;color:var(--ink3);margin-left:auto}
 
 /* ═══ KPIs ═══ */
-.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(144px,1fr));gap:11px}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:11px}
 .kpi{
   background:var(--card);border-radius:var(--r);
   padding:16px 15px 13px;border:1px solid var(--line);
@@ -209,7 +210,7 @@ footer a{color:var(--brand2);text-decoration:none}
       <h2>📈 Cours du marché</h2>
       <span class="sub" id="c-sub">DG AGRI (12.03.2026) — Semaine 2026-S11</span>
     </div>
-    <div class="kpis" style="grid-template-columns:repeat(4,1fr)">
+    <div class="kpis">
       <div class="kpi"><div class="kpi-lbl">Vache R·3</div><div class="kpi-val" id="k-vr">7.66</div><div class="kpi-sub">€/kg carc.</div></div>
       <div class="kpi"><div class="kpi-lbl">Vache O·3</div><div class="kpi-val ink" id="k-vo">6.68</div><div class="kpi-sub">€/kg carc.</div></div>
       <div class="kpi"><div class="kpi-lbl">JB R·3</div><div class="kpi-val" id="k-jb">7.53</div><div class="kpi-sub">€/kg carc.</div></div>
