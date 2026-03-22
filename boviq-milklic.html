@@ -125,19 +125,23 @@ tbody tr:hover td{background:#F7F4EE}
 .sdir-I{background:#F3E8FF;color:#6D28D9}
 
 /* ── ALERT ROWS ── */
-.alert-row{display:flex;align-items:center;gap:10px;padding:7px 12px;border-radius:var(--r);margin-bottom:6px;font-size:13px;border:1px solid transparent}
+.alert-row{display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:var(--r);margin-bottom:4px;font-size:12.5px;border:1px solid transparent;min-height:0}
 .alert-row.crit{background:var(--red-l);border-color:rgba(185,28,28,.2);border-left:3px solid var(--red)}
 .alert-row.warn{background:var(--amber-l);border-color:rgba(180,83,9,.2);border-left:3px solid var(--amber)}
 .alert-row.info{background:var(--blue-l);border-color:rgba(29,78,216,.2);border-left:3px solid var(--blue)}
-.alert-row .anom{font-weight:600;min-width:120px;font-size:13px}
-.alert-row .aval{margin-left:auto;font-weight:700;font-size:13px}
+.alert-row .anom{font-weight:600;flex-shrink:0;font-size:12.5px}
+.alert-row .anom-w{font-weight:700;min-width:100px;flex-shrink:0;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+.alert-row .anames{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:12px;color:var(--ink2)}
+.alert-row .aval{margin-left:auto;font-weight:700;font-size:12.5px;flex-shrink:0}
 
 /* ── REPRO IA CONSEIL ROWS ── */
-.conseil-row{display:flex;align-items:center;gap:10px;padding:7px 12px;border-radius:var(--r);margin-bottom:6px;font-size:13px;border:1px solid transparent}
-.conseil-row.ia-ok{background:#EFF9F2;border-color:#A7D9B4;border-left:4px solid var(--brand2)}
-.conseil-row.ia-no{background:var(--red-l);border-color:rgba(185,28,28,.2);border-left:4px solid var(--red)}
-.conseil-row.ia-possible{background:var(--blue-l);border-color:rgba(29,78,216,.2);border-left:4px solid var(--blue)}
-.conseil-row .cr-nom{font-weight:600;font-size:13px;flex:1}
+.conseil-row{display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:var(--r);margin-bottom:4px;font-size:12.5px;border:1px solid transparent;min-height:0}
+.conseil-row.ia-ok{background:#EFF9F2;border-color:#A7D9B4;border-left:3px solid var(--brand2)}
+.conseil-row.ia-no{background:var(--red-l);border-color:rgba(185,28,28,.2);border-left:3px solid var(--red)}
+.conseil-row.ia-possible{background:var(--blue-l);border-color:rgba(29,78,216,.2);border-left:3px solid var(--blue)}
+.conseil-row .cr-label{font-weight:700;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;flex-shrink:0;min-width:90px}
+.conseil-row .cr-noms{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:12px;color:var(--ink2)}
+.conseil-row .cr-count{font-weight:700;font-size:13px;flex-shrink:0;padding:1px 7px;border-radius:10px;background:rgba(0,0,0,.07)}
 .conseil-tag{font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap}
 .conseil-tag.ok{background:var(--brand-light);color:var(--brand)}
 .conseil-tag.no{background:var(--red-l);color:var(--red)}
@@ -224,12 +228,12 @@ tbody tr:hover td{background:#F7F4EE}
   <div class="grid4" id="dash-kpis"></div>
   <div class="grid2" style="margin-top:16px;align-items:stretch">
     <div style="display:flex;flex-direction:column;gap:16px">
-      <div class="card" style="flex:1"><div class="card-head"><h3>🦠 Alertes cellulaires</h3></div><div class="card-body" id="dash-cell-alerts" style="max-height:320px;overflow-y:auto"></div></div>
-      <div class="card" style="flex:1"><div class="card-head"><h3>⚠️ Statuts à surveiller</h3></div><div class="card-body" id="dash-statuts" style="max-height:320px;overflow-y:auto"></div></div>
+      <div class="card" style="flex:1"><div class="card-head"><h3>🦠 Alertes cellulaires</h3></div><div class="card-body" id="dash-cell-alerts" style="max-height:280px;overflow-y:auto"></div></div>
+      <div class="card" style="flex:1"><div class="card-head"><h3>⚠️ Statuts à surveiller</h3></div><div class="card-body" id="dash-statuts" style="max-height:280px;overflow-y:auto"></div></div>
     </div>
     <div style="display:flex;flex-direction:column;gap:16px">
-      <div class="card" style="flex:1"><div class="card-head"><h3>🔬 Conseils reproduction</h3></div><div class="card-body" id="dash-repro-conseils" style="max-height:320px;overflow-y:auto"></div></div>
-      <div class="card" style="flex:1"><div class="card-head"><h3>📉 Signaux faibles production</h3></div><div class="card-body" id="dash-prod-signals" style="max-height:320px;overflow-y:auto"></div></div>
+      <div class="card" style="flex:1"><div class="card-head"><h3>🔬 Conseils reproduction</h3></div><div class="card-body" id="dash-repro-conseils" style="max-height:280px;overflow-y:auto"></div></div>
+      <div class="card" style="flex:1"><div class="card-head"><h3>📉 Signaux faibles production</h3></div><div class="card-body" id="dash-prod-signals" style="max-height:280px;overflow-y:auto"></div></div>
     </div>
   </div>
 </div>
@@ -482,13 +486,27 @@ function renderDashboard(){
     <div class="kpi"><div class="kpi-label">TB / TP moyens</div><div class="kpi-val">${avg(VLs,a=>a.tb)}<span style="font-size:14px;color:var(--ink3)"> / ${avg(VLs,a=>a.tp)}</span></div></div>
     <div class="kpi"><div class="kpi-label">Leucos moyens</div><div class="kpi-val" style="color:${avgL>400?'var(--red)':avgL>200?'var(--amber)':'var(--brand)'}">${avgL}k</div><div class="kpi-sub">${VLs.filter(a=>a.leucos>400).length} vaches &gt;400k</div></div>`;
   const ca=VLs.filter(a=>a.leucos>400).sort((a,b)=>b.leucos-a.leucos).slice(0,8);
-  document.getElementById('dash-cell-alerts').innerHTML=ca.length?ca.map(a=>`<div class="alert-row ${a.leucos>800?'crit':'warn'}"><span class="anom">${a.nom||a.trav}</span>${a.sdir?`<span class="sdir sdir-${a.sdir}">${a.sdir}</span>`:''}<span class="aval">${a.leucos.toFixed(0)}k</span></div>`).join(''):'<p style="font-size:13px;color:var(--ink3)">✅ Aucune alerte &gt;400k</p>';
+  document.getElementById('dash-cell-alerts').innerHTML=ca.length
+    ?ca.map(a=>`<div class="alert-row ${a.leucos>800?'crit':'warn'}"><span class="anom">${a.nom||a.trav}</span>${a.sdir?`<span class="sdir sdir-${a.sdir}">${a.sdir}</span>`:''}<span class="aval">${(a.leucos/1000).toFixed(0)}k</span></div>`).join('')
+    :'<p style="font-size:13px;color:var(--ink3)">✅ Aucune alerte &gt;400k</p>';
   const grpSt={};Object.values(ML.animaux).filter(a=>a.statut).forEach(a=>{(grpSt[a.statut]=grpSt[a.statut]||[]).push(a)});
-  document.getElementById('dash-statuts').innerHTML=Object.entries(grpSt).length?Object.entries(grpSt).map(([st,lst])=>`<div class="alert-row info"><span class="statut-badge">${st}</span><span style="margin-left:8px;font-size:12px">${lst.map(a=>a.nom||a.trav).join(', ')}</span><span class="aval" style="font-size:13px">${lst.length}</span></div>`).join(''):'<p style="font-size:13px;color:var(--ink3)">—</p>';
+  const StOrder=['T','TT','FV','TFV','NC'];
+  const StEntries=StOrder.filter(k=>grpSt[k]).concat(Object.keys(grpSt).filter(k=>!StOrder.includes(k)));
+  document.getElementById('dash-statuts').innerHTML=StEntries.length
+    ?StEntries.map(st=>{const lst=grpSt[st];return`<div class="alert-row info"><span class="anom-w">${st}</span><span class="anames">${lst.map(a=>a.nom||a.trav).join(', ')}</span><span class="aval">${lst.length}</span></div>`}).join('')
+    :'<p style="font-size:13px;color:var(--ink3)">—</p>';
   const grpIA={};Object.values(ML.animaux).filter(a=>a.conseilIA).forEach(a=>{(grpIA[a.conseilIA]=grpIA[a.conseilIA]||[]).push(a)});
-  document.getElementById('dash-repro-conseils').innerHTML=Object.entries(grpIA).length?Object.entries(grpIA).map(([c,lst])=>`<div class="alert-row ${c.includes('d')?'warn':'info'}" style="flex-wrap:wrap"><span class="anom" style="font-size:12px">${c}</span><span style="font-size:12px;flex:1">${lst.map(a=>a.nom||a.trav).join(' · ')}</span><span class="aval">${lst.length}</span></div>`).join(''):'<p style="font-size:13px;color:var(--ink3)">—</p>';
+  const IAOrder=['A inséminér','IA possible','IA déconseillée'];
+  const IAcls={'A inséminér':'ia-ok','IA déconseillée':'ia-no','IA possible':'ia-possible'};
+  const IAlbl={'A inséminér':'A inséminer','IA déconseillée':'IA déconseillée','IA possible':'IA possible'};
+  const IAentries=IAOrder.filter(k=>grpIA[k]).concat(Object.keys(grpIA).filter(k=>!IAOrder.includes(k)));
+  document.getElementById('dash-repro-conseils').innerHTML=IAentries.length
+    ?IAentries.map(c=>{const lst=grpIA[c];return`<div class="conseil-row ${IAcls[c]||'ia-possible'}"><span class="cr-label">${IAlbl[c]||c}</span><span class="cr-noms">${lst.map(a=>a.nom||a.trav).join(' · ')}</span><span class="cr-count">${lst.length}</span></div>`}).join('')
+    :'<p style="font-size:13px;color:var(--ink3)">—</p>';
   const sf=VLs.filter(a=>a.varLait!=null&&a.varLait<=-15).sort((a,b)=>a.varLait-b.varLait).slice(0,6);
-  document.getElementById('dash-prod-signals').innerHTML=sf.length?sf.map(a=>`<div class="alert-row warn"><span class="anom">${a.nom||a.trav}</span><span style="font-size:12px;color:var(--ink3)">${a.lait24} L/j</span><span class="aval trend-up">${a.varLait}%</span></div>`).join(''):'<p style="font-size:13px;color:var(--ink3)">✅ Pas de chute &gt;15%</p>';
+  document.getElementById('dash-prod-signals').innerHTML=sf.length
+    ?sf.map(a=>`<div class="alert-row warn"><span class="anom">${a.nom||a.trav}</span><span style="font-size:11px;color:var(--ink3);flex:1">${a.lait24} L/j</span><span class="aval trend-up">${a.varLait}%</span></div>`).join('')
+    :'<p style="font-size:13px;color:var(--ink3)">✅ Pas de chute &gt;15%</p>';
 }
 
 function renderCellules(){
