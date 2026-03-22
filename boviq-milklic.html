@@ -110,7 +110,7 @@ tbody tr:hover td{background:#F7F4EE}
 .drop-zone svg{width:48px;height:48px;stroke:var(--ink3);margin-bottom:14px}
 .drop-zone h3{font-size:16px;font-weight:600;color:var(--ink2);margin-bottom:8px}
 .drop-zone p{font-size:13.5px;color:var(--ink3)}
-.drop-zone input{display:none}
+.drop-zone input{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
 
 /* ── LOG ── */
 .log-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}
@@ -251,7 +251,9 @@ tbody tr:hover td{background:#F7F4EE}
     </svg>
     <h3>Déposer les fichiers CSV MilKlic ici</h3>
     <p>Fichiers 01 à 09 · Encodage windows-1252 géré automatiquement</p>
-    <input type="file" id="file-input" multiple accept=".csv">
+    <p style="margin-top:10px;font-size:12px;color:var(--ink3)">ou</p>
+    <button type="button" class="btn btn-p" style="margin-top:8px" onclick="event.preventDefault();event.stopPropagation();document.getElementById('file-input').click()">📂 Choisir les fichiers</button>
+    <input type="file" id="file-input" multiple accept=".csv,.CSV,text/csv">
   </label>
   <div class="card" id="import-log-card" style="display:none;margin-top:16px">
     <div class="card-head"><h3>📋 Rapport d'import</h3><span id="import-summary" class="badge b-green"></span></div>
