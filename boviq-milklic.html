@@ -24,7 +24,7 @@
 }
 
 /* ── BASE ── */
-html{font-size:15px}
+html{font-size:14px}
 body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100dvh}
 .app{display:flex;min-height:100dvh}
 
@@ -76,7 +76,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .kpi-sub{font-size:10.5px;color:var(--ink3);margin-top:5px}
 
 /* ── BUTTONS ── */
-.btn{font:600 13.5px/1 'DM Sans',sans-serif;border:none;padding:10px 18px;border-radius:9px;cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn{font:600 13px/1 'DM Sans',sans-serif;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .btn-p{background:var(--brand2);color:#fff}.btn-p:hover{background:var(--brand)}
 .btn-o{background:var(--card);color:var(--ink2);border:1px solid var(--line2)}.btn-o:hover{background:var(--bg2)}
 .btn-d{background:transparent;color:var(--red);border:1px solid rgba(185,28,28,.25)}.btn-d:hover{background:var(--red-l)}
@@ -95,11 +95,11 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .tbl-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:14px}
 thead{position:sticky;top:0;z-index:1}
-th{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);padding:12px 16px;text-align:left;border-bottom:2px solid var(--line2);white-space:nowrap;background:var(--bg2)}
-td{padding:14px 16px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);padding:8px 12px;text-align:left;border-bottom:2px solid var(--line2);white-space:nowrap;background:var(--bg2);position:sticky;top:0;z-index:2}
+td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tbody tr:hover td{background:#F7F4EE}
-.td-nom{font-weight:700;font-size:15px;color:var(--ink)}
+.td-nom{font-weight:600;font-size:13px;color:var(--ink)}
 .td-trav{font-size:12px;color:var(--ink3);font-family:monospace;background:var(--bg2);padding:2px 5px;border-radius:4px}
 
 /* ── DROP ZONE ── */
@@ -133,11 +133,11 @@ tbody tr:hover td{background:#F7F4EE}
 .alert-row .aval{margin-left:auto;font-weight:700;font-size:13px}
 
 /* ── REPRO IA CONSEIL ROWS ── */
-.conseil-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--r);margin-bottom:8px;font-size:14px;border:1px solid transparent}
+.conseil-row{display:flex;align-items:center;gap:10px;padding:7px 12px;border-radius:var(--r);margin-bottom:6px;font-size:13px;border:1px solid transparent}
 .conseil-row.ia-ok{background:#EFF9F2;border-color:#A7D9B4;border-left:4px solid var(--brand2)}
 .conseil-row.ia-no{background:var(--red-l);border-color:rgba(185,28,28,.2);border-left:4px solid var(--red)}
 .conseil-row.ia-possible{background:var(--blue-l);border-color:rgba(29,78,216,.2);border-left:4px solid var(--blue)}
-.conseil-row .cr-nom{font-weight:700;font-size:15px;flex:1}
+.conseil-row .cr-nom{font-weight:600;font-size:13px;flex:1}
 .conseil-tag{font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap}
 .conseil-tag.ok{background:var(--brand-light);color:var(--brand)}
 .conseil-tag.no{background:var(--red-l);color:var(--red)}
