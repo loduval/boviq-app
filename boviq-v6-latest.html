@@ -83,7 +83,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .btn-p{background:var(--brand);color:#fff}.btn-p:hover{background:#6AE88A}
 .btn-o{background:rgba(255,255,255,.06);color:var(--ink2);border:1px solid var(--line2)}.btn-o:hover{background:rgba(255,255,255,.1)}
 .btn-d{background:transparent;color:var(--red);border:1px solid rgba(220,38,38,.25)}.btn-d:hover{background:var(--red-l)}
-.btn-s{padding:5px 10px;font-size:12px}
+.btn-s{padding:5px 10px}
 .btn-icon{width:30px;height:30px;padding:0;justify-content:center;border-radius:7px}
 
 .badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px}
@@ -729,7 +729,7 @@ tr:hover td{background:var(--brand-pale)}
   <div class="page-head"><h2>Tableau de bord</h2>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn btn-p btn-s" onclick="openVelageModal()" style="background:var(--teal)">🍼 + Vêlage</button>
-      <button class="btn btn-p btn-s btn-scan-cam" onclick="scanBoucle('search-animaux')" title="Scanner une boucle pour rechercher l'animal" style="background:var(--brand2);font-size:15px">📷 Scanner boucle</button>
+      <button class="btn btn-p btn-s btn-scan-cam" onclick="scanBoucle('search-animaux')" title="Scanner une boucle pour rechercher l'animal" style="background:var(--brand2)">📷 Scanner boucle</button>
       <button class="btn btn-o btn-s" onclick="exportReproCSV()">📥 Export Repro CSV</button>
       <button class="btn btn-o btn-s" onclick="exportJSON()">💾 Sauvegarde JSON</button>
       <button class="btn btn-o btn-s" onclick="document.getElementById('json-import').click()">📂 Importer JSON</button>
@@ -1009,7 +1009,7 @@ tr:hover td{background:var(--brand-pale)}
         <option value="tar">Tarissements</option>
         <option value="vide">Vaches vides</option>
       </select>
-      <a href="boviq-milklic.html" target="_blank" class="btn btn-o" style="font-size:12px;padding:6px 12px">📂 Module MilKlic</a>
+      <a href="boviq-milklic.html" target="_blank" class="btn btn-o btn-s">📂 Module MilKlic</a>
     </div>
   </div>
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px" id="ml-kpis"></div>
@@ -5168,8 +5168,8 @@ function renderJournal(){
             <div class="je-note">${j.note||'—'}</div>
           </div>
           <div class="je-actions">
-            <button class="btn btn-o btn-icon btn-s" onclick="openJournalModal('${j.id}')" style="padding:2px 6px;font-size:12px">✏️</button>
-            <button class="btn btn-d btn-icon btn-s" onclick="delJournal('${j.id}')" style="padding:2px 6px;font-size:12px">🗑</button>
+            <button class="btn btn-o btn-icon btn-s" onclick="openJournalModal('${j.id}')" style="padding:2px 6px">✏️</button>
+            <button class="btn btn-d btn-icon btn-s" onclick="delJournal('${j.id}')" style="padding:2px 6px">🗑</button>
           </div>
         </div>`;
       });
