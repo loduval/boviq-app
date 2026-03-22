@@ -245,16 +245,6 @@ tbody tr:hover td{background:#F7F4EE}
     <div><h2>Import MilKlic</h2><p class="page-sub">Déposez les CSV exportés depuis MilKlic — tous en une fois</p></div>
     <button class="btn btn-d btn-s" id="btn-clear" style="display:none" onclick="clearData()">🗑 Effacer</button>
   </div>
-  <!-- DIAGNOSTIC PANEL -->
-  <div id="diag-panel" class="card" style="margin-bottom:14px;border:2px solid #f59e0b">
-    <div class="card-head" style="background:#fef3c7"><h3 style="color:#92400e">🔬 Diagnostic import (temporaire)</h3>
-      <button class="btn btn-s" onclick="document.getElementById('diag-panel').style.display='none'" style="font-size:11px">Masquer</button>
-    </div>
-    <div class="card-body" style="background:#fffbeb">
-      <div id="diag-log" style="font-family:monospace;font-size:11.5px;line-height:1.8;max-height:220px;overflow-y:auto"></div>
-      <button class="btn btn-o btn-s" style="margin-top:8px" onclick="runDiag()">▶ Lancer diagnostic</button>
-    </div>
-  </div>
   <label class="drop-zone" id="drop-zone" for="file-input">
     <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
       <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M12 12V4m0 0L8.5 7.5M12 4l3.5 3.5"/>
@@ -820,50 +810,6 @@ function renderBridge(){
     }
   } else h+=`<div class="alert-row warn"><span>⚠️ BOVIQ V6 non trouvé (ouvrir dans même navigateur)</span></div>`;
   el.innerHTML=h;
-}
-
-function runDiag(){
-  var D=document.getElementById('diag-log');
-  D.innerHTML='';
-  function lg(msg,col){D.innerHTML+='<div style="color:'+(col||'#1e40af')+'">'+msg+'</div>';D.scrollTop=D.scrollHeight;}
-  lg('=== DIAGNOSTIC ===');
-  // 1. localStorage
-  try{localStorage.setItem('_t','1');localStorage.removeItem('_t');lg('✅ localStorage OK','#15803d');}
-  catch(e){lg('❌ localStorage BLOQUÉ: '+e.message,'#dc2626');return;}
-  // 2. Taille localStorage
-  var tot=0;for(var k in localStorage){if(localStorage.hasOwnProperty(k))tot+=(localStorage.getItem(k)||'').length*2;}
-  var kb=Math.round(tot/1024);
-  lg((kb>4000?'❌':'✅')+' localStorage: '+kb+'KB / ~5120KB',(kb>4000?'#dc2626':'#15803d'));
-  if(kb>4000)lg('⚠️ QUOTA PRESQUE PLEIN — saveML() va échouer!','#dc2626');
-  // 3. ML courant
-  lg((ML?'✅':'⚠️')+' ML en mémoire: '+(ML?Object.keys(ML.animaux||{}).length+' animaux':'null'),(ML?'#15803d':'#92400e'));
-  // 4. input file
-  var fi=document.getElementById('file-input');
-  lg('✅ input#file-input: display='+window.getComputedStyle(fi).display+' opacity='+window.getComputedStyle(fi).opacity,'#1e40af');
-  lg('✅ accept="'+fi.accept+'"','#1e40af');
-  // 5. FileReader + Promise
-  try{new FileReader();lg('✅ FileReader disponible','#15803d');}catch(e){lg('❌ FileReader: '+e.message,'#dc2626');}
-  var p1=Promise.all([Promise.resolve(1),Promise.resolve(2)]);
-  p1.then(function(r){lg('✅ Promise.all OK: '+r,'#15803d');}).catch(function(e){lg('❌ Promise.all: '+e.message,'#dc2626');});
-  // 6. Patch handleFiles pour tracer
-  var origHF=handleFiles;
-  handleFiles=function(files){
-    lg('→ handleFiles appelé avec '+files.length+' fichier(s)','#7c3aed');
-    for(var i=0;i<files.length;i++) lg('  ['+i+'] '+files[i].name+' '+files[i].size+'B','#6b7280');
-    origHF(files);
-    lg('→ handleFiles lancé (async en cours...)','#7c3aed');
-    // Restaurer après usage
-    setTimeout(function(){handleFiles=origHF;},5000);
-  };
-  // Patch saveML
-  var origSave=saveML;
-  saveML=function(){
-    lg('→ saveML() appelé','#7c3aed');
-    try{origSave();lg('✅ saveML() OK','#15803d');}
-    catch(e){lg('❌ saveML() ERREUR: '+e.message,'#dc2626');}
-    saveML=origSave;
-  };
-  lg('✅ Patches actifs — maintenant sélectionne tes CSV','#15803d');
 }
 
 function saveML(){
