@@ -78,33 +78,34 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
   overflow:hidden;color:#fff;
   box-shadow:0 4px 24px rgba(20,83,45,.2);
 }
-.meteo-body{padding:12px 24px;display:flex;flex-direction:row;align-items:center;gap:17px;flex-wrap:nowrap}
+.meteo-body{padding:14px 24px;display:flex;flex-direction:row;align-items:center;gap:10px;flex-wrap:nowrap}
 .meteo-loc{font-size:11px;opacity:.6;display:flex;align-items:center;gap:3px;letter-spacing:.4px;text-transform:uppercase;margin-bottom:3px}
 .meteo-main{display:flex;align-items:center;gap:14px;flex-shrink:0}
 .meteo-ico{font-size:40px;line-height:1}
 .meteo-temp{font-family:'Playfair Display',serif;font-size:31px;line-height:1}
 .meteo-desc{font-size:14px;opacity:.85;text-transform:capitalize;margin-top:2px}
 .meteo-meta{font-size:12px;opacity:.55;display:flex;gap:8px;margin-top:2px}
+/* verdict = même style que .slot */
 .verdict{
-  background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.2);
-  border-radius:8px;padding:6px 8px;text-align:center;flex-shrink:0;
+  background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.07);
+  border-radius:8px;padding:6px 7px;text-align:center;
+  flex:1;min-width:0;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  min-width:74px;
 }
 .verdict.ok{background:rgba(134,239,172,.2);border-color:rgba(134,239,172,.35)}
 .verdict.warn{background:rgba(253,224,71,.15);border-color:rgba(253,224,71,.3)}
-.v-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.4px;opacity:.6;margin-bottom:2px}
-.v-ico{font-size:19px;line-height:1.3}
-.v-txt{font-size:11px;font-weight:600;white-space:nowrap;margin-top:2px}
-.slots{display:flex;gap:6px;flex:1;min-width:0;padding:0}
-.slot{background:rgba(255,255,255,.09);border-radius:8px;padding:6px 7px;text-align:center;border:1px solid rgba(255,255,255,.07);flex:1;min-width:40px}
+.v-lbl{font-size:11px;opacity:.6;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%}
+.v-ico{font-size:20px;line-height:1.3}
+.v-txt{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%}
+.slots{display:flex;gap:6px;flex:5;min-width:0;padding:0}
+.slot{background:rgba(255,255,255,.09);border-radius:8px;padding:6px 7px;text-align:center;border:1px solid rgba(255,255,255,.07);flex:1;min-width:0}
 .slot.now{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.3)}
 .s-t{font-size:11px;opacity:.6;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .s-i{font-size:20px;line-height:1.3}
 .s-v{font-size:13px;font-weight:600}
 .s-r{font-size:11px;opacity:.5;margin-top:1px}
 .meteo-foot{font-size:10px;opacity:.25;text-align:right;padding:0 24px 5px;margin-top:-4px}
-.meteo-err{padding:12px 24px;opacity:.7;font-size:14px}
+.meteo-err{padding:14px 24px;opacity:.7;font-size:14px}
 @media(max-width:700px){.slots{display:none}}
 
 /* ═══ SECTION ═══ */
@@ -270,7 +271,7 @@ function renderM(data){
   <div class="verdict ${v.cls}">
     <div class="v-lbl">Sortie au pré</div>
     <div class="v-ico">${v.ico}</div>
-    <div class="v-txt">${v.txt}</div>
+    <div class="v-txt">${v.txt.replace('Conditions moyennes','Cond. moyennes').replace('Sortie possible avec prudence','Prudence').replace('Sortie déconseillée','Déconseillé')}</div>
   </div>
   <div class="slots">${sl.map(s=>`<div class="slot${s.first?' now':''}"><div class="s-t">${s.first?'Maint.':s.t}</div><div class="s-i">${wi(s.wmo)}</div><div class="s-v">${s.temp}°</div><div class="s-r">${s.rain>0?s.rain+'mm':'—'}</div></div>`).join('')}</div>
   <div style="font-size:9px;opacity:.25;white-space:nowrap;align-self:flex-end;padding-bottom:2px">Open-Meteo · ${now.getHours()}h${String(now.getMinutes()).padStart(2,'0')}</div>
