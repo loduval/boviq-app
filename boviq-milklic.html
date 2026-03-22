@@ -172,6 +172,13 @@ tbody tr:hover td{background:#F7F4EE}
 .step-num{width:30px;height:30px;border-radius:50%;background:var(--brand-light);color:var(--brand);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .code-block{background:#1E1B16;color:#A8D5B5;font-family:monospace;font-size:12px;padding:14px 18px;border-radius:10px;overflow-x:auto;margin-top:10px;line-height:1.7}
 
+.sm-filter-btn{font:600 11.5px 'DM Sans',sans-serif;padding:4px 12px;border-radius:20px;border:1.5px solid var(--line2);background:var(--card);color:var(--ink3);cursor:pointer;transition:all .12s;white-space:nowrap}
+.sm-filter-btn:hover{border-color:var(--ink3);color:var(--ink)}
+.sm-filter-btn.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.sm-filter-btn.vert.active{background:#16a34a;border-color:#16a34a;color:#fff}
+.sm-filter-btn.bleu.active{background:#2563eb;border-color:#2563eb;color:#fff}
+.sm-filter-btn.orange.active{background:#ea580c;border-color:#ea580c;color:#fff}
+.sm-filter-btn.rouge.active{background:#dc2626;border-color:#dc2626;color:#fff}
 /* ── SANTÉ MAMELLES ── */
 .sm-table{width:100%;border-collapse:collapse}
 .sm-table th{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);padding:6px 10px;border-bottom:2px solid var(--line2);background:var(--bg2);white-space:nowrap}
@@ -318,6 +325,23 @@ tbody tr:hover td{background:#F7F4EE}
       <span class="sm-badge orange">● Fréquente</span>
       <span class="sm-badge rouge">● Chronique ≥3</span>
     </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+    <div style="position:relative;flex:1;min-width:180px;max-width:260px">
+      <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none">🔍</span>
+      <input id="sante-search" type="text" placeholder="Rechercher un animal…"
+        oninput="filterSante()"
+        style="width:100%;padding:7px 10px 7px 32px;border:1.5px solid var(--line2);border-radius:8px;font:500 13px 'DM Sans',sans-serif;background:var(--card);color:var(--ink);outline:none"
+        onfocus="this.style.borderColor='var(--brand2)'" onblur="this.style.borderColor='var(--line2)'">
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap" id="sante-filters">
+      <button class="sm-filter-btn active" data-f="all"    onclick="setSanteFilter('all')">Toutes</button>
+      <button class="sm-filter-btn vert"   data-f="vert"   onclick="setSanteFilter('vert')">● Saines</button>
+      <button class="sm-filter-btn bleu"   data-f="bleu"   onclick="setSanteFilter('bleu')">● Épisodiques</button>
+      <button class="sm-filter-btn orange" data-f="orange" onclick="setSanteFilter('orange')">● Fréquentes</button>
+      <button class="sm-filter-btn rouge"  data-f="rouge"  onclick="setSanteFilter('rouge')">● Chroniques</button>
+    </div>
+    <span id="sante-count" style="font-size:11.5px;color:var(--ink3);white-space:nowrap"></span>
   </div>
   <div class="card">
     <div class="card-body" style="padding:0">
@@ -682,6 +706,33 @@ function sparklineSVG(a){
   </svg>`;
 }
 
+let _santeFilter='all';
+
+function setSanteFilter(f){
+  _santeFilter=f;
+  document.querySelectorAll('.sm-filter-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.f===f);
+  });
+  filterSante();
+}
+
+function filterSante(){
+  const q=(document.getElementById('sante-search').value||'').toLowerCase().trim();
+  const rows=document.querySelectorAll('#sante-tbody tr');
+  let visible=0;
+  rows.forEach(tr=>{
+    const nom=(tr.dataset.nom||'').toLowerCase();
+    const trav=(tr.dataset.trav||'').toLowerCase();
+    const cls=tr.dataset.cls||'';
+    const matchQ=!q||nom.includes(q)||trav.includes(q);
+    const matchF=_santeFilter==='all'||cls===_santeFilter;
+    tr.style.display=(matchQ&&matchF)?'':'none';
+    if(matchQ&&matchF)visible++;
+  });
+  const total=rows.length;
+  document.getElementById('sante-count').textContent=visible===total?`${total} vaches`:`${visible} / ${total} vaches`;
+}
+
 function renderSante(){
   if(!ML)return;
   const VLs=Object.values(ML.animaux)
@@ -697,7 +748,7 @@ function renderSante(){
     const lastEntry=Object.entries(hc).sort((x,y)=>x[0]<y[0]?-1:1).pop();
     const lastVal=lastEntry?lastEntry[1]:null;
     const st=a.statut?`<span class="statut-badge" style="font-size:10px;padding:1px 6px">${statLbl[a.statut]||a.statut}</span>`:'<span style="color:var(--ink3);font-size:11px">En traite</span>';
-    return`<tr class="sm-row">
+    return`<tr class="sm-row" data-nom="${(a.nom||'').toLowerCase()}" data-trav="${a.trav}" data-cls="${cls}">
       <td><span class="sm-nom" onclick="openSanteModal('${a.trav}')">${a.nom||'—'}</span></td>
       <td><span class="sm-trav">${a.trav}</span></td>
       <td>${st}</td>
@@ -706,9 +757,12 @@ function renderSante(){
       <td><span class="sm-badge ${cls}">${{vert:'Saine',bleu:'Épisodique',orange:'Fréquente',rouge:'Chronique'}[cls]}</span></td>
     </tr>`;
   }).join('');
-}
-
-function openSanteModal(trav){
+  // Reset filtre + search + compteur
+  _santeFilter='all';
+  document.querySelectorAll('.sm-filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.f==='all'));
+  if(document.getElementById('sante-search'))document.getElementById('sante-search').value='';
+  document.getElementById('sante-count').textContent=`${VLs.length} vaches`;
+}(trav){
   if(!ML)return;
   const a=ML.animaux[trav];if(!a)return;
   const hc=a.histoCell||{};
