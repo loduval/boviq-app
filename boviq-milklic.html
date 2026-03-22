@@ -775,7 +775,9 @@ function renderSante(){
   document.querySelectorAll('.sm-filter-btn').forEach(b=>b.classList.toggle('active',b.dataset.f==='all'));
   if(document.getElementById('sante-search'))document.getElementById('sante-search').value='';
   document.getElementById('sante-count').textContent=`${VLs.length} vaches`;
-}(trav){
+}
+
+function openSanteModal(trav){
   if(!ML)return;
   const a=ML.animaux[trav];if(!a)return;
   const hc=a.histoCell||{};
