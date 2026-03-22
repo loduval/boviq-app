@@ -1,6 +1,6 @@
 # BOVIQ — MEMORY SESSION
 
-Dernière mise à jour : **22/03/2026** — session audit 100/100, light mode complet, corrections design, MilKlic leucos, exports
+Dernière mise à jour : **22/03/2026** — patch3 : fix seuils leucos + badge cellules inventaire + tank risk + UGB prévisionnel + scroll pages + KPIs dashboard + start_url PWA
 
 ---
 
@@ -8,10 +8,11 @@ Dernière mise à jour : **22/03/2026** — session audit 100/100, light mode co
 
 | Fichier | Lignes | Taille | Dernier commit |
 |---------|--------|--------|----------------|
-| `boviq-v6-latest.html` | 5 827 | 445 KB | `64601f4` |
-| `boviq-milklic.html` | 621 | 142 KB | `64601f4` |
+| `boviq-v6-latest.html` | 5 971 | ~450 KB | `4b98f9d` |
+| `boviq-milklic.html` | 621 | 142 KB | `04142be` |
 | `boviq-cours-marche.html` | 1 139 | 47 KB | — |
-| `index.html` | 349 | 17 KB | `4cae003` |
+| `index.html` | ~360 | ~18 KB | `949b13f` |
+| `manifest.json` | 17 | — | `949b13f` |
 
 **Repo GitHub** : `loduval/boviq-app` (public)  
 **GitHub Pages** : `loduval.github.io/boviq-app/`  
@@ -150,6 +151,9 @@ leucos en milliers, `\u00a0` parsé, seuils corrects, export CSV, design system
 | `d7b63c5` | fix: milklic design system — KPIs/cards/alertes taille V6, max-height 320px |
 | `b02623b` | fix: milklic design system — font 14px, td/th/conseil-row/btn tailles V6 |
 | `64601f4` | audit 100/100: light mode remnants, tabs/btn-o/card-head, milklic export CSV, commentaires CSS |
+| `cab7d12` | fix: scroll pages — supprime height:100dvh+overflow-y:hidden |
+| `949b13f` | fix: start_url index.html (PWA) + 3 KPIs dashboard (lact.moy, genisse_r3, vache_r4) |
+| `4b98f9d` | feat: badge cellules inventaire + tank risk + UGB prévisionnel + fix seuils leucos V6 |
 
 ---
 
@@ -157,11 +161,11 @@ leucos en milliers, `\u00a0` parsé, seuils corrects, export CSV, design system
 
 ```
 BOVIQ/
-├── index.html                  ← HUB 349L (JAMAIS écraser par V6!)
-├── boviq-v6-latest.html        ← 5827L, 445KB, light mode
+├── index.html                  ← HUB ~360L (JAMAIS écraser par V6!)
+├── boviq-v6-latest.html        ← 5971L, ~450KB, light mode
 ├── boviq-milklic.html          ← 621L, 142KB, INIT_ML_DATA 160 animaux
 ├── boviq-cours-marche.html     ← 1139L, 47KB
-├── manifest.json               ← PWA
+├── manifest.json               ← PWA, start_url=./index.html
 ├── sw.js                       ← cache boviq-v20260321
 ├── .github/workflows/
 │   └── update-market-data.yml  ← GitHub Actions lundi 8h UTC
