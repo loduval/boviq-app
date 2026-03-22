@@ -571,7 +571,39 @@ function renderBridge(){
   el.innerHTML=h;
 }
 
-function saveML(){if(ML)localStorage.setItem(ML_KEY,JSON.stringify(ML))}
+function saveML(){
+  if(!ML)return;
+  localStorage.setItem(ML_KEY,JSON.stringify(ML));
+  // ── Archivage historique leucos dans boviq (D.mlControles) ──────────────
+  // Chaque contrôle est archivé par date — structure compacte : {date, vaches:[{trav,lc,l,tb,tp}]}
+  try{
+    const bvRaw=localStorage.getItem('boviq');
+    if(!bvRaw)return;
+    const bv=JSON.parse(bvRaw);
+    if(!ML.controleDate)return;
+    // Normaliser la date en YYYY-MM-DD
+    const dParts=ML.controleDate.split('/');
+    const isoDate=dParts.length===3?'20'+dParts[2]+'-'+dParts[1]+'-'+dParts[0]:ML.controleDate;
+    if(!bv.mlControles)bv.mlControles=[];
+    // Supprimer entrée existante même date
+    bv.mlControles=bv.mlControles.filter(c=>c.date!==isoDate);
+    // Construire snapshot compact (leucos en k, lait, TB, TP)
+    const vaches=Object.values(ML.animaux)
+      .filter(a=>a.categ==='VL'&&(a.leucos!=null||a.lait24!=null))
+      .map(a=>({
+        t:a.trav,
+        lc:a.leucos!=null?Math.round(a.leucos):null,
+        l:a.lait24!=null?a.lait24:null,
+        tb:a.tb!=null?a.tb:null,
+        tp:a.tp!=null?a.tp:null
+      }));
+    bv.mlControles.push({date:isoDate,vaches});
+    // Garder max 24 contrôles (~2 ans de mensuel)
+    bv.mlControles.sort((a,b)=>a.date.localeCompare(b.date));
+    if(bv.mlControles.length>24)bv.mlControles=bv.mlControles.slice(-24);
+    localStorage.setItem('boviq',JSON.stringify(bv));
+  }catch(e){console.warn('saveML: archivage mlControles échoué',e);}
+}
 
 function exportMLCSV(){
   if(!ML||!Object.keys(ML.animaux).length){alert('Aucune donnée à exporter.');return}

@@ -2080,12 +2080,15 @@ function renderAnimaux(){
     if(a._ml_leucos&&a._categ_ml==='VL'){
       const k=Math.round(a._ml_leucos);
       const recidive=a._ml_leuco_prev&&a._ml_leuco_prev>400;
+      const recColor=getLeucosRecurrenceColor(a._trav||'');
+      // Indicateur récurrence 12 mois si historique dispo
+      const recTag=recColor?`<span style="display:inline-flex;width:8px;height:8px;border-radius:50%;background:${recColor};margin-left:2px;vertical-align:middle" title="Récurrence 12 mois"></span>`:'';
       if(a._ml_leucos>800){
-        cellBadge=`<span style="display:inline-flex;margin-left:4px;font-size:10px;font-weight:700;padding:1px 5px;border-radius:12px;background:var(--red-l);color:var(--red)" title="Cellules critiques${recidive?' — récidive':''}">🦠 ${k}k${recidive?' ↑↑':''}</span>`;
+        cellBadge=`<span style="display:inline-flex;align-items:center;margin-left:4px;font-size:10px;font-weight:700;padding:1px 5px;border-radius:12px;background:var(--red-l);color:var(--red)" title="Cellules critiques${recidive?' — récidive':''}">🦠 ${k}k${recidive?' ↑↑':''}${recTag}</span>`;
       } else if(a._ml_leucos>400){
-        cellBadge=`<span style="display:inline-flex;margin-left:4px;font-size:10px;font-weight:700;padding:1px 5px;border-radius:12px;background:var(--amber-l);color:var(--amber)" title="Cellules élevées${recidive?' — récidive':''}">🦠 ${k}k${recidive?' ↑↑':''}</span>`;
+        cellBadge=`<span style="display:inline-flex;align-items:center;margin-left:4px;font-size:10px;font-weight:700;padding:1px 5px;border-radius:12px;background:var(--amber-l);color:var(--amber)" title="Cellules élevées${recidive?' — récidive':''}">🦠 ${k}k${recidive?' ↑↑':''}${recTag}</span>`;
       } else if(a._ml_leucos>200){
-        cellBadge=`<span style="display:inline-flex;margin-left:4px;font-size:10px;font-weight:500;padding:1px 5px;border-radius:12px;background:var(--bg2);color:var(--ink3)" title="Cellules à surveiller">🦠 ${k}k</span>`;
+        cellBadge=`<span style="display:inline-flex;align-items:center;margin-left:4px;font-size:10px;font-weight:500;padding:1px 5px;border-radius:12px;background:var(--bg2);color:var(--ink3)" title="Cellules à surveiller">🦠 ${k}k${recTag}</span>`;
       }
     }
     return `<tr>
@@ -4866,6 +4869,22 @@ function openFicheAnimal(id){
     const dTar=a._ml_tar_prev?Math.round((new Date(a._ml_tar_prev)-new Date())/86400000):null;
     const tarStr=a._ml_tar_prev?`${a._ml_tar_prev} <span style="font-size:11px;color:${dTar<30?'var(--amber)':'var(--ink3)'}">(dans ${dTar}j)</span>`:'—';
     const leucoPrevStr=a._ml_leuco_prev!=null?`<span style="font-size:11px;color:var(--ink3)">N-1 : ${leucoBadge(a._ml_leuco_prev)}</span>`:'';
+    // Historique multi-contrôles si disponible
+    const histo=getLeucosHisto(a._trav||'');
+    const histoStr=histo.length>1?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--line2)">
+      <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--ink3);margin-bottom:6px">Historique leucos (${histo.length} contrôles)</div>
+      <div style="display:flex;align-items:flex-end;gap:4px;height:40px">
+        ${histo.map(h=>{
+          const col=h.lc>800?'var(--red)':h.lc>400?'var(--amber)':h.lc>200?'var(--ink3)':'var(--brand)';
+          const pct=h.lc?Math.min(100,Math.round(h.lc/20))+'%':'2%';
+          return`<div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:2px" title="${h.date} : ${h.lc??'—'}k">
+            <div style="font-size:8px;color:var(--ink3)">${h.lc??'—'}</div>
+            <div style="width:100%;background:${col};border-radius:2px;height:${pct};min-height:3px"></div>
+            <div style="font-size:7px;color:var(--ink3);white-space:nowrap">${h.date.slice(5)}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`:'';
     const statutMl=a._ml_statut?`<span style="display:inline-flex;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;background:var(--amber-l);color:var(--amber)">${esc(a._ml_statut)}</span>`:'';
 
     h+=`<div class="fiche-section"><div class="fiche-section-title">🥛 Dernier contrôle laitier
@@ -4886,6 +4905,7 @@ function openFicheAnimal(id){
         <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);margin-bottom:5px">Cellules</div>
         <div style="font-size:18px;font-weight:700;margin-bottom:4px">${leucoBadge(a._ml_leucos)}</div>
         <div>${leucoPrevStr}</div>
+        ${histoStr}
       </div>
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px">
@@ -5646,6 +5666,28 @@ function renderBDNI(){
     h+=`</div></div>`;
   }
   el.innerHTML=h;
+}
+
+// ─── Historique leucos multi-contrôles ───────────────────────────────────────
+// Retourne [{date, lc, l, tb, tp}] triés chronologiquement pour un animal (par _trav)
+function getLeucosHisto(trav){
+  if(!trav||!D.mlControles||!D.mlControles.length)return[];
+  return D.mlControles
+    .map(c=>{const v=c.vaches&&c.vaches.find(x=>x.t===trav);return v?{date:c.date,...v}:null})
+    .filter(Boolean)
+    .sort((a,b)=>a.date.localeCompare(b.date));
+}
+
+// Badge couleur leucos récurrence 12 mois (≥3 contrôles >400k sur 12 derniers mois)
+function getLeucosRecurrenceColor(trav){
+  const histo=getLeucosHisto(trav);if(!histo.length)return null;
+  const cutoff=new Date();cutoff.setFullYear(cutoff.getFullYear()-1);
+  const recent=histo.filter(h=>new Date(h.date)>=cutoff);
+  const hauts=recent.filter(h=>h.lc>400).length;
+  if(hauts>=3)return'var(--red)';
+  if(hauts>=2)return'var(--amber)';
+  if(hauts>=1)return'var(--brand)';
+  return null;
 }
 
 function renderAll(){
