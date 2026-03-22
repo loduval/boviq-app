@@ -4256,11 +4256,11 @@ async function exportSantePdf(){
   // Header
   doc.setFont('helvetica','bold');
   doc.setFontSize(16);
-  doc.text('BOVIQ — Registre sanitaire',14,15);
+  doc.text('BOVIQ - Registre sanitaire',14,15);
   doc.setFont('helvetica','normal');
   doc.setFontSize(10);
   doc.text('Édité le '+dateStr,14,22);
-  doc.text('Registre des traitements médicamenteux — Article L.234-1 du Code rural',14,27);
+  doc.text('Registre des traitements medicamenteux - Article L.234-1 du Code rural',14,27);
 
   // Sort by date desc
   const sorted=[...D.sante].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
@@ -4315,8 +4315,8 @@ async function exportSantePdf(){
       // Footer
       doc.setFontSize(8);
       doc.setTextColor(140);
-      doc.text('BOVIQ — Registre sanitaire — Page '+doc.internal.getNumberOfPages(),14,doc.internal.pageSize.height-8);
-      doc.text('Document généré automatiquement — à présenter en cas de contrôle',doc.internal.pageSize.width-14,doc.internal.pageSize.height-8,{align:'right'});
+      doc.text('BOVIQ - Registre sanitaire - Page '+doc.internal.getNumberOfPages(),14,doc.internal.pageSize.height-8);
+      doc.text('Document genere automatiquement - a presenter en cas de controle',doc.internal.pageSize.width-14,doc.internal.pageSize.height-8,{align:'right'});
     }
   });
 
@@ -4331,9 +4331,9 @@ async function exportSantePdf(){
   doc.setFont('helvetica','bold');
   doc.text('Résumé',14,finalY);
   doc.setFont('helvetica','normal');doc.setFontSize(9);
-  doc.text(`• ${totalTraits} traitements enregistrés`,14,finalY+6);
-  doc.text(`• ${animauxTraites.size} animaux traités`,14,finalY+11);
-  doc.text(`• ${withDelai} traitements avec délai d'attente`,14,finalY+16);
+  doc.text(`- ${totalTraits} traitements enregistres`,14,finalY+6);
+  doc.text(`- ${animauxTraites.size} animaux traites`,14,finalY+11);
+  doc.text(`- ${withDelai} traitements avec delai d'attente`,14,finalY+16);
 
   doc.save('boviq-registre-sanitaire-'+now.toISOString().slice(0,10)+'.pdf');
 }
@@ -4360,7 +4360,7 @@ async function exportBilanPdf(){
   // Header
   doc.setFillColor(45,106,79);doc.rect(0,0,w,28,'F');
   doc.setFont('helvetica','bold');doc.setFontSize(18);doc.setTextColor(255);
-  doc.text('BOVIQ — Analyse financière '+year,14,14);
+  doc.text('BOVIQ - Analyse financiere '+year,14,14);
   doc.setFontSize(10);doc.setFont('helvetica','normal');
   doc.text('Édité le '+now.toLocaleDateString('fr-FR'),14,22);
 
@@ -4420,7 +4420,7 @@ async function exportBilanPdf(){
   const pages=doc.internal.getNumberOfPages();
   for(let i=1;i<=pages;i++){
     doc.setPage(i);doc.setFontSize(8);doc.setTextColor(140);
-    doc.text('BOVIQ — Analyse financière '+year+' — Page '+i+'/'+pages,14,287);
+    doc.text('BOVIQ - Analyse financiere '+year+' - Page '+i+'/'+pages,14,287);
     doc.text('Document généré automatiquement',w-14,287,{align:'right'});
   }
 
@@ -5100,7 +5100,7 @@ async function exportFichePdf(id){
   // ── En-tête
   doc.setFillColor(27,67,50);doc.rect(0,0,210,28,'F');
   doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(18);
-  doc.text('BOVIQ — Fiche individuelle',14,12);
+  doc.text('BOVIQ - Fiche individuelle',14,12);
   doc.setFontSize(10);doc.setFont('helvetica','normal');
   doc.text('Editee le '+dateStr,14,20);
 
@@ -5129,7 +5129,7 @@ async function exportFichePdf(id){
 
   // ── 1. Contrôle laitier
   if(a._categ_ml==='VL'&&(a._ml_lait24!=null||a._ml_leucos!=null)){
-    yPos=addSection('Controle laitier — Lact. '+(a._ml_lact||'?')+(a._ml_statut?' ('+a._ml_statut+')':''),yPos);
+    yPos=addSection('Controle laitier - Lact. '+(a._ml_lact||'?')+(a._ml_statut?' ('+a._ml_statut+')':''),yPos);
     const fmtK=v=>v!=null?Math.round(v)+'k':'—';
     const fmtV=(v,d=1)=>v!=null?Number(v).toFixed(d):'—';
     const mlRows=[
@@ -5274,7 +5274,7 @@ async function exportFichePdf(id){
   const pages=doc.internal.getNumberOfPages();
   for(let i=1;i<=pages;i++){
     doc.setPage(i);doc.setFontSize(8);doc.setTextColor(140,132,116);
-    doc.text('BOVIQ — Article L.234-1 Code rural — Page '+i+'/'+pages,14,290);
+    doc.text('BOVIQ - Code rural Art.L.234-1 - Page '+i+'/'+pages,14,290);
     doc.text(dateStr,180,290);
   }
   doc.save('Fiche_'+a.nom+'_'+(a.boucle||'').replace(/\s/g,'')+'.pdf');
