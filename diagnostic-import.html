@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>BOVIQ — Diagnostic Import</title>
+<style>
+body{font-family:monospace;padding:20px;background:#111;color:#0f0;font-size:13px}
+h2{color:#fff;font-family:sans-serif}
+.ok{color:#0f0}.warn{color:#ff0}.err{color:#f44}.info{color:#8cf}
+button{padding:8px 18px;background:#333;color:#fff;border:1px solid #555;border-radius:6px;cursor:pointer;font-size:13px;margin:4px}
+button:hover{background:#555}
+#log{background:#000;padding:16px;border-radius:8px;min-height:200px;max-height:500px;overflow-y:auto;margin-top:16px;border:1px solid #333}
+input[type=file]{display:block;margin:10px 0;background:#222;color:#fff;padding:6px}
+</style>
+</head>
+<body>
+<h2>🔬 BOVIQ — Diagnostic Import Windows</h2>
+<p class="info">Ouvre cette page sur Chrome Windows, puis clique sur chaque test.</p>
+
+<div id="log"></div>
+
+<br>
+<button onclick="testEnv()">1. Infos navigateur</button>
+<button onclick="testInput()">2. Test input file direct</button>
+<button onclick="testReader()">3. Test FileReader</button>
+<button onclick="testEncoding()">4. Test encodage windows-1252</button>
+<button onclick="clearLog()">🗑 Effacer</button>
+
+<br><br>
+<label style="color:#fff;font-size:13px">Test manuel — sélectionne un CSV MilKlic :</label>
+<input type="file" id="manual-input" multiple accept=".csv,.CSV,text/csv" onchange="manualTest(event)">
+
+<script>
+function log(msg, cls='info'){
+  const d = document.getElementById('log');
+  const t = new Date().toISOString().substring(11,19);
+  d.innerHTML += `<div class="${cls}">[${t}] ${msg}</div>`;
+  d.scrollTop = d.scrollHeight;
+}
+function clearLog(){ document.getElementById('log').innerHTML=''; }
+
+function testEnv(){
+  log('--- INFOS NAVIGATEUR ---');
+  log(`UserAgent: ${navigator.userAgent}`, 'info');
+  log(`Platform: ${navigator.platform}`, 'info');
+  log(`Chrome: ${'chrome' in window}`, window.chrome ? 'ok' : 'warn');
+  log(`FileReader: ${'FileReader' in window}`, 'FileReader' in window ? 'ok' : 'err');
+  log(`File API: ${'File' in window}`, 'File' in window ? 'ok' : 'err');
+  log(`TextDecoder: ${'TextDecoder' in window}`, 'TextDecoder' in window ? 'ok' : 'err');
+  log(`window-1252 support: test...`);
+  try {
+    const td = new TextDecoder('windows-1252');
+    log('TextDecoder windows-1252 → OK', 'ok');
+  } catch(e) {
+    log(`TextDecoder windows-1252 → ECHEC: ${e.message}`, 'err');
+  }
+}
+
+function testInput(){
+  log('--- TEST INPUT FILE ---');
+  const fi = document.getElementById('manual-input');
+  log(`Input element: ${fi ? 'trouvé' : 'ABSENT'}`, fi ? 'ok' : 'err');
+  if(!fi) return;
+  log(`accept attr: ${fi.accept}`, 'info');
+  log(`multiple: ${fi.multiple}`, 'info');
+  log(`style.display: ${window.getComputedStyle(fi).display}`, 'info');
+  log(`style.opacity: ${window.getComputedStyle(fi).opacity}`, 'info');
+  log(`offsetParent: ${fi.offsetParent}`, 'info');
+  log(`disabled: ${fi.disabled}`, fi.disabled ? 'err' : 'ok');
+  // Test déclenchement change
+  const orig = fi.onchange;
+  let triggered = false;
+  fi.addEventListener('change', function onceTest(e){
+    triggered = true;
+    log(`✅ Événement 'change' déclenché! Fichiers: ${e.target.files.length}`, 'ok');
+    fi.removeEventListener('change', onceTest);
+  });
+  log(`Listener 'change' attaché — sélectionne un fichier ci-dessous`, 'warn');
+}
+
+function testReader(){
+  log('--- TEST FILEREADER ---');
+  const fi = document.getElementById('manual-input');
+  if(!fi || !fi.files.length){
+    log('⚠ Sélectionne d\'abord un fichier avec l\'input ci-dessus', 'warn');
+    return;
+  }
+  const file = fi.files[0];
+  log(`Fichier: ${file.name} (${file.size} octets, type: "${file.type || 'non détecté'}")`, 'info');
+  const r = new FileReader();
+  r.onload = e => {
+    const txt = e.target.result;
+    log(`✅ FileReader.readAsText → ${txt.length} chars lus`, 'ok');
+    log(`Début: ${txt.substring(0,80).replace(/\n/g,'↵')}`, 'info');
+    const lines = txt.split('\n').length;
+    log(`Lignes: ${lines}`, 'info');
+  };
+  r.onerror = e => log(`❌ FileReader erreur: ${e.target.error}`, 'err');
+  r.onabort = () => log('❌ FileReader annulé', 'err');
+  log('Lecture en cours...', 'info');
+  r.readAsText(file, 'windows-1252');
+}
+
+function testEncoding(){
+  log('--- TEST ENCODAGE ---');
+  const fi = document.getElementById('manual-input');
+  if(!fi || !fi.files.length){
+    log('⚠ Sélectionne d\'abord un fichier', 'warn');
+    return;
+  }
+  const file = fi.files[0];
+  // Test 1: windows-1252
+  const r1 = new FileReader();
+  r1.onload = e => {
+    const s = e.target.result.substring(0,200);
+    const hasAccents = /[àâéèêîôùûç]/i.test(s);
+    log(`windows-1252 → accents détectés: ${hasAccents} | Début: ${s.substring(0,60)}`, hasAccents ? 'ok' : 'warn');
+  };
+  r1.readAsText(file, 'windows-1252');
+  // Test 2: utf-8
+  const r2 = new FileReader();
+  r2.onload = e => {
+    const s = e.target.result.substring(0,200);
+    log(`UTF-8 → Début: ${s.substring(0,60)}`, 'info');
+  };
+  r2.readAsText(file, 'utf-8');
+  // Test 3: latin1
+  const r3 = new FileReader();
+  r3.onload = e => {
+    const s = e.target.result.substring(0,200);
+    log(`latin1 → Début: ${s.substring(0,60)}`, 'info');
+  };
+  r3.readAsText(file, 'iso-8859-1');
+}
+
+function manualTest(e){
+  const files = e.target.files;
+  log(`--- SÉLECTION MANUELLE: ${files.length} fichier(s) ---`, 'ok');
+  for(let i=0; i<files.length; i++){
+    const f = files[i];
+    log(`  [${i+1}] ${f.name} — ${f.size} octets — type: "${f.type||'?'}"`, 'info');
+  }
+  if(files.length){
+    log('✅ Événement change OK, fichiers accessibles', 'ok');
+  }
+  // Reset pour permettre re-sélection
+  setTimeout(()=>{ e.target.value=''; }, 100);
+}
+
+// Auto-run env check
+window.onload = () => {
+  log('Page chargée — Clique sur les boutons de test', 'info');
+  testEnv();
+};
+</script>
+</body>
+</html>
