@@ -200,6 +200,7 @@ footer a{color:var(--brand2);text-decoration:none}
       <div class="kpi"><div class="kpi-lbl">TB / TP</div><div class="kpi-val ink" id="k-tt">35.8<small style="font-size:.42em">/28.0</small></div><div class="kpi-sub">g/kg moyens</div></div>
       <div class="kpi"><div class="kpi-lbl">Leucos &gt;400k</div><div class="kpi-val red" id="k-le">11</div><div class="kpi-sub">vaches en alerte</div></div>
       <div class="kpi"><div class="kpi-lbl">À inséminer</div><div class="kpi-val amber" id="k-ia">13</div><div class="kpi-sub">conseillées</div></div>
+      <div class="kpi"><div class="kpi-lbl">Lact. moy.</div><div class="kpi-val ink" id="k-lm">—</div><div class="kpi-sub">n° moyen VL</div></div>
     </div>
   </section>
 
@@ -212,7 +213,9 @@ footer a{color:var(--brand2);text-decoration:none}
     <div class="kpis">
       <div class="kpi"><div class="kpi-lbl">Vache R·3</div><div class="kpi-val" id="k-vr">7.66</div><div class="kpi-sub">€/kg carc.</div></div>
       <div class="kpi"><div class="kpi-lbl">Vache O·3</div><div class="kpi-val ink" id="k-vo">6.68</div><div class="kpi-sub">€/kg carc.</div></div>
+      <div class="kpi"><div class="kpi-lbl">Vache R·4</div><div class="kpi-val ink" id="k-vr4">7.57</div><div class="kpi-sub">€/kg carc.</div></div>
       <div class="kpi"><div class="kpi-lbl">JB R·3</div><div class="kpi-val" id="k-jb">7.53</div><div class="kpi-sub">€/kg carc.</div></div>
+      <div class="kpi"><div class="kpi-lbl">Génisse R·3</div><div class="kpi-val" id="k-gr3">7.68</div><div class="kpi-sub">€/kg carc.</div></div>
       <div class="kpi"><div class="kpi-lbl">Lait conv.</div><div class="kpi-val ink" id="k-lp">449</div><div class="kpi-sub">€/1 000 L</div></div>
     </div>
   </section>
@@ -302,9 +305,11 @@ function renderM(data){
       const tp=tpA.length?(tpA.reduce((s,a)=>s+a._ml_tp,0)/tpA.length).toFixed(1):0;
       const le=vl.filter(a=>a._ml_leucos>400).length;
       const ia=A.filter(a=>a._ml_conseil_ia==='A inséminér').length;
+      const vlL=vl.filter(a=>a._ml_lact>0);
+      const lm=vlL.length?(vlL.reduce((s,a)=>s+a._ml_lact,0)/vlL.length).toFixed(1):'—';
       set('k-ct',vl.length,'ink');set('k-la',la);
       document.getElementById('k-tt').innerHTML=tb+'<small style="font-size:.42em">/'+tp+'</small>';
-      set('k-le',le,le>0?'red':'');set('k-ia',ia,'amber');
+      set('k-le',le,le>0?'red':'');set('k-ia',ia,'amber');set('k-lm',lm,'ink');
       if(d._mlControleDate)document.getElementById('ml-sub').textContent='Contrôle '+d._mlControleDate;
     }
   }catch(e){}
@@ -317,9 +322,13 @@ function renderM(data){
     const last=cots.filter(c=>c.semaine===sem[0]);
     const f=(cat,conf,eng)=>last.find(c=>(c.categorie===cat||c.categorieNorm===cat)&&c.conformation===conf&&(c.engraissement===eng||c.engraissement===String(eng)));
     const vr=f('Vaches','R',3),vo=f('Vaches','O',3),jb=f('Jeunes Bovins','R',3);
+    const gr3=f('Génisses','R',3)||f('Génisse','R',3)||f('genisse_r3','R',3);
+    const vr4=f('Vaches','R',4);
     if(vr)set('k-vr',vr.prix.toFixed(2));
     if(vo)set('k-vo',vo.prix.toFixed(2),'ink');
     if(jb)set('k-jb',jb.prix.toFixed(2));
+    if(gr3)set('k-gr3',gr3.prix.toFixed(2));
+    if(vr4)set('k-vr4',vr4.prix.toFixed(2),'ink');
     if(src)document.getElementById('c-sub').textContent=src+' — '+sem[0];
   }
   try{
@@ -330,6 +339,19 @@ function renderM(data){
   fetch('data/market/cours-data.json')
     .then(r=>r.json())
     .then(d=>{
+      if(!d.cotations&&d.beef?.prices){
+        const p=d.beef.prices,w=d.beef.week_date;
+        const src=d.meta?.source_label||'DG AGRI';
+        const sem=w?w[w.length-1]:'';
+        if(p.vache_r3)set('k-vr',(p.vache_r3/100).toFixed(2));
+        if(p.vache_o3)set('k-vo',(p.vache_o3/100).toFixed(2),'ink');
+        if(p.vache_r4)set('k-vr4',(p.vache_r4/100).toFixed(2),'ink');
+        if(p.jb_r3)set('k-jb',(p.jb_r3/100).toFixed(2));
+        if(p.genisse_r3)set('k-gr3',(p.genisse_r3/100).toFixed(2));
+        if(d.milk?.latest)set('k-lp',Math.round(d.milk.latest*10),'ink');
+        if(sem)document.getElementById('c-sub').textContent=src+' — '+sem;
+        return;
+      }
       if(!d.cotations)return;
       try{localStorage.setItem('boviq_market_v2',JSON.stringify({cotations:d.cotations,source:d.meta?.source_label||'DG AGRI'}))}catch(e){}
       applyCours(d.cotations,d.meta?.source_label||'DG AGRI');

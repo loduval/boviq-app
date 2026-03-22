@@ -2,7 +2,7 @@
   "name": "BOVIQ — Gestion de troupeau",
   "short_name": "BOVIQ",
   "description": "Application de gestion de troupeau laitier",
-  "start_url": "./boviq-v6-latest.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#1a3a2a",
   "theme_color": "#2d6a4f",
