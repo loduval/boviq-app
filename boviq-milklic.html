@@ -487,7 +487,7 @@ function renderDashboard(){
     <div class="kpi"><div class="kpi-label">Leucos moyens</div><div class="kpi-val" style="color:${avgL>400?'var(--red)':avgL>200?'var(--amber)':'var(--brand)'}">${avgL}k</div><div class="kpi-sub">${VLs.filter(a=>a.leucos>400).length} vaches &gt;400k</div></div>`;
   const ca=VLs.filter(a=>a.leucos>400).sort((a,b)=>b.leucos-a.leucos).slice(0,8);
   document.getElementById('dash-cell-alerts').innerHTML=ca.length
-    ?ca.map(a=>`<div class="alert-row ${a.leucos>800?'crit':'warn'}"><span class="anom">${a.nom||a.trav}</span>${a.sdir?`<span class="sdir sdir-${a.sdir}">${a.sdir}</span>`:''}<span class="aval">${(a.leucos/1000).toFixed(0)}k</span></div>`).join('')
+    ?ca.map(a=>`<div class="alert-row ${a.leucos>800?'crit':'warn'}"><span class="anom">${a.nom||a.trav}</span>${a.sdir?`<span class="sdir sdir-${a.sdir}">${a.sdir}</span>`:''}<span class="aval">${a.leucos.toFixed(0)}k</span></div>`).join('')
     :'<p style="font-size:13px;color:var(--ink3)">✅ Aucune alerte &gt;400k</p>';
   const grpSt={};Object.values(ML.animaux).filter(a=>a.statut).forEach(a=>{(grpSt[a.statut]=grpSt[a.statut]||[]).push(a)});
   const StOrder=['T','TT','FV','TFV','NC'];
@@ -496,12 +496,13 @@ function renderDashboard(){
     ?StEntries.map(st=>{const lst=grpSt[st];return`<div class="alert-row info"><span class="anom-w">${st}</span><span class="anames">${lst.map(a=>a.nom||a.trav).join(', ')}</span><span class="aval">${lst.length}</span></div>`}).join('')
     :'<p style="font-size:13px;color:var(--ink3)">—</p>';
   const grpIA={};Object.values(ML.animaux).filter(a=>a.conseilIA).forEach(a=>{(grpIA[a.conseilIA]=grpIA[a.conseilIA]||[]).push(a)});
-  const IAOrder=['A inséminér','IA possible','IA déconseillée'];
-  const IAcls={'A inséminér':'ia-ok','IA déconseillée':'ia-no','IA possible':'ia-possible'};
-  const IAlbl={'A inséminér':'A inséminer','IA déconseillée':'IA déconseillée','IA possible':'IA possible'};
-  const IAentries=IAOrder.filter(k=>grpIA[k]).concat(Object.keys(grpIA).filter(k=>!IAOrder.includes(k)));
+  // Tri : A inseminer (toutes variantes) → IA possible → IA deconseille
+  const iaSortKey=k=>{const n=k.toLowerCase();if(n.startsWith('a ins'))return 0;if(n.startsWith('ia p'))return 1;return 2};
+  const IAcls=k=>{const n=k.toLowerCase();if(n.startsWith('a ins'))return'ia-ok';if(n.startsWith('ia d'))return'ia-no';return'ia-possible'};
+  const IAlbl=k=>{const n=k.toLowerCase();if(n.startsWith('a ins'))return'A inséminer';if(n.startsWith('ia d'))return'IA déconseillée';if(n.startsWith('ia p'))return'IA possible';return k};
+  const IAentries=Object.keys(grpIA).sort((a,b)=>iaSortKey(a)-iaSortKey(b));
   document.getElementById('dash-repro-conseils').innerHTML=IAentries.length
-    ?IAentries.map(c=>{const lst=grpIA[c];return`<div class="conseil-row ${IAcls[c]||'ia-possible'}"><span class="cr-label">${IAlbl[c]||c}</span><span class="cr-noms">${lst.map(a=>a.nom||a.trav).join(' · ')}</span><span class="cr-count">${lst.length}</span></div>`}).join('')
+    ?IAentries.map(c=>{const lst=grpIA[c];return`<div class="conseil-row ${IAcls(c)}"><span class="cr-label">${IAlbl(c)}</span><span class="cr-noms">${lst.map(a=>a.nom||a.trav).join(' · ')}</span><span class="cr-count">${lst.length}</span></div>`}).join('')
     :'<p style="font-size:13px;color:var(--ink3)">—</p>';
   const sf=VLs.filter(a=>a.varLait!=null&&a.varLait<=-15).sort((a,b)=>a.varLait-b.varLait).slice(0,6);
   document.getElementById('dash-prod-signals').innerHTML=sf.length
