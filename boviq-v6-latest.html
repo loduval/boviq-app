@@ -5028,7 +5028,6 @@ function openFicheAnimal(id){
   h+=`</div>`;
 
   el.innerHTML=h;
-  if(a._categ_ml==='VL') renderFicheCharts(a._trav);
   const ficheFooter=document.getElementById('fiche-footer');
   if(ficheFooter){
     const btnVelage=a.sexe==='Femelle'&&!a.statut?'<button class="btn btn-o btn-s" style="color:var(--teal);border-color:var(--teal)" onclick="closeM(\'fiche\');openVelageModal(\''+a.id+'\')">🍼 Vêlage</button>':'';
@@ -5042,6 +5041,8 @@ function openFicheAnimal(id){
       '<button class="btn btn-p btn-s" onclick="exportFichePdf(\''+a.id+'\')">📄 PDF fiche</button>';
   }
   openM('fiche');
+  // Courbes après ouverture du modal (canvas doit être visible pour Chart.js)
+  if(a._categ_ml==='VL') setTimeout(()=>renderFicheCharts(a._trav),50);
 }
 
 async function renderFicheCharts(trav){
@@ -5101,18 +5102,18 @@ async function exportFichePdf(id){
   doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(18);
   doc.text('BOVIQ — Fiche individuelle',14,12);
   doc.setFontSize(10);doc.setFont('helvetica','normal');
-  doc.text('Éditée le '+dateStr,14,20);
+  doc.text('Editee le '+dateStr,14,20);
 
   // ── Identité
   doc.setTextColor(30,27,22);doc.setFontSize(16);doc.setFont('helvetica','bold');
   doc.text(a.nom,14,38);
   doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(80,75,68);
-  doc.text(a.race+' · '+a.type+' · '+(a.sexe==='Femelle'?'♀':'')+a.sexe+' · '+age+' ans'+(a.naissance?' · Née le '+fmt(a.naissance):''),14,44);
+  doc.text(a.race+' | '+a.type+' | '+(a.sexe==='Femelle'?'F':'M')+' | '+age+' ans'+(a.naissance?' | Nee le '+fmt(a.naissance):''),14,44);
   if(a.boucle)doc.text('N° Boucle : '+a.boucle,14,49);
   doc.setFont('helvetica','bold');doc.setTextColor(27,67,50);
   doc.text('Statut : '+statut.l+(a.statut?' ('+a.statut+(a.dateSortie?' le '+fmt(a.dateSortie):'')+')'  :''),a.boucle?80:14,49);
   doc.setFont('helvetica','normal');doc.setTextColor(80,75,68);
-  doc.text('Score santé : '+ss.grade+' ('+ss.score+'/100)  ·  Vêlages : '+velages+(ivv?'  ·  IVV moy. : '+ivv+'j':''),14,54);
+  doc.text('Score sante : '+ss.grade+' ('+ss.score+'/100)  |  Velages : '+velages+(ivv?'  |  IVV moy. : '+ivv+'j':''),14,54);
 
   // ── Séparateur
   doc.setDrawColor(45,106,79);doc.setLineWidth(0.4);doc.line(14,57,196,57);
@@ -5128,7 +5129,7 @@ async function exportFichePdf(id){
 
   // ── 1. Contrôle laitier
   if(a._categ_ml==='VL'&&(a._ml_lait24!=null||a._ml_leucos!=null)){
-    yPos=addSection('🥛 Dernier contrôle laitier — Lact. '+(a._ml_lact||'?')+(a._ml_statut?' ('+a._ml_statut+')':''),yPos);
+    yPos=addSection('Controle laitier — Lact. '+(a._ml_lact||'?')+(a._ml_statut?' ('+a._ml_statut+')':''),yPos);
     const fmtK=v=>v!=null?Math.round(v)+'k':'—';
     const fmtV=(v,d=1)=>v!=null?Number(v).toFixed(d):'—';
     const mlRows=[
@@ -5137,8 +5138,8 @@ async function exportFichePdf(id){
       ['Cellules (dernier)',fmtK(a._ml_leucos),'Cellules (N-1)',fmtK(a._ml_leuco_prev)],
       ['SDIR',a._ml_sdir||'—','Conseil IA repro',a._ml_conseil_ia||'—'],
     ];
-    if(a._ml_date_ia)mlRows.push(['Dernière IA',a._ml_date_ia+(a._ml_jours_ia!=null?' (il y a '+a._ml_jours_ia+'j)':''),'Taureau IA',(a._ml_taureau_ia||'—')+(a._ml_rang_ia?' · rang '+a._ml_rang_ia:'')]);
-    if(a._ml_tar_prev){const dT=Math.round((new Date(a._ml_tar_prev)-new Date())/86400000);mlRows.push(['Tarissement prévu',a._ml_tar_prev+' (dans '+dT+' j)','','']);}
+    if(a._ml_date_ia)mlRows.push(['Derniere IA',a._ml_date_ia+(a._ml_jours_ia!=null?' (il y a '+a._ml_jours_ia+'j)':''),'Taureau IA',(a._ml_taureau_ia||'—')+(a._ml_rang_ia?' | rang '+a._ml_rang_ia:'')]);
+    if(a._ml_tar_prev){const dT=Math.round((new Date(a._ml_tar_prev)-new Date())/86400000);mlRows.push(['Tarissement prevu',a._ml_tar_prev+' (dans '+dT+' j)','','']);}
     doc.autoTable({startY:yPos,body:mlRows,styles:{fontSize:9,cellPadding:2.5},
       columnStyles:{0:{fontStyle:'bold',textColor:[45,106,79],cellWidth:40},1:{cellWidth:50},2:{fontStyle:'bold',textColor:[45,106,79],cellWidth:40},3:{cellWidth:46}},
       alternateRowStyles:{fillColor:[244,241,235]},margin:{left:14,right:14}});
@@ -5147,7 +5148,7 @@ async function exportFichePdf(id){
 
   // ── 2. Généalogie
   if(mere||pere||enfants.length){
-    yPos=addSection('👪 Généalogie',yPos);
+    yPos=addSection('Genealogie',yPos);
     const genoRows=[];
     if(mere)genoRows.push(['Mère',mere.nom+' ('+mere.race+')']);
     if(pere)genoRows.push(['Père',pere.nom+' ('+pere.race+')']);
@@ -5161,7 +5162,7 @@ async function exportFichePdf(id){
   // ── 3. Reproductions
   if(repros.length){
     if(yPos>240){doc.addPage();yPos=15;}
-    yPos=addSection('💚 Reproductions ('+repros.length+')',yPos);
+    yPos=addSection('Reproductions ('+repros.length+')',yPos);
     const reproRows=repros.map(r=>{
       const t=r.taureau?D.taureaux.find(x=>x.id===r.taureau):null;
       const st=reproStatut(r);
@@ -5180,7 +5181,7 @@ async function exportFichePdf(id){
   // ── 4. Traitements
   if(treats.length){
     if(yPos>240){doc.addPage();yPos=15;}
-    yPos=addSection('💊 Traitements médicamenteux ('+treats.length+')',yPos);
+    yPos=addSection('Traitements medicamenteux ('+treats.length+')',yPos);
     const treatRows=[];
     treats.forEach(t=>{
       const lignes=getLignesSante(t);
@@ -5201,7 +5202,7 @@ async function exportFichePdf(id){
   // ── 5. Traçabilité BDNI
   if(a.dateEntree||a.provenance||a.ancienneBoucle||a.dateRebouclage){
     if(yPos>255){doc.addPage();yPos=15;}
-    yPos=addSection('🏛️ Traçabilité BDNI',yPos);
+    yPos=addSection('Tracabilite BDNI',yPos);
     const bdniRows=[];
     if(a.dateEntree)bdniRows.push(['Entrée troupeau',fmt(a.dateEntree)]);
     if(a.provenance)bdniRows.push(['Provenance',a.provenance]);
@@ -5215,7 +5216,7 @@ async function exportFichePdf(id){
   // ── 6. Notes
   if(a.notes){
     if(yPos>255){doc.addPage();yPos=15;}
-    yPos=addSection('📝 Notes',yPos);
+    yPos=addSection('Notes',yPos);
     doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(60,55,50);
     const lines=doc.splitTextToSize(a.notes,178);
     doc.setFillColor(254,243,199);doc.roundedRect(13,yPos-1,182,lines.length*5+5,2,2,'F');
