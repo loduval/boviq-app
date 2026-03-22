@@ -528,7 +528,7 @@ const dz=document.getElementById('drop-zone'),fi=document.getElementById('file-i
 dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag')});
 dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
 dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');handleFiles(e.dataTransfer.files)});
-fi.addEventListener('change',e=>{handleFiles(e.target.files);fi.value='';});
+fi.addEventListener('change',e=>{handleFiles(e.target.files);});
 
 function handleFiles(files){
   if(!files.length)return;
@@ -558,6 +558,7 @@ function handleFiles(files){
     }));
   });
   Promise.all(tasks).then(()=>{
+    fi.value='';
     saveML();
     const tot=Object.keys(ML.animaux).length;
     document.getElementById('import-summary').textContent=`${tot} animaux consolidés`;
