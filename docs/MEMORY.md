@@ -1,6 +1,6 @@
 # BOVIQ — MEMORY SESSION
 
-Dernière mise à jour : **22/03/2026** — patch3 : fix seuils leucos + badge cellules inventaire + tank risk + UGB prévisionnel + scroll pages + KPIs dashboard + start_url PWA
+Dernière mise à jour : **22/03/2026** — sprint historique leucos : D.mlControles[], graphe fiche, badge récurrence 12 mois + fix bug JS corps orphelin exportFichePdf (crash inventaire)
 
 ---
 
@@ -8,8 +8,8 @@ Dernière mise à jour : **22/03/2026** — patch3 : fix seuils leucos + badge c
 
 | Fichier | Lignes | Taille | Dernier commit |
 |---------|--------|--------|----------------|
-| `boviq-v6-latest.html` | 5 971 | ~450 KB | `4b98f9d` |
-| `boviq-milklic.html` | 621 | 142 KB | `04142be` |
+| `boviq-v6-latest.html` | 6 157 | ~460 KB | `b83cd27` |
+| `boviq-milklic.html` | 655 | ~145 KB | `d299aa6` |
 | `boviq-cours-marche.html` | 1 139 | 47 KB | — |
 | `index.html` | ~360 | ~18 KB | `949b13f` |
 | `manifest.json` | 17 | — | `949b13f` |
