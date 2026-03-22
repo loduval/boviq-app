@@ -5229,6 +5229,47 @@ async function exportFichePdf(id){
     doc.setFontSize(10);doc.setTextColor(140,132,116);doc.text('Aucun historique enregistré.',14,yPos);
   }
 
+  // ── Courbes de contrôle laitier (canvas → base64 PNG)
+  if(a._categ_ml==='VL'){
+    try{
+      const mlRaw=localStorage.getItem('BOVIQ_MILKLIC');
+      if(mlRaw){
+        const ml=JSON.parse(mlRaw);
+        const ma=ml.animaux&&ml.animaux[a._trav];
+        if(ma){
+          await loadChartJs();
+          const sp=obj=>Object.entries(obj||{}).filter(([,v])=>v!=null).sort(([x],[y])=>x.localeCompare(y));
+          const lp=sp(ma.histoLait),tbp=sp(ma.histoTB),tpp=sp(ma.histoTP),cp=sp(ma.histoCell);
+          const fmtD=d=>d.slice(5).replace('-','/');
+          const baseOff={animation:false,responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{grid:{display:false},ticks:{font:{size:8},maxRotation:45}},y:{grid:{color:'rgba(0,0,0,.06)'},ticks:{font:{size:8}}}}};
+          const makeChart=(canv,cfg)=>new Chart(canv,cfg);
+          const W=520,H=140;
+          const addChartToPdf=(chartCfg,titleStr)=>{
+            if(yPos>250){doc.addPage();yPos=15;}
+            yPos=addSection(titleStr,yPos);
+            const canv=document.createElement('canvas');canv.width=W;canv.height=H;
+            const ch=makeChart(canv,chartCfg);
+            const img=canv.toDataURL('image/png',1.0);
+            doc.addImage(img,'PNG',14,yPos,182,H*182/W);
+            yPos+=H*182/W+6;
+            ch.destroy();canv.remove();
+          };
+          if(lp.length>=2){
+            addChartToPdf({type:'line',data:{labels:lp.map(([d])=>fmtD(d)),datasets:[{label:'Lait L/j',data:lp.map(([,v])=>v),borderColor:'#2D6A4F',backgroundColor:'rgba(45,106,79,.10)',fill:true,tension:.3,pointRadius:3,borderWidth:1.5}]},options:baseOff},'Lait 24h (L/j)');
+          }
+          if((tbp.length>=2||tpp.length>=2)){
+            const allD=[...new Set([...tbp.map(([d])=>d),...tpp.map(([d])=>d)])].sort();
+            const tbM=Object.fromEntries(tbp),tpM=Object.fromEntries(tpp);
+            addChartToPdf({type:'line',data:{labels:allD.map(fmtD),datasets:[{label:'TB',data:allD.map(d=>tbM[d]??null),borderColor:'#D97706',backgroundColor:'rgba(217,119,6,.05)',fill:false,tension:.3,pointRadius:3,borderWidth:1.5,spanGaps:false},{label:'TP',data:allD.map(d=>tpM[d]??null),borderColor:'#1D4ED8',backgroundColor:'rgba(29,78,216,.04)',fill:false,tension:.3,pointRadius:3,borderWidth:1.5,spanGaps:false}]},options:{...baseOff,plugins:{legend:{display:true,labels:{boxWidth:8,font:{size:8}}},tooltip:{enabled:false}}}},'TB / TP (g/kg)');
+          }
+          if(cp.length>=2){
+            addChartToPdf({type:'line',data:{labels:cp.map(([d])=>fmtD(d)),datasets:[{label:'Leucos',data:cp.map(([,v])=>+(v/1000).toFixed(1)),borderColor:'#DC2626',backgroundColor:'rgba(220,38,38,.08)',fill:true,tension:.3,pointRadius:3,borderWidth:1.5,pointBackgroundColor:cp.map(([,v])=>v/1000>800?'#DC2626':v/1000>400?'#D97706':'#2D6A4F')},{data:cp.map(()=>400),borderColor:'rgba(220,38,38,.35)',borderWidth:1,borderDash:[4,3],fill:false,pointRadius:0,label:'Seuil 400k'}]},options:{...baseOff,plugins:{legend:{display:false},tooltip:{enabled:false}}}},'Cellules (x1000 cell/mL) — seuil 400k');
+          }
+        }
+      }
+    }catch(e){console.warn('PDF courbes erreur',e);}
+  }
+
   // ── Pied de page
   const pages=doc.internal.getNumberOfPages();
   for(let i=1;i<=pages;i++){
