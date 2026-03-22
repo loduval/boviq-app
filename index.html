@@ -176,7 +176,11 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 
 /* === TABLE === */
 .tw{overflow-x:auto}
+/* === PLEINE LARGEUR GLOBALE === */
+.page>.card,.page>.sante-filtres,.page>.page-head+.card{width:100%}
+.tw{overflow-x:auto;width:100%}
 table{width:100%;border-collapse:collapse;font-size:13px}
+.journal-grid,.race-grid{width:100%}
 th{text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--ink3);padding:10px 12px;border-bottom:2px solid var(--line);white-space:nowrap;position:sticky;top:0;background:var(--card)}
 td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
 th.sortable{cursor:pointer;user-select:none;white-space:nowrap;transition:color .15s}
@@ -584,11 +588,11 @@ tr:hover td{background:rgba(0,0,0,.01)}
 .planning-day.today .pd-dow,.planning-day.today .pd-num{color:white}
 .pd-body{padding:4px 6px;display:flex;flex-direction:column;gap:3px;flex:1;overflow:hidden}
 .pd-event{font-size:10px;padding:2px 5px;border-radius:4px;line-height:1.3;border-left:3px solid transparent}
-.pd-event.ev-velage{background:var(--teal-l);border-color:var(--teal);color:var(--teal)}
-.pd-event.ev-tarissement{background:var(--amber-l);border-color:var(--amber);color:var(--amber)}
-.pd-event.ev-vaccin{background:var(--blue-l);border-color:var(--blue);color:var(--blue)}
-.pd-event.ev-delai{background:var(--red-l);border-color:var(--red);color:var(--red)}
-.pd-event.ev-bdni{background:var(--purple-l);border-color:var(--purple);color:var(--purple)}
+.pd-event.ev-velage{background:rgba(20,184,166,.15);border-color:#0F766E;color:#0F766E}
+.pd-event.ev-tarissement{background:rgba(217,119,6,.12);border-color:#B45309;color:#92400E}
+.pd-event.ev-vaccin{background:rgba(37,99,235,.12);border-color:#1D4ED8;color:#1E40AF}
+.pd-event.ev-delai{background:rgba(220,38,38,.12);border-color:#DC2626;color:#B91C1C}
+.pd-event.ev-bdni{background:rgba(124,58,237,.12);border-color:#7C3AED;color:#6D28D9}
 .pd-empty{font-size:10px;color:var(--ink4);padding:3px 5px;font-style:italic}
 .planning-nav{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .planning-nav .pw-label{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;flex:1;text-align:center}
@@ -640,7 +644,7 @@ input,select,textarea{color-scheme:light}
 .filter-bar select{background:#fff;border-color:var(--line2);color:var(--ink)}
 #h-animal{background:#fff;border-color:var(--line2);color:var(--ink)}
 /* === TABLES LIGHT === */
-th{background:var(--bg2);color:var(--ink3);border-bottom-color:var(--line2)}
+th{background:var(--bg2);color:var(--ink3);border-bottom-color:var(--line2);position:sticky;top:0;z-index:2}
 tr:hover td{background:var(--brand-pale)}
 /* === MODAL LIGHT === */
 .modal{background:var(--card);border:1px solid var(--line2)}
@@ -866,8 +870,7 @@ tr:hover td{background:var(--brand-pale)}
     </div>
   </div>
 
-  <div class="card"><div class="tw"><table><thead><tr>
-    <th class="sortable" data-table="sante" data-col="date">Date <span class="sort-icon">⇅</span></th><th class="sortable" data-table="sante" data-col="animal">Animal(aux) / Ordonnance <span class="sort-icon">⇅</span></th><th>Produit(s)</th><th>Détail</th><th class="sortable" data-table="sante" data-col="delaiLait">Délai lait <span class="sort-icon">⇅</span></th><th class="sortable" data-table="sante" data-col="delaiViande">Délai viande <span class="sort-icon">⇅</span></th><th class="sortable" data-table="sante" data-col="fin">Fin attente <span class="sort-icon">⇅</span></th><th></th>
+  <div class="card"><div class="tw" style="max-height:38dvh;overflow-y:auto;scrollbar-width:thin"><table><thead><tr> <span class="sort-icon">⇅</span></th><th class="sortable" data-table="sante" data-col="animal">Animal(aux) / Ordonnance <span class="sort-icon">⇅</span></th><th>Produit(s)</th><th>Détail</th><th class="sortable" data-table="sante" data-col="delaiLait">Délai lait <span class="sort-icon">⇅</span></th><th class="sortable" data-table="sante" data-col="delaiViande">Délai viande <span class="sort-icon">⇅</span></th><th class="sortable" data-table="sante" data-col="fin">Fin attente <span class="sort-icon">⇅</span></th><th></th>
   </tr></thead><tbody id="tb-sante"></tbody></table></div></div>
 
   <!-- Plan vaccinal -->
@@ -880,7 +883,7 @@ tr:hover td{background:var(--brand-pale)}
       <p style="font-size:12px;color:var(--ink3);margin-bottom:10px">Activez les protocoles suivis dans votre exploitation :</p>
       <div id="vaccin-toggles" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px"></div>
     </div>
-    <div class="card-body" id="vaccin-plan" style="padding-top:6px;max-height:60dvh;overflow-y:auto;scrollbar-width:thin"></div>
+    <div class="card-body" id="vaccin-plan" style="padding-top:6px;max-height:38dvh;overflow-y:auto;scrollbar-width:thin"></div>
   </div>
 </div>
 
@@ -889,7 +892,7 @@ tr:hover td{background:var(--brand-pale)}
   <div class="page-head"><h2>Registre taureaux</h2>
     <button class="btn btn-p" onclick="openTaureauModal()">+ Taureau</button>
   </div>
-  <div class="card"><div class="tw"><table><thead><tr>
+  <div class="card" style="width:100%"><div class="tw"><table style="width:100%"><thead><tr>
     <th class="sortable" data-table="taureaux" data-col="nom">Nom <span class="sort-icon">⇅</span></th><th class="sortable" data-table="taureaux" data-col="race">Race <span class="sort-icon">⇅</span></th><th class="sortable" data-table="taureaux" data-col="boucle">N° Boucle <span class="sort-icon">⇅</span></th><th class="sortable" data-table="taureaux" data-col="naissance">Naissance <span class="sort-icon">⇅</span></th><th class="sortable" data-table="taureaux" data-col="saillies">Saillies <span class="sort-icon">⇅</span></th><th></th>
   </tr></thead><tbody id="tb-taureaux"></tbody></table></div></div>
 </div>
@@ -4661,7 +4664,7 @@ function renderAides(){
   let headerHtml=`<div class="card"><div class="card-body" style="font-size:13px;line-height:1.6;color:var(--ink2);padding:18px">
     Retrouvez ci-dessous toutes les aides auxquelles un \u00e9leveur bovin lait peut pr\u00e9tendre. Cliquez sur chaque aide pour voir les d\u00e9tails, les d\u00e9marches et un mod\u00e8le de courrier.`;
   if(lb&&totalEstMax>0){
-    headerHtml+=`<div class="aide-estim" style="margin-top:12px">\u{1F4B0} Estimation potentielle annuelle (bas\u00e9e sur votre exercice ${lb.year}) : <strong>de ${fmtN(Math.round(totalEstMin))} \u00e0 ${fmtN(Math.round(totalEstMax))} \u20ac</strong><br><span style="font-size:11px;font-weight:400;color:var(--ink3)">Montants indicatifs \u2014 v\u00e9rifiez votre \u00e9ligibilit\u00e9 r\u00e9elle aupr\u00e8s de la DDT et de la Chambre d'agriculture.</span></div>`;
+    headerHtml+=`<div class="aide-estim" style="margin-top:12px">\u{1F4B0} Estimation potentielle annuelle (bas\u00e9e sur votre exercice ${lb.annee||lb.year}) : <strong>de ${fmtN(Math.round(totalEstMin))} \u00e0 ${fmtN(Math.round(totalEstMax))} \u20ac</strong><br><span style="font-size:11px;font-weight:400;color:var(--ink3)">Montants indicatifs \u2014 v\u00e9rifiez votre \u00e9ligibilit\u00e9 r\u00e9elle aupr\u00e8s de la DDT et de la Chambre d'agriculture.</span></div>`;
   }
   headerHtml+=`</div></div>`;
 
