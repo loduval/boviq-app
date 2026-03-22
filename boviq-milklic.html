@@ -172,6 +172,38 @@ tbody tr:hover td{background:#F7F4EE}
 .step-num{width:30px;height:30px;border-radius:50%;background:var(--brand-light);color:var(--brand);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .code-block{background:#1E1B16;color:#A8D5B5;font-family:monospace;font-size:12px;padding:14px 18px;border-radius:10px;overflow-x:auto;margin-top:10px;line-height:1.7}
 
+/* ── SANTÉ MAMELLES ── */
+.sm-table{width:100%;border-collapse:collapse}
+.sm-table th{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);padding:6px 10px;border-bottom:2px solid var(--line2);background:var(--bg2);white-space:nowrap}
+.sm-row{border-bottom:1px solid var(--line)}
+.sm-row:last-child{border-bottom:none}
+.sm-row:hover td{background:#F7F4EE}
+.sm-row td{padding:5px 10px;vertical-align:middle}
+.sm-nom{font-weight:600;font-size:12.5px;cursor:pointer;text-decoration:none;color:var(--brand);transition:opacity .12s}
+.sm-nom:hover{opacity:.7;text-decoration:underline}
+.sm-trav{font-size:11px;color:var(--ink3);font-family:monospace}
+.sm-last{font-weight:600;font-size:12px}
+.sm-dot{display:inline-flex;align-items:center;justify-content:center;width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.sm-dot.vert{background:#16a34a}.sm-dot.bleu{background:#2563eb}.sm-dot.orange{background:#ea580c}.sm-dot.rouge{background:#dc2626}
+.sm-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:12px;font-size:10.5px;font-weight:700}
+.sm-badge.vert{background:#dcfce7;color:#15803d}
+.sm-badge.bleu{background:#dbeafe;color:#1d4ed8}
+.sm-badge.orange{background:#ffedd5;color:#c2410c}
+.sm-badge.rouge{background:#fee2e2;color:#b91c1c}
+.sm-spark{display:block}
+/* Modal */
+.sm-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:center;justify-content:center}
+.sm-modal{background:var(--card);border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.18);padding:24px;max-width:520px;width:90%;max-height:80vh;overflow-y:auto}
+.sm-modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.sm-modal-head h3{font-family:'Playfair Display',serif;font-size:18px;color:var(--brand)}
+.sm-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--ink3);line-height:1;padding:2px 6px;border-radius:6px}
+.sm-close:hover{background:var(--bg2)}
+.sm-hist-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--line);font-size:12.5px}
+.sm-hist-row:last-child{border-bottom:none}
+.sm-hist-date{color:var(--ink3);font-size:11.5px;min-width:80px}
+.sm-bar-wrap{flex:1;height:14px;background:var(--bg2);border-radius:4px;margin:0 10px;overflow:hidden}
+.sm-bar{height:100%;border-radius:4px;transition:width .3s}
+
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -193,6 +225,7 @@ tbody tr:hover td{background:#F7F4EE}
     <button class="nav-btn" data-p="dashboard"><span class="icon">📊</span>Tableau de bord</button>
     <button class="nav-btn" data-p="cellules"><span class="icon">🦠</span>Cellules<span class="nav-badge" id="nb-alert-cell">—</span></button>
     <button class="nav-btn" data-p="repro"><span class="icon">🔬</span>Repro / IA<span class="nav-badge" id="nb-alert-repro">—</span></button>
+    <button class="nav-btn" data-p="sante"><span class="icon">🫧</span>Santé mamelles</button>
     <button class="nav-btn" data-p="courbes"><span class="icon">📈</span>Courbes</button>
     <button class="nav-btn" data-p="bridge"><span class="icon">🔗</span>Intégration BOVIQ</button>
   </nav>
@@ -276,6 +309,43 @@ tbody tr:hover td{background:#F7F4EE}
   </div>
 </div>
 
+<div class="page" id="page-sante">
+  <div class="page-head">
+    <div><h2>Santé Mamelles</h2><p class="page-sub">Tendance cellulaire · toutes les vaches laitières et taries</p></div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span class="sm-badge vert">● Saine</span>
+      <span class="sm-badge bleu">● Épisodique</span>
+      <span class="sm-badge orange">● Fréquente</span>
+      <span class="sm-badge rouge">● Chronique ≥3</span>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body" style="padding:0">
+      <div class="tbl-wrap">
+        <table class="sm-table">
+          <thead><tr>
+            <th>Vache</th><th>N°</th><th>Statut</th>
+            <th>Tendance 12 mois</th>
+            <th style="text-align:right">Dernier (k)</th><th>Profil</th>
+          </tr></thead>
+          <tbody id="sante-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal santé -->
+<div class="sm-modal-bg" id="sm-modal-bg" style="display:none" onclick="closeSanteModal(event)">
+  <div class="sm-modal">
+    <div class="sm-modal-head">
+      <h3 id="sm-modal-titre">—</h3>
+      <button class="sm-close" onclick="document.getElementById('sm-modal-bg').style.display='none'">×</button>
+    </div>
+    <div id="sm-modal-body"></div>
+  </div>
+</div>
+
 <div class="page" id="page-bridge">
   <div class="page-head"><div><h2>Intégration BOVIQ V6</h2><p class="page-sub">localStorage partagé · clé BOVIQ_MILKLIC</p></div></div>
   <div class="card">
@@ -327,6 +397,7 @@ function showPage(p){
   if(p==='cellules')renderCellules();
   if(p==='repro')renderRepro();
   if(p==='courbes')renderCourbesInit();
+  if(p==='sante')renderSante();
   if(p==='bridge')renderBridge();
 }
 
@@ -568,6 +639,100 @@ function renderCourbes(){
   document.getElementById('courbe-fiche').style.display='block';
   document.getElementById('courbe-fiche-titre').textContent=(a.nom||a.trav)+' — Fiche contrôle';
   document.getElementById('courbe-fiche-body').innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px">${[['N° travail',a.trav],['N° national',a.numNat||'—'],['Naissance',a.naissance||'—'],['Catégorie',a.categ||'—'],['Lactation n°',a.numLact??'—'],['Lait',a.lait24!=null?a.lait24+' L/j':'—'],['TB',a.tb??'—'],['TP',a.tp??'—'],['Leucos',a.leucos!=null?a.leucos.toFixed(0)+'k':'—'],['SDIR',a.sdir||'—'],['Taureau',a.taureau||'—'],['Tarissement',a.tarPrev||'—'],['Conseil IA',a.conseilIA||'—'],['Évol. lait',a.varLait!=null?a.varLait+'%':'—']].map(([l,v])=>`<div class="kpi"><div class="kpi-label">${l}</div><div style="font-size:16px;font-weight:600;color:var(--ink)">${v}</div></div>`).join('')}</div>`;
+}
+
+function classifySante(a){
+  const hc=a.histoCell||{};
+  const vals=Object.entries(hc).sort((x,y)=>x[0]<y[0]?-1:1);
+  if(!vals.length)return'vert';
+  const recent=vals.slice(-6).map(v=>v[1]);
+  // Chronique : 3+ consécutifs > 200k sans interruption sur les derniers contrôles
+  let consec=0,maxConsec=0;
+  for(const v of recent){if(v>200){consec++;maxConsec=Math.max(maxConsec,consec)}else consec=0}
+  if(maxConsec>=3)return'rouge';
+  // Fréquente : ≥3 contrôles sur les 6 derniers > 200k
+  const cnt=recent.filter(v=>v>200).length;
+  if(cnt>=3)return'orange';
+  if(cnt>=1)return'bleu';
+  return'vert';
+}
+
+function sparklineSVG(a){
+  const hc=a.histoCell||{};
+  const vals=Object.entries(hc).sort((x,y)=>x[0]<y[0]?-1:1).slice(-12);
+  if(vals.length<2)return`<svg width="120" height="28" class="sm-spark"><text x="4" y="18" font-size="10" fill="#B8B0A2">—</text></svg>`;
+  const W=120,H=28,pad=3;
+  const ys=vals.map(v=>v[1]);
+  const mx=Math.max(...ys,400);
+  const pts=ys.map((v,i)=>{
+    const x=pad+i*(W-pad*2)/(ys.length-1);
+    const y=H-pad-(v/mx)*(H-pad*2);
+    return[x,y];
+  });
+  const cls=classifySante(a);
+  const col={vert:'#16a34a',bleu:'#2563eb',orange:'#ea580c',rouge:'#dc2626'}[cls];
+  // Ligne de seuil 200k
+  const sy=H-pad-(200/mx)*(H-pad*2);
+  const path='M'+pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join('L');
+  const dots=pts.map((p,i)=>ys[i]>200?`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.5" fill="${col}"/>`:'').join('');
+  return`<svg width="${W}" height="${H}" class="sm-spark">
+    <line x1="${pad}" y1="${sy.toFixed(1)}" x2="${W-pad}" y2="${sy.toFixed(1)}" stroke="#E8E3DA" stroke-width="1" stroke-dasharray="3,2"/>
+    <path d="${path}" fill="none" stroke="${col}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+    ${dots}
+  </svg>`;
+}
+
+function renderSante(){
+  if(!ML)return;
+  const VLs=Object.values(ML.animaux)
+    .filter(a=>a.categ==='VL'&&(Object.keys(a.histoCell||{}).length>0||a.lait24!=null||a.statut))
+    .sort((a,b)=>{
+      const order={rouge:0,orange:1,bleu:2,vert:3};
+      return(order[classifySante(a)]||3)-(order[classifySante(b)]||3);
+    });
+  const statLbl={T:'Tarie',TT:'Tarie',FV:'Vide',TFV:'Vide+T',NC:'NC',S:'Chaleurs'};
+  document.getElementById('sante-tbody').innerHTML=VLs.map(a=>{
+    const cls=classifySante(a);
+    const hc=a.histoCell||{};
+    const lastEntry=Object.entries(hc).sort((x,y)=>x[0]<y[0]?-1:1).pop();
+    const lastVal=lastEntry?lastEntry[1]:null;
+    const st=a.statut?`<span class="statut-badge" style="font-size:10px;padding:1px 6px">${statLbl[a.statut]||a.statut}</span>`:'<span style="color:var(--ink3);font-size:11px">En traite</span>';
+    return`<tr class="sm-row">
+      <td><span class="sm-nom" onclick="openSanteModal('${a.trav}')">${a.nom||'—'}</span></td>
+      <td><span class="sm-trav">${a.trav}</span></td>
+      <td>${st}</td>
+      <td>${sparklineSVG(a)}</td>
+      <td style="text-align:right"><span class="sm-last" style="color:${lastVal>800?'var(--red)':lastVal>400?'var(--amber)':lastVal>200?'#ca8a04':'var(--brand)'}">${lastVal!=null?lastVal+'k':'—'}</span></td>
+      <td><span class="sm-badge ${cls}">${{vert:'Saine',bleu:'Épisodique',orange:'Fréquente',rouge:'Chronique'}[cls]}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function openSanteModal(trav){
+  if(!ML)return;
+  const a=ML.animaux[trav];if(!a)return;
+  const hc=a.histoCell||{};
+  const vals=Object.entries(hc).sort((x,y)=>x[0]<y[0]?-1:1).slice(-12);
+  const mx=Math.max(...vals.map(v=>v[1]),400);
+  document.getElementById('sm-modal-titre').textContent=(a.nom||a.trav)+' — Cellules 12 mois';
+  document.getElementById('sm-modal-body').innerHTML=vals.length
+    ?`<div style="margin-bottom:12px;font-size:12px;color:var(--ink3)">Seuil 200k = limite d'attention · ${vals.length} contrôle(s)</div>`
+    +vals.map(([d,v])=>{
+      const pct=Math.min(100,Math.round(v/mx*100));
+      const col=v>800?'#dc2626':v>400?'#ea580c':v>200?'#ca8a04':'#16a34a';
+      return`<div class="sm-hist-row">
+        <span class="sm-hist-date">${d.substring(0,7)}</span>
+        <div class="sm-bar-wrap"><div class="sm-bar" style="width:${pct}%;background:${col}"></div></div>
+        <span style="font-weight:700;font-size:12px;min-width:42px;text-align:right;color:${col}">${v}k</span>
+      </div>`;
+    }).join('')
+    :'<p style="color:var(--ink3);font-size:13px">Pas de données cellulaires.</p>';
+  document.getElementById('sm-modal-bg').style.display='flex';
+}
+
+function closeSanteModal(e){
+  if(e.target===document.getElementById('sm-modal-bg'))
+    document.getElementById('sm-modal-bg').style.display='none';
 }
 
 function renderBridge(){
