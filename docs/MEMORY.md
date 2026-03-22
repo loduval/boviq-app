@@ -1,6 +1,6 @@
 # BOVIQ — MEMORY SESSION
 
-Dernière mise à jour : **22/03/2026** — sprint historique leucos : D.mlControles[], graphe fiche, badge récurrence 12 mois + fix bug JS corps orphelin exportFichePdf (crash inventaire)
+Dernière mise à jour : **22/03/2026 — soir** — fiche animal PNG canvas, audit 26 checks, historique leucos, courbes fiche+PDF, fix encodage Latin1
 
 ---
 
@@ -8,11 +8,12 @@ Dernière mise à jour : **22/03/2026** — sprint historique leucos : D.mlContr
 
 | Fichier | Lignes | Taille | Dernier commit |
 |---------|--------|--------|----------------|
-| `boviq-v6-latest.html` | 6 157 | ~460 KB | `b83cd27` |
-| `boviq-milklic.html` | 655 | ~145 KB | `d299aa6` |
+| `boviq-v6-latest.html` | 6 321 | ~480 KB | `78d8946` |
+| `boviq-milklic.html` | 658 | ~145 KB | `d299aa6` |
 | `boviq-cours-marche.html` | 1 139 | 47 KB | — |
-| `index.html` | ~360 | ~18 KB | `949b13f` |
+| `index.html` | 370 | ~19 KB | `949b13f` |
 | `manifest.json` | 17 | — | `949b13f` |
+| `scripts/audit-boviq.py` | ~380 | — | `f315e8c` |
 
 **Repo GitHub** : `loduval/boviq-app` (public)  
 **GitHub Pages** : `loduval.github.io/boviq-app/`  
@@ -32,128 +33,7 @@ git commit -m "..."
 git push
 ```
 
-`index.html` = **hub portal 349 lignes**. Ne jamais écraser.
-
----
-
-## Session 22/03/2026 — Corrections appliquées
-
-### 1. Light mode (suite session 21/03)
-
-Commit `5e48057` → commits suivants :
-
-| Élément | Fix |
-|---------|-----|
-| `.card-head` bg | `rgba(255,255,255,.02)` → `var(--bg)` |
-| `.btn-o:hover` | `rgba(255,255,255,.1)` → `var(--bg2)` |
-| `.tabs` bg | `rgba(255,255,255,.05)` → `var(--bg2)` |
-| `.tab-btn.active` | `rgba(255,255,255,.08)` → `#fff` + ombre light |
-| `.fiche-geno-item` | `rgba(255,255,255,.05)` → `var(--bg2)` |
-| `heroStatutBg` fallback | `rgba(255,255,255,.15)` → `rgba(45,106,79,.12)` |
-| Commentaires CSS | "DARK" → renommés correctement (SCROLLBAR / BADGES / TABS / MISC) |
-
-### 2. Planning — couleurs événements
-
-Commit `5d1905c` — `.pd-event.*` couleurs sombres saturées pour light mode :
-- `ev-velage` → `#0F766E` (vert foncé)
-- `ev-tarissement` → `#92400E` (ambre foncé)
-- `ev-vaccin` → `#1E40AF` (bleu foncé)
-- `ev-delai` → `#B91C1C` (rouge foncé)
-- `ev-bdni` → `#6D28D9` (violet foncé)
-
-### 3. Carnet sanitaire + Plan vaccinal
-
-- Tableau traitement : `max-height:38dvh` + `overflow-y:auto` + `th` sticky `top:0;z-index:2`
-- Plan vaccinal : `max-height:38dvh` + `overflow-y:auto` (314 animaux scrollables)
-
-### 4. Largeur universelle pages
-
-Commit `1df04ae` — cause racine : `margin:0 auto` sans `width` → shrink sur pages vides.  
-Fix : `.page{width:100%;max-width:1100px;margin:0 auto}`  
-Commit `07b4b33` — `.dash-quad{width:100%}` (modules dashboard alignés avec KPIs)
-
-### 5. Taureaux + Journal + Races + toutes pages
-
-Règle globale CSS `.page>.card{width:100%}` + `.tw{width:100%}` + `table{width:100%}`  
-Taureaux : `<div class="card" style="width:100%"><div class="tw"><table style="width:100%">`
-
-### 6. Index.html hub — restauration définitive
-
-Commit `4cae003` — hub écrasé par V6 dans tous les commits précédents (`cp boviq-v6-latest.html index.html`).  
-**Restauré depuis git commit `b42b6ff`** (vrai hub 349 lignes) + corrections météo CSS réappliquées.
-
-- Logo hub : `href="index.html"` → recharge hub ✅
-- Logo V6 sidebar : `href="index.html"` → retour hub ✅
-- CSS météo compact flex-row, slots, verdict même taille
-- Grille 6 colonnes, `kpis` 6col
-
-### 7. Aides éleveur — bug `undefined`
-
-`lb.year` → `lb.annee||lb.year` (bilan stocké avec `annee:2024`, code cherchait `year`)
-
-### 8. MilKlic — bugs leucos
-
-Commit `b263442` + `fad76ac` :
-
-| Bug | Cause | Fix |
-|-----|-------|-----|
-| Seuils cassés | Valeurs CSV en milliers (1465k) mais code comparait `>400000` | `>400`, `>800`, `>200` |
-| Leucos null | Espace insécable `\u00a0` dans "1 465" → `pf()` échouait | `replace(/[\s\u00a0]/g,'')` |
-
-Commit `d7b63c5` + `b02623b` — design system harmonisé :
-- `html{font-size:14px}` (était 15px)
-- `th/td` padding réduit (8px/9px au lieu de 12px/14px)
-- `.conseil-row` 7px 12px, `.cr-nom` 13px semibold
-- `.btn` 13px, 8px 16px
-- `max-height` cards dashboard : 220px → 320px
-- `.page{width:100%;max-width:1100px}`
-
-### 9. MilKlic — export CSV ajouté
-
-Commit `64601f4` — `exportMLCSV()` :
-- Bouton "⬇️ Export CSV" sur le dashboard
-- Export de tous les animaux consolidés : trav, nom, N°nat, catég, race, lait, TB, TP, leucos, leucoPrev, varLait, SDIR, numLact, dateIA, taureau, conseilIA, tarPrev, statut
-- Format CSV UTF-8 BOM avec `;` comme séparateur
-- Filename : `BOVIQ-MilKlic-[date-contrôle].csv`
-
----
-
-## Audit 100/100 — 22/03/2026
-
-### ✅ Fonctions V6 (25/25)
-`goTo`, `renderAll`, toutes `render*`, `exportJSON`, `importJSON`, `exportSantePdf`, `exportReproCSV`, `exportBilanPdf`, `openFicheAnimal`, `openSanteModal`, `openReproModal`, `calcIVV`, `save`, `esc`
-
-### ✅ Pages (13/13 à 1100px)
-Dashboard, Planning, Animaux, Repro, Sanitaire, Taureaux, Journal, Ventes viande, BDNI, Référentiel races, Analyse financière, Contrôle laitier, Aides éleveur
-
-### ✅ Navigation
-Logo V6 → hub, logo hub → hub, toutes nav-btn opérationnelles
-
-### ✅ Données réelles
-160 animaux, 28 repros, 134 actes sanitaires, 3 taureaux, 1 bilan, 6 protocoles vaccin
-
-### ✅ MilKlic
-leucos en milliers, `\u00a0` parsé, seuils corrects, export CSV, design system
-
----
-
-## Commits session 22/03/2026 (chronologique)
-
-| Commit | Description |
-|--------|-------------|
-| `8502aab` | fix: plan vaccinal scrollable max-height:60dvh |
-| `5d1905c` | fix: planning couleurs, sanitaire scroll, taureaux/pages width:100%, aides année |
-| `1df04ae` | fix: .page width:100% — toutes pages identiques |
-| `07b4b33` | fix: dash-quad width:100% — modules dashboard alignés KPIs |
-| `4cae003` | fix DÉFINITIF: hub restauré, logo→index.html, ne plus cp V6 sur index |
-| `b263442` | fix: milklic leucos en milliers — seuils 400/800/200 |
-| `fad76ac` | fix: milklic pf() — espace insécable \u00a0 dans leucos CSV |
-| `d7b63c5` | fix: milklic design system — KPIs/cards/alertes taille V6, max-height 320px |
-| `b02623b` | fix: milklic design system — font 14px, td/th/conseil-row/btn tailles V6 |
-| `64601f4` | audit 100/100: light mode remnants, tabs/btn-o/card-head, milklic export CSV, commentaires CSS |
-| `cab7d12` | fix: scroll pages — supprime height:100dvh+overflow-y:hidden |
-| `949b13f` | fix: start_url index.html (PWA) + 3 KPIs dashboard (lact.moy, genisse_r3, vache_r4) |
-| `4b98f9d` | feat: badge cellules inventaire + tank risk + UGB prévisionnel + fix seuils leucos V6 |
+`index.html` = **hub portal 370 lignes**. Ne jamais écraser.
 
 ---
 
@@ -161,25 +41,26 @@ leucos en milliers, `\u00a0` parsé, seuils corrects, export CSV, design system
 
 ```
 BOVIQ/
-├── index.html                  ← HUB ~360L (JAMAIS écraser par V6!)
-├── boviq-v6-latest.html        ← 5971L, ~450KB, light mode
-├── boviq-milklic.html          ← 621L, 142KB, INIT_ML_DATA 160 animaux
+├── index.html                  ← HUB ~370L (JAMAIS écraser par V6!)
+├── boviq-v6-latest.html        ← 6321L, ~480KB, light mode
+├── boviq-milklic.html          ← 658L, 145KB, INIT_ML_DATA 160 animaux
 ├── boviq-cours-marche.html     ← 1139L, 47KB
 ├── manifest.json               ← PWA, start_url=./index.html
 ├── sw.js                       ← cache boviq-v20260321
 ├── .github/workflows/
 │   └── update-market-data.yml  ← GitHub Actions lundi 8h UTC
 ├── data/market/
-│   └── cours-data.json         ← données 16/03/2026
+│   └── cours-data.json         ← données marché DG AGRI
 ├── docs/
 │   ├── MEMORY.md               ← ce fichier
 │   ├── INDEX.md                ← index fonctions
 │   ├── ROADMAP.md
 │   └── BOVIQ-COURS-NOTES.md
 ├── scripts/
+│   ├── audit-boviq.py          ← audit complet 26 vérifications
 │   ├── milklic-sync.py         ← Windows tâche planifiée lundi 7h
 │   └── update-cours-data.py    ← GitHub Actions DG AGRI
-└── _backups-v6/
+└── _backups-v6/                ← snapshots V6 horodatés
 ```
 
 ---
@@ -206,14 +87,108 @@ BOVIQ/
 | **`BOVIQ AMI`** | Retours testeur éleveur EARL La Rousselière |
 | **`BOVIQ MILKLIC`** | Module contrôle laitier Seenergi/MilKlic |
 | **`BOVIQ MILKLIC MAJ`** | Nouvelle donnée CSV → relancer script Python + injecter INIT_ML_DATA |
-| **`BOVIQ AUDIT`** | Audit complet — lancer checklist 100/100 |
+| **`BOVIQ AUDIT`** | `python3 scripts/audit-boviq.py` — 26 vérifications |
 
 ---
 
-## Points en suspens (prochaine session)
+## Commits session 22/03/2026 (chronologique complet)
 
-1. **MilKlic courbes** — tester renderCourbes() avec nouvelles données CSV 21/03/2026
-2. **Gantt repro** — `.gantt` CSS vérifier sur light mode
-3. **Score IDELE** — vérifier rendu score /100 dans Analyse financière light mode
-4. **Import nouveaux CSV MilKlic** — prochain export Seenergi → relancer script + INIT_ML_DATA
-5. **BDNI** — 4 alertes actives à déclarer (veaux Oxygène, Ultra, Saturne nés)
+| Commit | Description |
+|--------|-------------|
+| `cab7d12` | fix: scroll pages — supprime height:100dvh+overflow-y:hidden |
+| `949b13f` | fix: start_url index.html PWA + 3 KPIs dashboard |
+| `4b98f9d` | feat: badge cellules + tank risk + UGB prévisionnel + fix seuils leucos |
+| `1f2ef92` | docs: MEMORY.md |
+| `5e81883` | feat: section MilKlic dans fiche animal modale |
+| `26b75a0` | feat: section MilKlic dans PDF fiche animal |
+| `2947dfd` | feat: PDF fiche animal — miroir complet |
+| `b83cd27` | fix: supprime corps orphelin exportFichePdf (crash inventaire) |
+| `d299aa6` | feat: historique leucos D.mlControles — accumulation imports, graphe fiche, badge récurrence |
+| `3525c03` | docs: MEMORY.md |
+| `ae97d1c` | feat: courbes contrôle laitier dans fiche animal (setTimeout) |
+| `50e7656` | fix: courbes fiche après openModal + PDF sans emojis/accents |
+| `a4295ef` | feat: courbes PDF fiche — canvas off-screen → base64 PNG → addImage |
+| `f315e8c` | fix: PDF encodage Latin1 complet (—, •, accents) + script audit-boviq.py |
+| **`78d8946`** | **feat: exportFicheImage — fiche animal PNG canvas HTML5 (emojis, courbes, accents natifs)** |
+
+---
+
+## Fonctionnalités clés session 22/03 (après-midi)
+
+### 🖼️ Fiche animal → Image PNG (exportFicheImage)
+- **Remplace** `exportFichePdf()` pour la fiche individuelle
+- Canvas HTML5 natif — aucune dépendance (jsPDF supprimé pour la fiche)
+- **Emojis** : 🥛 💚 💊 👪 🏛️ 📝 tous rendus nativement
+- **Accents** : sans contrainte Latin-1 (é è â û ô corrects)
+- **Courbes** : Chart.js off-screen → `drawImage()` dans le canvas
+- **Format** : PNG 794px largeur, hauteur dynamique selon contenu
+- **Téléchargement** : `Fiche_NomVache_Boucle.png`
+- Sections : identité · contrôle laitier · courbes · généalogie · reproductions · traitements · BDNI · notes
+
+### 📈 Historique leucos multi-contrôles (D.mlControles)
+- `saveML()` dans boviq-milklic.html archive chaque import dans `D.mlControles[]` (localStorage boviq)
+- Format : `{date: "YYYY-MM-DD", vaches: [{t, lc, l, tb, tp}]}` — max 24 entrées
+- `getLeucosHisto(trav)` → points triés chronologiquement
+- `getLeucosRecurrenceColor(trav)` → rouge ≥3 contrôles >400k/12 mois, amber=2, vert=1
+- Graphique barres verticales dans la fiche animal modale
+- Badge point coloré ● récurrence dans inventaire
+- **Prérequis** : boviq-milklic.html et boviq-v6 ouverts dans le même navigateur
+
+### 🔍 Script audit (scripts/audit-boviq.py)
+26 vérifications : syntaxe JS, IDs HTML, fonctions manquantes, encodage PDF, seuils leucos, règle index.html, CSS scroll, localStorage, CDN, INIT_DATA JSON, corps orphelins, git état...  
+Usage : `python3 scripts/audit-boviq.py`
+
+### 📄 PDF encodage Latin1 (tous les PDFs)
+- Registre sanitaire : `—` → `-`, `•` → `-`, accents → ASCII
+- Bilan financier : idem
+- Fiche individuelle : remplacée par image PNG (problème supprimé)
+- Autres `doc.text()` : tous nettoyés de caractères non-Latin1
+
+### 🔧 Corrections bugs
+- Corps orphelin `exportFichePdf` (96 lignes hors fonction) → inventaire vidé au chargement
+- `renderFicheCharts` appelée via `setTimeout(50ms)` après `openM('fiche')` (canvas visible)
+- Seuils leucos dans V6 : `>400000` → `>400` (valeurs en k cell/mL)
+
+---
+
+## Structure données D.mlControles (NOUVEAU)
+
+```javascript
+D.mlControles = [
+  {
+    date: "2026-03-04",        // YYYY-MM-DD
+    vaches: [
+      {t: "8668", lc: 1465, l: 5.7, tb: 38.0, tp: 33.9},  // lc en k cell/mL
+      {t: "9093", lc: 1651, l: 8.1, tb: 42.5, tp: 34.6},
+      // ... 82 vaches
+    ]
+  },
+  // ... jusqu'à 24 contrôles (environ 2 ans)
+]
+```
+
+---
+
+## Points en suspens / Roadmap
+
+1. **Suivi cellules 12 mois** — nécessite ≥2 contrôles importés dans boviq-milklic (premier import = premier point)
+2. **"Pourrisseurs du tank"** sur 12/24 mois — même prérequis D.mlControles
+3. **sw.js cache** — mettre à jour version après déploiements majeurs
+4. **BDNI** — 4 alertes actives (veaux Oxygène, Ultra, Saturne nés)
+5. **Import nouveaux CSV MilKlic** — prochain export Seenergi → relancer milklic-sync.py
+
+---
+
+## Règles encodage PDF (pour tout futur doc.text())
+
+```javascript
+// ❌ INTERDIT — jsPDF Helvetica = Latin-1 uniquement
+doc.text('BOVIQ — Analyse', ...)   // — = U+2014, hors Latin-1
+doc.text('• 5 traitements', ...)   // • = hors Latin-1
+doc.text('Éditée le...', ...)      // É = OK Latin-1 mais E accent parfois corrompu
+
+// ✅ CORRECT
+doc.text('BOVIQ - Analyse', ...)   // tiret ASCII
+doc.text('- 5 traitements', ...)   // tiret ASCII
+doc.text('Editee le...', ...)      // pas d'accent du tout
+```
