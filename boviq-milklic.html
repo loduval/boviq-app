@@ -56,7 +56,7 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 .card{background:var(--card);border-radius:var(--r2);box-shadow:var(--sh);overflow:hidden;margin-bottom:14px;border:1px solid var(--line)}
 .card-head{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;background:var(--bg)}
 .card-head h3{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--brand);letter-spacing:.1px}
-.card-body{padding:14px 16px}
+.card-body{padding:10px 12px}
 
 /* ── GRIDS ── */
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
@@ -118,30 +118,30 @@ tbody tr:hover td{background:#F7F4EE}
 .log-item span{color:var(--ink3)}
 
 /* ── SDIR BADGES ── */
-.sdir{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;font-size:12px;font-weight:700}
+.sdir{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:4px;font-size:10px;font-weight:700;flex-shrink:0}
 .sdir-S{background:var(--brand-light);color:var(--brand)}
 .sdir-D{background:var(--amber-l);color:var(--amber)}
 .sdir-R{background:var(--red-l);color:var(--red)}
 .sdir-I{background:#F3E8FF;color:#6D28D9}
 
 /* ── ALERT ROWS ── */
-.alert-row{display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:var(--r);margin-bottom:4px;font-size:12.5px;border:1px solid transparent;overflow:hidden;width:100%}
+.alert-row{display:flex;align-items:center;gap:6px;padding:3px 8px;border-radius:6px;margin-bottom:3px;font-size:12px;border:1px solid transparent;overflow:hidden;width:100%;min-height:26px}
 .alert-row.crit{background:var(--red-l);border-color:rgba(185,28,28,.2);border-left:3px solid var(--red)}
 .alert-row.warn{background:var(--amber-l);border-color:rgba(180,83,9,.2);border-left:3px solid var(--amber)}
 .alert-row.info{background:var(--blue-l);border-color:rgba(29,78,216,.2);border-left:3px solid var(--blue)}
-.alert-row .anom{font-weight:600;flex-shrink:0;font-size:12.5px}
-.alert-row .anom-w{font-weight:700;min-width:38px;flex-shrink:0;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2)}
+.alert-row .anom{font-weight:600;flex-shrink:0;font-size:12px}
+.alert-row .anom-w{font-weight:700;min-width:34px;flex-shrink:0;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2)}
 .alert-row .anames{flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:12px;color:var(--ink)}
-.alert-row .aval{margin-left:auto;font-weight:700;font-size:12.5px;flex-shrink:0}
+.alert-row .aval{margin-left:auto;font-weight:700;font-size:12px;flex-shrink:0}
 
 /* ── REPRO IA CONSEIL ROWS ── */
-.conseil-row{display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:var(--r);margin-bottom:4px;font-size:12.5px;border:1px solid transparent;overflow:hidden;width:100%}
+.conseil-row{display:flex;align-items:center;gap:6px;padding:3px 8px;border-radius:6px;margin-bottom:3px;font-size:12px;border:1px solid transparent;overflow:hidden;width:100%;min-height:26px}
 .conseil-row.ia-ok{background:#EFF9F2;border-color:#A7D9B4;border-left:3px solid var(--brand2)}
 .conseil-row.ia-no{background:var(--red-l);border-color:rgba(185,28,28,.2);border-left:3px solid var(--red)}
 .conseil-row.ia-possible{background:var(--blue-l);border-color:rgba(29,78,216,.2);border-left:3px solid var(--blue)}
-.conseil-row .cr-label{font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.04em;flex-shrink:0;min-width:88px;color:var(--ink2)}
-.conseil-row .cr-noms{flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:12px;color:var(--ink)}
-.conseil-row .cr-count{font-weight:700;font-size:12.5px;flex-shrink:0;padding:1px 7px;border-radius:10px;background:rgba(0,0,0,.07)}
+.conseil-row .cr-label{font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.05em;flex-shrink:0;min-width:82px;color:var(--ink2)}
+.conseil-row .cr-noms{flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:11.5px;color:var(--ink)}
+.conseil-row .cr-count{font-weight:700;font-size:12px;flex-shrink:0;padding:0 6px;border-radius:10px;background:rgba(0,0,0,.07)}
 .conseil-tag{font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap}
 .conseil-tag.ok{background:var(--brand-light);color:var(--brand)}
 .conseil-tag.no{background:var(--red-l);color:var(--red)}
