@@ -337,7 +337,7 @@ function detectType(n){
   if(/09.Gestation/i.test(n))return'gestation';
   return null;
 }
-function pf(s){if(!s||s===''||s==='HN'||s==='NA')return null;return parseFloat(String(s).replace(/\s/g,'').replace(',','.'))||null}
+function pf(s){if(!s||s===''||s==='HN'||s==='NA')return null;return parseFloat(String(s).replace(/[\s\u00a0]/g,'').replace(',','.'))||null}
 function fmtD(s){if(!s||!s.trim())return null;const p=s.trim().split('/');if(p.length!==3)return null;const y=p[2].length===2?'20'+p[2]:p[2];return`${y}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`}
 function normN(s){return(s||'').replace(/\s/g,'').replace(/\u00a0/g,'')}
 function getA(k){if(!ML.animaux[k])ML.animaux[k]={trav:k};return ML.animaux[k]}
