@@ -4851,6 +4851,72 @@ function openFicheAnimal(id){
   </div>
   <div class="fiche-body">`;
 
+  // Section contrôle laitier dans la fiche
+  if(a._categ_ml==='VL'&&(a._ml_lait24!=null||a._ml_leucos!=null)){
+    const fmtK=v=>v!=null?Math.round(v)+'k':'—';
+    const fmtVal=(v,dec=1)=>v!=null?Number(v).toFixed(dec):'—';
+    const clsL=v=>v>800?'background:var(--red-l);color:var(--red)':v>400?'background:var(--amber-l);color:var(--amber)':v>200?'background:var(--bg2);color:var(--ink3)':'background:var(--brand-light);color:var(--brand)';
+    const leucoBadge=v=>v!=null?`<span style="display:inline-flex;align-items:center;font-size:12px;font-weight:700;padding:2px 8px;border-radius:20px;${clsL(v)}">${fmtK(v)}</span>`:'—';
+    const varLait=a._ml_var_lait!=null?`<span style="color:${a._ml_var_lait>0?'var(--teal)':a._ml_var_lait<0?'var(--amber)':'var(--ink3)'};font-size:11px">${a._ml_var_lait>0?'+':''}${a._ml_var_lait}L</span>`:'';
+    const sdirColors={'S':'var(--brand-light)','D':'var(--amber-l)','I':'var(--red-l)','R':'var(--red-l)'};
+    const sdirText={'S':'var(--brand)','D':'var(--amber)','I':'var(--red)','R':'var(--red)'};
+    const sdirBadge=a._ml_sdir?`<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:4px;font-size:11px;font-weight:700;background:${sdirColors[a._ml_sdir]||'var(--bg2)'};color:${sdirText[a._ml_sdir]||'var(--ink3)'}">${esc(a._ml_sdir)}</span>`:'—';
+    const conseilColors={'A inséminér':'background:var(--brand-light);color:var(--brand)','IA déconseillée':'background:var(--amber-l);color:var(--amber)','IA possible':'background:var(--bg2);color:var(--ink3)'};
+    const conseilBadge=a._ml_conseil_ia?`<span style="display:inline-flex;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;${conseilColors[a._ml_conseil_ia]||'background:var(--bg2);color:var(--ink3)'}">${esc(a._ml_conseil_ia)}</span>`:'—';
+    const dTar=a._ml_tar_prev?Math.round((new Date(a._ml_tar_prev)-new Date())/86400000):null;
+    const tarStr=a._ml_tar_prev?`${a._ml_tar_prev} <span style="font-size:11px;color:${dTar<30?'var(--amber)':'var(--ink3)'}">(dans ${dTar}j)</span>`:'—';
+    const leucoPrevStr=a._ml_leuco_prev!=null?`<span style="font-size:11px;color:var(--ink3)">N-1 : ${leucoBadge(a._ml_leuco_prev)}</span>`:'';
+    const statutMl=a._ml_statut?`<span style="display:inline-flex;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;background:var(--amber-l);color:var(--amber)">${esc(a._ml_statut)}</span>`:'';
+
+    h+=`<div class="fiche-section"><div class="fiche-section-title">🥛 Dernier contrôle laitier
+      <span style="font-size:11px;color:var(--ink3);font-weight:400;margin-left:8px">Lact. ${a._ml_lact||'?'} ${statutMl}</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px">
+      <div style="background:var(--bg2);border-radius:10px;padding:11px 14px">
+        <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);margin-bottom:5px">Lait 24h</div>
+        <div style="font-size:22px;font-weight:700;font-family:'Playfair Display',serif">${a._ml_lait24!=null?a._ml_lait24+' L':'—'}</div>
+        <div style="margin-top:4px">${varLait}</div>
+      </div>
+      <div style="background:var(--bg2);border-radius:10px;padding:11px 14px">
+        <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);margin-bottom:5px">TB / TP</div>
+        <div style="font-size:18px;font-weight:700;font-family:'Playfair Display',serif">${fmtVal(a._ml_tb)} / ${fmtVal(a._ml_tp)}</div>
+        <div style="font-size:11px;color:var(--ink3);margin-top:4px">g/kg</div>
+      </div>
+      <div style="background:var(--bg2);border-radius:10px;padding:11px 14px">
+        <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);margin-bottom:5px">Cellules</div>
+        <div style="font-size:18px;font-weight:700;margin-bottom:4px">${leucoBadge(a._ml_leucos)}</div>
+        <div>${leucoPrevStr}</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px">
+      <div style="background:var(--bg2);border-radius:10px;padding:11px 14px">
+        <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);margin-bottom:5px">Urée</div>
+        <div style="font-size:18px;font-weight:700;font-family:'Playfair Display',serif">${a._ml_uree!=null?a._ml_uree:'—'}</div>
+        <div style="font-size:11px;color:var(--ink3);margin-top:4px">mg/L</div>
+      </div>
+      <div style="background:var(--bg2);border-radius:10px;padding:11px 14px">
+        <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);margin-bottom:5px">SDIR</div>
+        <div style="font-size:16px;font-weight:700;margin-top:4px">${sdirBadge}</div>
+      </div>
+      <div style="background:var(--bg2);border-radius:10px;padding:11px 14px">
+        <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);margin-bottom:5px">Conseil IA</div>
+        <div style="font-size:13px;font-weight:600;margin-top:4px">${conseilBadge}</div>
+      </div>
+    </div>
+    ${(a._ml_date_ia||a._ml_tar_prev||a._ml_taureau_ia)?`<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px">
+      ${a._ml_date_ia?`<div style="background:var(--bg2);border-radius:10px;padding:10px 14px">
+        <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);margin-bottom:4px">Dernière IA</div>
+        <div style="font-size:13px;font-weight:600">${a._ml_date_ia}${a._ml_jours_ia!=null?' <span style="font-size:11px;color:var(--ink3)">il y a '+a._ml_jours_ia+'j</span>':''}</div>
+        ${a._ml_taureau_ia?`<div style="font-size:11px;color:var(--ink3);margin-top:3px">🐂 ${esc(a._ml_taureau_ia)}${a._ml_rang_ia?' · rang '+a._ml_rang_ia:''}</div>`:''}
+      </div>`:''}
+      ${a._ml_tar_prev?`<div style="background:var(--bg2);border-radius:10px;padding:10px 14px">
+        <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);margin-bottom:4px">Tarissement prévu</div>
+        <div style="font-size:13px;font-weight:600">${tarStr}</div>
+      </div>`:''}
+    </div>`:''}
+    </div>`;
+  }
+
   // Généalogie
   if(mere||pere||enfants.length){
     h+=`<div class="fiche-section"><div class="fiche-section-title">👪 Généalogie</div><div class="fiche-geno">`;
