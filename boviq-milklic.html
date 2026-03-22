@@ -471,15 +471,15 @@ function renderDashboard(){
   if(!ML)return;
   const VLs=Object.values(ML.animaux).filter(a=>a.lait24!=null);
   const avg=(arr,fn)=>arr.length?(arr.reduce((s,a)=>s+(fn(a)||0),0)/arr.length).toFixed(1):'—';
-  const avgL=VLs.length?(VLs.reduce((s,a)=>s+(a.leucos||0),0)/VLs.length/1000).toFixed(0):'—';
+  const avgL=VLs.length?(VLs.reduce((s,a)=>s+(a.leucos||0),0)/VLs.length).toFixed(0):'—';
   document.getElementById('dash-date').textContent=`Contrôle : ${ML.controleDate||'?'} · Import : ${ML.importDate||'?'}`;
   document.getElementById('dash-kpis').innerHTML=`
     <div class="kpi"><div class="kpi-label">Vaches contrôlées</div><div class="kpi-val">${VLs.length}</div><div class="kpi-sub">en traite</div></div>
     <div class="kpi"><div class="kpi-label">Lait moyen</div><div class="kpi-val">${avg(VLs,a=>a.lait24)} <span style="font-size:14px;color:var(--ink3)">L/j</span></div></div>
     <div class="kpi"><div class="kpi-label">TB / TP moyens</div><div class="kpi-val">${avg(VLs,a=>a.tb)}<span style="font-size:14px;color:var(--ink3)"> / ${avg(VLs,a=>a.tp)}</span></div></div>
-    <div class="kpi"><div class="kpi-label">Leucos moyens</div><div class="kpi-val" style="color:${avgL>400?'var(--red)':avgL>200?'var(--amber)':'var(--brand)'}">${avgL}k</div><div class="kpi-sub">${VLs.filter(a=>a.leucos>400000).length} vaches &gt;400k</div></div>`;
-  const ca=VLs.filter(a=>a.leucos>400000).sort((a,b)=>b.leucos-a.leucos).slice(0,8);
-  document.getElementById('dash-cell-alerts').innerHTML=ca.length?ca.map(a=>`<div class="alert-row ${a.leucos>800000?'crit':'warn'}"><span class="anom">${a.nom||a.trav}</span>${a.sdir?`<span class="sdir sdir-${a.sdir}">${a.sdir}</span>`:''}<span class="aval">${(a.leucos/1000).toFixed(0)}k</span></div>`).join(''):'<p style="font-size:13px;color:var(--ink3)">✅ Aucune alerte &gt;400k</p>';
+    <div class="kpi"><div class="kpi-label">Leucos moyens</div><div class="kpi-val" style="color:${avgL>400?'var(--red)':avgL>200?'var(--amber)':'var(--brand)'}">${avgL}k</div><div class="kpi-sub">${VLs.filter(a=>a.leucos>400).length} vaches &gt;400k</div></div>`;
+  const ca=VLs.filter(a=>a.leucos>400).sort((a,b)=>b.leucos-a.leucos).slice(0,8);
+  document.getElementById('dash-cell-alerts').innerHTML=ca.length?ca.map(a=>`<div class="alert-row ${a.leucos>800?'crit':'warn'}"><span class="anom">${a.nom||a.trav}</span>${a.sdir?`<span class="sdir sdir-${a.sdir}">${a.sdir}</span>`:''}<span class="aval">${a.leucos.toFixed(0)}k</span></div>`).join(''):'<p style="font-size:13px;color:var(--ink3)">✅ Aucune alerte &gt;400k</p>';
   const grpSt={};Object.values(ML.animaux).filter(a=>a.statut).forEach(a=>{(grpSt[a.statut]=grpSt[a.statut]||[]).push(a)});
   document.getElementById('dash-statuts').innerHTML=Object.entries(grpSt).length?Object.entries(grpSt).map(([st,lst])=>`<div class="alert-row info"><span class="statut-badge">${st}</span><span style="margin-left:8px;font-size:12px">${lst.map(a=>a.nom||a.trav).join(', ')}</span><span class="aval" style="font-size:13px">${lst.length}</span></div>`).join(''):'<p style="font-size:13px;color:var(--ink3)">—</p>';
   const grpIA={};Object.values(ML.animaux).filter(a=>a.conseilIA).forEach(a=>{(grpIA[a.conseilIA]=grpIA[a.conseilIA]||[]).push(a)});
@@ -492,13 +492,13 @@ function renderCellules(){
   if(!ML)return;
   const seuil=parseInt(document.getElementById('cell-seuil').value)||0;
   const list=Object.values(ML.animaux).filter(a=>a.leucos!=null&&a.leucos>=seuil).sort((a,b)=>b.leucos-a.leucos);
-  const nb=Object.values(ML.animaux).filter(a=>a.leucos>400000).length;
+  const nb=Object.values(ML.animaux).filter(a=>a.leucos>400).length;
   const el=document.getElementById('nb-alert-cell');el.textContent=nb||'—';el.className='nav-badge'+(nb>0?' red':'');
   if(!list.length){document.getElementById('cell-table').innerHTML='<p style="padding:20px;text-align:center;color:var(--ink3)">Aucun animal à ce seuil</p>';return}
   document.getElementById('cell-table').innerHTML=`<table><thead><tr><th>Vache</th><th>Trav</th><th>Leucos</th><th>Leucos préc.</th><th>Évol.</th><th>SDIR n-1</th><th>SDIR</th><th>Lait 24h</th><th>TB</th><th>TP</th><th>Lact.</th></tr></thead><tbody>${list.map(a=>{
-    const cls=a.leucos>800000?'b-red':a.leucos>400000?'b-amber':a.leucos>200000?'b-gray':'b-green';
+    const cls=a.leucos>800?'b-red':a.leucos>400?'b-amber':a.leucos>200?'b-gray':'b-green';
     const ev=!a.evolLeucoTxt?'':a.evolLeucoTxt==='D'?'<span class="trend-dn">▼</span>':a.evolLeucoTxt==='R'?'<span class="trend-up">▲▲</span>':'▶';
-    return`<tr><td class="td-nom">${a.nom||'—'}</td><td class="td-trav">${a.trav}</td><td><span class="badge ${cls}">${(a.leucos/1000).toFixed(0)}k</span></td><td style="color:var(--ink3);font-size:12px">${a.leucoPrev!=null?(a.leucoPrev/1000).toFixed(0)+'k':'—'}</td><td>${ev}</td><td>${a.sdirN1?`<span class="sdir sdir-${a.sdirN1}">${a.sdirN1}</span>`:'—'}</td><td>${a.sdir?`<span class="sdir sdir-${a.sdir}">${a.sdir}</span>`:'—'}</td><td>${a.lait24!=null?a.lait24+' L':'<span class="statut-badge">'+(a.statut||'—')+'</span>'}</td><td>${a.tb??'—'}</td><td>${a.tp??'—'}</td><td style="color:var(--ink3)">${a.numLact??'—'}</td></tr>`;
+    return`<tr><td class="td-nom">${a.nom||'—'}</td><td class="td-trav">${a.trav}</td><td><span class="badge ${cls}">${a.leucos!=null?a.leucos.toFixed(0)+'k':'—'}</span></td><td style="color:var(--ink3);font-size:12px">${a.leucoPrev!=null?a.leucoPrev.toFixed(0)+'k':'—'}</td><td>${ev}</td><td>${a.sdirN1?`<span class="sdir sdir-${a.sdirN1}">${a.sdirN1}</span>`:'—'}</td><td>${a.sdir?`<span class="sdir sdir-${a.sdir}">${a.sdir}</span>`:'—'}</td><td>${a.lait24!=null?a.lait24+' L':'<span class="statut-badge">'+(a.statut||'—')+'</span>'}</td><td>${a.tb??'—'}</td><td>${a.tp??'—'}</td><td style="color:var(--ink3)">${a.numLact??'—'}</td></tr>`;
   }).join('')}</tbody></table>`;
 }
 
@@ -547,7 +547,7 @@ function renderCourbes(){
   charts['chart-cell']=new Chart(document.getElementById('chart-cell'),{type:'line',data:{labels:cp.map(([d])=>d.slice(5).replace('-','/')),datasets:[{label:'Leucos ×1000',data:cp.map(([,v])=>v/1000),borderColor:'#DC2626',backgroundColor:'rgba(220,38,38,.07)',fill:true,tension:.3,pointRadius:4,borderWidth:2}]},options:baseO});
   document.getElementById('courbe-fiche').style.display='block';
   document.getElementById('courbe-fiche-titre').textContent=(a.nom||a.trav)+' — Fiche contrôle';
-  document.getElementById('courbe-fiche-body').innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px">${[['N° travail',a.trav],['N° national',a.numNat||'—'],['Naissance',a.naissance||'—'],['Catégorie',a.categ||'—'],['Lactation n°',a.numLact??'—'],['Lait',a.lait24!=null?a.lait24+' L/j':'—'],['TB',a.tb??'—'],['TP',a.tp??'—'],['Leucos',a.leucos!=null?(a.leucos/1000).toFixed(0)+'k':'—'],['SDIR',a.sdir||'—'],['Taureau',a.taureau||'—'],['Tarissement',a.tarPrev||'—'],['Conseil IA',a.conseilIA||'—'],['Évol. lait',a.varLait!=null?a.varLait+'%':'—']].map(([l,v])=>`<div class="kpi"><div class="kpi-label">${l}</div><div style="font-size:16px;font-weight:600;color:var(--ink)">${v}</div></div>`).join('')}</div>`;
+  document.getElementById('courbe-fiche-body').innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px">${[['N° travail',a.trav],['N° national',a.numNat||'—'],['Naissance',a.naissance||'—'],['Catégorie',a.categ||'—'],['Lactation n°',a.numLact??'—'],['Lait',a.lait24!=null?a.lait24+' L/j':'—'],['TB',a.tb??'—'],['TP',a.tp??'—'],['Leucos',a.leucos!=null?a.leucos.toFixed(0)+'k':'—'],['SDIR',a.sdir||'—'],['Taureau',a.taureau||'—'],['Tarissement',a.tarPrev||'—'],['Conseil IA',a.conseilIA||'—'],['Évol. lait',a.varLait!=null?a.varLait+'%':'—']].map(([l,v])=>`<div class="kpi"><div class="kpi-label">${l}</div><div style="font-size:16px;font-weight:600;color:var(--ink)">${v}</div></div>`).join('')}</div>`;
 }
 
 function renderBridge(){
@@ -593,7 +593,7 @@ function updateSidebar(){
   const vl_ctrl=all.filter(a=>a.lait24!=null).length;
   el.innerHTML=`Contrôle : ${ML.controleDate||'?'}<br>${n} animaux · ${vl} VL · ${vl_ctrl} contrôlées`;
   document.getElementById('btn-clear').style.display='inline-flex';
-  const crit=all.filter(a=>a.leucos>400000).length;
+  const crit=all.filter(a=>a.leucos>400).length;
   const nb=document.getElementById('nb-alert-cell');nb.textContent=crit||'—';nb.className='nav-badge'+(crit>0?' red':'');
 }
 
