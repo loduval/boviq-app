@@ -5038,7 +5038,7 @@ function openFicheAnimal(id){
       '<button class="btn btn-o" onclick="closeM(\'fiche\')">Fermer</button>'+
       '<button class="btn btn-o btn-s" onclick="closeM(\'fiche\');openAnimalModal(\''+a.id+'\')">✏️ Modifier</button>'+
       btnVelage+btnSortie+
-      '<button class="btn btn-p btn-s" onclick="exportFichePdf(\''+a.id+'\')">📄 PDF fiche</button>';
+      '<button class="btn btn-p btn-s" onclick="exportFicheImage(\''+a.id+'\')">🖼️ Image fiche</button>';
   }
   openM('fiche');
   // Courbes après ouverture du modal (canvas doit être visible pour Chart.js)
@@ -5080,11 +5080,18 @@ async function renderFicheCharts(trav){
   }catch(e){console.warn('renderFicheCharts',e);const c=document.getElementById('fiche-charts-content');if(c)c.innerHTML='<em style="opacity:.6">Erreur lors du chargement des courbes.</em>';}
 }
 
-async function exportFichePdf(id){
+async function exportFicheImage(id){
   const a=D.animaux.find(x=>x.id===id);if(!a){alert('Animal introuvable');return}
-  try{await loadJsPdf();await loadAutoTable();}catch(e){alert('❌ '+e.message);return}
-  const{jsPDF}=window.jspdf;
-  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  await loadChartJs();
+
+  // ── Constantes mise en page ──────────────────────────────────────────────
+  const W=794,M=40,CW=W-M*2;
+  const BRAND='#1B4332',BRAND2='#2D6A4F',BRAND_L='#D1FAE5';
+  const INK='#1E1B16',INK2='#4B453C',INK3='#8C8474';
+  const BG='#F6FAF7',CARD='#FFFFFF',LINE='#E8E4DC',AMBER_L='#FEF3C7',AMBER='#D97706';
+  const RED='#DC2626',RED_L='#FEE2E2',TEAL='#0D9488';
+
+  // ── Données ───────────────────────────────────────────────────────────────
   const age=a.naissance?((new Date()-new Date(a.naissance))/31557600000).toFixed(1):'—';
   const mere=a.mere?D.animaux.find(x=>x.id===a.mere):null;
   const pere=a.pere?D.taureaux.find(x=>x.id===a.pere):null;
@@ -5097,188 +5104,265 @@ async function exportFichePdf(id){
   const velages=repros.filter(r=>r.velageReel).length;
   const treats=D.sante.filter(s=>{const an=Array.isArray(s.animaux)?s.animaux:[s.animaux];return an.includes(a.id)}).sort((x,y)=>(y.date||'').localeCompare(x.date||''));
 
-  // ── En-tête
-  doc.setFillColor(27,67,50);doc.rect(0,0,210,28,'F');
-  doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(18);
-  doc.text('BOVIQ - Fiche individuelle',14,12);
-  doc.setFontSize(10);doc.setFont('helvetica','normal');
-  doc.text('Editee le '+dateStr,14,20);
+  // ── Helpers canvas ────────────────────────────────────────────────────────
+  const canvas=document.createElement('canvas');
+  canvas.width=W; canvas.height=8000;
+  const cx=canvas.getContext('2d');
+  cx.fillStyle=BG; cx.fillRect(0,0,W,8000);
 
-  // ── Identité
-  doc.setTextColor(30,27,22);doc.setFontSize(16);doc.setFont('helvetica','bold');
-  doc.text(a.nom,14,38);
-  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(80,75,68);
-  doc.text(a.race+' | '+a.type+' | '+(a.sexe==='Femelle'?'F':'M')+' | '+age+' ans'+(a.naissance?' | Nee le '+fmt(a.naissance):''),14,44);
-  if(a.boucle)doc.text('N° Boucle : '+a.boucle,14,49);
-  doc.setFont('helvetica','bold');doc.setTextColor(27,67,50);
-  doc.text('Statut : '+statut.l+(a.statut?' ('+a.statut+(a.dateSortie?' le '+fmt(a.dateSortie):'')+')'  :''),a.boucle?80:14,49);
-  doc.setFont('helvetica','normal');doc.setTextColor(80,75,68);
-  doc.text('Score sante : '+ss.grade+' ('+ss.score+'/100)  |  Velages : '+velages+(ivv?'  |  IVV moy. : '+ivv+'j':''),14,54);
-
-  // ── Séparateur
-  doc.setDrawColor(45,106,79);doc.setLineWidth(0.4);doc.line(14,57,196,57);
-
-  const addSection=(title,yP)=>{
-    if(yP>255){doc.addPage();yP=15;}
-    doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(27,67,50);
-    doc.text(title,14,yP);
-    return yP+5;
+  const f=(size,w='normal')=>`${w} ${size}px -apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif`;
+  const rr=(x,y,w,h,r,fill,stroke)=>{
+    cx.beginPath();cx.moveTo(x+r,y);cx.lineTo(x+w-r,y);cx.quadraticCurveTo(x+w,y,x+w,y+r);
+    cx.lineTo(x+w,y+h-r);cx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);cx.lineTo(x+r,y+h);
+    cx.quadraticCurveTo(x,y+h,x,y+h-r);cx.lineTo(x,y+r);cx.quadraticCurveTo(x,y,x+r,y);cx.closePath();
+    if(fill){cx.fillStyle=fill;cx.fill();}
+    if(stroke){cx.strokeStyle=stroke;cx.lineWidth=1;cx.stroke();}
+  };
+  const secTitle=(title,y)=>{
+    cx.fillStyle=BRAND; cx.font=f(13,'600');
+    cx.fillText(title,M,y);
+    cx.fillStyle=BRAND2; cx.fillRect(M,y+4,CW,2);
+    return y+20;
+  };
+  const kv=(label,val,x,y,w)=>{
+    rr(x,y,w,48,8,CARD,LINE);
+    cx.fillStyle=INK3; cx.font=f(9,'600');
+    cx.fillText(label.toUpperCase(),x+10,y+16);
+    cx.fillStyle=INK; cx.font=f(15,'700');
+    cx.fillText(String(val||'—').slice(0,18),x+10,y+36);
+  };
+  const drawTable=(headers,rows,y,colWidths,opts={})=>{
+    const RH=22,HR=26,PX=8;
+    // En-tête
+    cx.fillStyle=opts.headBg||BRAND2;
+    cx.fillRect(M,y,CW,HR);
+    cx.fillStyle='#fff'; cx.font=f(9,'600');
+    let xc=M+PX;
+    headers.forEach((h,i)=>{cx.fillText(h,xc,y+17);xc+=colWidths[i];});
+    y+=HR;
+    rows.forEach((row,ri)=>{
+      cx.fillStyle=ri%2===0?CARD:'#F4F1EB';
+      cx.fillRect(M,y,CW,RH);
+      cx.fillStyle=INK2; cx.font=f(9);
+      let xc=M+PX;
+      row.forEach((cell,i)=>{
+        const txt=String(cell||'—');
+        const max=Math.floor((colWidths[i]-PX*2)/6);
+        cx.fillText(txt.length>max?txt.slice(0,max)+'…':txt,xc,y+15);
+        xc+=colWidths[i];
+      });
+      y+=RH;
+    });
+    cx.strokeStyle=LINE; cx.lineWidth=1;
+    cx.strokeRect(M,y-rows.length*RH-HR,CW,rows.length*RH+HR);
+    return y+8;
+  };
+  const chartImg=async(cfg,cw,ch)=>{
+    const cv=document.createElement('canvas');cv.width=cw;cv.height=ch;
+    const ch2=new Chart(cv,cfg);
+    await new Promise(r=>setTimeout(r,0));
+    const img=new Image();img.src=cv.toDataURL('image/png',1);
+    ch2.destroy();cv.remove();
+    return img;
   };
 
-  let yPos=62;
+  let y=0;
 
-  // ── 1. Contrôle laitier
+  // ── 1. HEADER ─────────────────────────────────────────────────────────────
+  cx.fillStyle=BRAND; cx.fillRect(0,0,W,76);
+  cx.fillStyle='rgba(255,255,255,.07)'; cx.fillRect(0,0,W,38);
+  cx.fillStyle='#fff'; cx.font=f(22,'700');
+  cx.fillText('BOVIQ — Fiche individuelle',M,32);
+  cx.fillStyle='rgba(255,255,255,.7)'; cx.font=f(11);
+  cx.fillText('Éditée le '+dateStr,M,52);
+  cx.fillStyle='rgba(255,255,255,.45)'; cx.font=f(10);
+  cx.fillText('EARL La Rousselière',M,67);
+  y=76;
+
+  // ── 2. IDENTITÉ ───────────────────────────────────────────────────────────
+  y+=18;
+  cx.fillStyle=INK; cx.font=f(24,'700');
+  cx.fillText(a.nom||'Sans nom',M,y);
+  y+=6;
+  cx.fillStyle=INK3; cx.font=f(11);
+  cx.fillText(`${a.race} · ${a.type} · ${a.sexe==='Femelle'?'♀ Femelle':'♂ Mâle'} · ${age} ans${a.naissance?' · Née le '+fmt(a.naissance):''}`,M,y+14);
+  if(a.boucle){cx.fillStyle=INK2;cx.font=f(11);cx.fillText('Boucle : '+a.boucle,M,y+30);}
+  // Badges droite
+  const scoreCol={A:BRAND_L,B:'#FEF3C7',C:RED_L}[ss.grade]||BRAND_L;
+  const scoreText={A:BRAND2,B:AMBER,C:RED}[ss.grade]||BRAND2;
+  rr(W-M-120,y,120,52,10,scoreCol);
+  cx.fillStyle=scoreText; cx.font=f(11,'700');
+  cx.textAlign='center';
+  cx.fillText('Score santé : '+ss.grade,W-M-60,y+18);
+  cx.fillStyle=scoreText; cx.font=f(10);
+  cx.fillText(ss.score+'/100',W-M-60,y+33);
+  if(a.statut){
+    rr(W-M-250,y,118,52,10,'#F4F1EB',LINE);
+    cx.fillStyle=INK2; cx.font=f(10,'600');
+    cx.fillText('Statut : '+a.statut,W-M-191,y+22);
+    if(a.dateSortie){cx.font=f(9);cx.fillStyle=INK3;cx.fillText(fmt(a.dateSortie),W-M-191,y+36);}
+  }
+  cx.textAlign='left';
+  y+=60;
+  cx.fillStyle=INK3; cx.font=f(10);
+  const ivvStr=ivv?`  ·  IVV moy. : ${ivv}j`:'';
+  cx.fillText(`Vêlages : ${velages}${ivvStr}`,M,y);
+  y+=16;
+  // Séparateur
+  cx.strokeStyle=BRAND2; cx.lineWidth=1.5;
+  cx.beginPath();cx.moveTo(M,y);cx.lineTo(W-M,y);cx.stroke();
+  y+=16;
+
+  // ── 3. CONTRÔLE LAITIER ───────────────────────────────────────────────────
   if(a._categ_ml==='VL'&&(a._ml_lait24!=null||a._ml_leucos!=null)){
-    yPos=addSection('Controle laitier - Lact. '+(a._ml_lact||'?')+(a._ml_statut?' ('+a._ml_statut+')':''),yPos);
-    const fmtK=v=>v!=null?Math.round(v)+'k':'—';
+    y=secTitle('🥛 Contrôle laitier — Lact. '+(a._ml_lact||'?')+(a._ml_statut?' ('+a._ml_statut+')':''),y);
+    const fmtK=v=>v!=null?Math.round(v)+'k cell/mL':'—';
     const fmtV=(v,d=1)=>v!=null?Number(v).toFixed(d):'—';
-    const mlRows=[
-      ['Lait 24h',a._ml_lait24!=null?a._ml_lait24+' L':'—','Variation lait',a._ml_var_lait!=null?(a._ml_var_lait>0?'+':'')+a._ml_var_lait+' L':'—'],
-      ['TB / TP',fmtV(a._ml_tb)+' / '+fmtV(a._ml_tp)+' g/kg','Urée',a._ml_uree!=null?a._ml_uree+' mg/L':'—'],
-      ['Cellules (dernier)',fmtK(a._ml_leucos),'Cellules (N-1)',fmtK(a._ml_leuco_prev)],
-      ['SDIR',a._ml_sdir||'—','Conseil IA repro',a._ml_conseil_ia||'—'],
+    const kpis=[
+      ['Lait 24h',a._ml_lait24!=null?a._ml_lait24+' L':'—'],
+      ['Variation',a._ml_var_lait!=null?(a._ml_var_lait>0?'+':'')+a._ml_var_lait+' L':'—'],
+      ['TB / TP',fmtV(a._ml_tb)+' / '+fmtV(a._ml_tp)+' g/kg'],
+      ['Urée',a._ml_uree!=null?a._ml_uree+' mg/L':'—'],
+      ['Cellules',fmtK(a._ml_leucos)],
+      ['Cellules N-1',fmtK(a._ml_leuco_prev)],
+      ['SDIR',a._ml_sdir||'—'],
+      ['Conseil IA',a._ml_conseil_ia||'—'],
     ];
-    if(a._ml_date_ia)mlRows.push(['Derniere IA',a._ml_date_ia+(a._ml_jours_ia!=null?' (il y a '+a._ml_jours_ia+'j)':''),'Taureau IA',(a._ml_taureau_ia||'—')+(a._ml_rang_ia?' | rang '+a._ml_rang_ia:'')]);
-    if(a._ml_tar_prev){const dT=Math.round((new Date(a._ml_tar_prev)-new Date())/86400000);mlRows.push(['Tarissement prevu',a._ml_tar_prev+' (dans '+dT+' j)','','']);}
-    doc.autoTable({startY:yPos,body:mlRows,styles:{fontSize:9,cellPadding:2.5},
-      columnStyles:{0:{fontStyle:'bold',textColor:[45,106,79],cellWidth:40},1:{cellWidth:50},2:{fontStyle:'bold',textColor:[45,106,79],cellWidth:40},3:{cellWidth:46}},
-      alternateRowStyles:{fillColor:[244,241,235]},margin:{left:14,right:14}});
-    yPos=doc.lastAutoTable.finalY+7;
+    const KW=Math.floor(CW/4),KH=52;
+    kpis.forEach(([lbl,val],i)=>{
+      const col=i%4,row=Math.floor(i/4);
+      kv(lbl,val,M+col*KW,y+row*(KH+6),KW-6);
+    });
+    y+=Math.ceil(kpis.length/4)*(KH+6)+8;
+    if(a._ml_date_ia){
+      rr(M,y,CW,40,8,BRAND_L);
+      cx.fillStyle=BRAND2; cx.font=f(10,'600');
+      cx.fillText('Dernière IA : '+a._ml_date_ia+(a._ml_jours_ia?' (il y a '+a._ml_jours_ia+'j)':'')+(a._ml_taureau_ia?'  ·  Taureau : '+a._ml_taureau_ia:'')+(a._ml_rang_ia?'  ·  Rang '+a._ml_rang_ia:''),M+12,y+16);
+      if(a._ml_tar_prev){const dT=Math.round((new Date(a._ml_tar_prev)-new Date())/86400000);cx.fillStyle=INK2;cx.font=f(10);cx.fillText('Tarissement prévu : '+a._ml_tar_prev+' (dans '+dT+'j)',M+12,y+32);}
+      y+=50;
+    }
+    y+=8;
   }
 
-  // ── 2. Généalogie
+  // ── 4. COURBES MILKLIC ────────────────────────────────────────────────────
+  try{
+    const mlRaw=localStorage.getItem('BOVIQ_MILKLIC');
+    if(mlRaw&&a._trav){
+      const ml=JSON.parse(mlRaw);const ma=ml.animaux&&ml.animaux[a._trav];
+      if(ma){
+        const sp=obj=>Object.entries(obj||{}).filter(([,v])=>v!=null).sort(([x],[y])=>x.localeCompare(y));
+        const lp=sp(ma.histoLait),tbp=sp(ma.histoTB),tpp=sp(ma.histoTP),cp=sp(ma.histoCell);
+        const fmtD=d=>d.slice(5).replace('-','/');
+        const bO={animation:false,responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{grid:{display:false},ticks:{font:{size:9},maxRotation:45}},y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{size:9}}}}};
+        const CH=160,CW2=CW;
+        y=secTitle('📈 Courbes de contrôle',y);
+        if(lp.length>=2){
+          const img=await chartImg({type:'line',data:{labels:lp.map(([d])=>fmtD(d)),datasets:[{data:lp.map(([,v])=>v),borderColor:BRAND2,backgroundColor:'rgba(45,106,79,.1)',fill:true,tension:.3,pointRadius:3,borderWidth:2}]},options:{...bO,plugins:{...bO.plugins,title:{display:true,text:'Lait 24h (L/j)',font:{size:11,weight:'bold'},color:BRAND}}}},CW2*2,CH*2);
+          await new Promise(r=>{img.onload=r;if(img.complete)r();});
+          cx.drawImage(img,M,y,CW2,CH);y+=CH+8;
+        }
+        if(tbp.length>=2||tpp.length>=2){
+          const allD=[...new Set([...tbp.map(([d])=>d),...tpp.map(([d])=>d)])].sort();
+          const tbM=Object.fromEntries(tbp),tpM=Object.fromEntries(tpp);
+          const img=await chartImg({type:'line',data:{labels:allD.map(fmtD),datasets:[{label:'TB',data:allD.map(d=>tbM[d]??null),borderColor:AMBER,fill:false,tension:.3,pointRadius:3,borderWidth:2,spanGaps:false},{label:'TP',data:allD.map(d=>tpM[d]??null),borderColor:'#1D4ED8',fill:false,tension:.3,pointRadius:3,borderWidth:2,spanGaps:false}]},options:{...bO,plugins:{legend:{display:true,labels:{boxWidth:10,font:{size:9}}},tooltip:{enabled:false},title:{display:true,text:'TB / TP (g/kg)',font:{size:11,weight:'bold'},color:BRAND}}}},CW2*2,CH*2);
+          await new Promise(r=>{img.onload=r;if(img.complete)r();});
+          cx.drawImage(img,M,y,CW2,CH);y+=CH+8;
+        }
+        if(cp.length>=2){
+          const hasCrit=cp.some(([,v])=>v/1000>400);
+          const img=await chartImg({type:'line',data:{labels:cp.map(([d])=>fmtD(d)),datasets:[{data:cp.map(([,v])=>+(v/1000).toFixed(1)),borderColor:hasCrit?RED:BRAND2,backgroundColor:hasCrit?'rgba(220,38,38,.08)':'rgba(45,106,79,.08)',fill:true,tension:.3,pointRadius:3,borderWidth:2,pointBackgroundColor:cp.map(([,v])=>v/1000>800?RED:v/1000>400?AMBER:BRAND2)},{data:cp.map(()=>400),borderColor:'rgba(220,38,38,.4)',borderWidth:1,borderDash:[5,4],fill:false,pointRadius:0,label:'Seuil 400k'}]},options:{...bO,plugins:{legend:{display:false},tooltip:{enabled:false},title:{display:true,text:'Cellules (×1000 cell/mL) — seuil 400k',font:{size:11,weight:'bold'},color:BRAND}}}},CW2*2,CH*2);
+          await new Promise(r=>{img.onload=r;if(img.complete)r();});
+          cx.drawImage(img,M,y,CW2,CH);y+=CH+8;
+        }
+        y+=8;
+      }
+    }
+  }catch(e){console.warn('exportFicheImage courbes',e);}
+
+  // ── 5. GÉNÉALOGIE ──────────────────────────────────────────────────────────
   if(mere||pere||enfants.length){
-    yPos=addSection('Genealogie',yPos);
-    const genoRows=[];
-    if(mere)genoRows.push(['Mère',mere.nom+' ('+mere.race+')']);
-    if(pere)genoRows.push(['Père',pere.nom+' ('+pere.race+')']);
-    if(enfants.length)genoRows.push(['Descendants ('+enfants.length+')',enfants.map(e=>e.nom).join(', ')]);
-    doc.autoTable({startY:yPos,body:genoRows,styles:{fontSize:9,cellPadding:2.5},
-      columnStyles:{0:{fontStyle:'bold',textColor:[45,106,79],cellWidth:40}},
-      alternateRowStyles:{fillColor:[244,241,235]},margin:{left:14,right:14}});
-    yPos=doc.lastAutoTable.finalY+7;
+    y=secTitle('👪 Généalogie',y);
+    if(mere){rr(M,y,CW/2-4,38,8,CARD,LINE);cx.fillStyle=INK3;cx.font=f(9,'600');cx.fillText('MÈRE',M+10,y+14);cx.fillStyle=INK;cx.font=f(11,'600');cx.fillText(mere.nom+' ('+mere.race+')',M+10,y+30);y+=44;}
+    if(pere){rr(M,y,CW/2-4,38,8,CARD,LINE);cx.fillStyle=INK3;cx.font=f(9,'600');cx.fillText('PÈRE / TAUREAU',M+10,y+14);cx.fillStyle=INK;cx.font=f(11,'600');cx.fillText(pere.nom+' ('+pere.race+')',M+10,y+30);y+=44;}
+    if(enfants.length){
+      rr(M,y,CW,38,8,CARD,LINE);cx.fillStyle=INK3;cx.font=f(9,'600');cx.fillText('DESCENDANTS ('+enfants.length+')',M+10,y+14);
+      cx.fillStyle=INK2;cx.font=f(10);cx.fillText(enfants.map(e=>e.nom).join(', ').slice(0,100),M+10,y+30);y+=44;
+    }
+    y+=8;
   }
 
-  // ── 3. Reproductions
+  // ── 6. REPRODUCTIONS ──────────────────────────────────────────────────────
   if(repros.length){
-    if(yPos>240){doc.addPage();yPos=15;}
-    yPos=addSection('Reproductions ('+repros.length+')',yPos);
+    y=secTitle('💚 Reproductions ('+repros.length+')',y);
     const reproRows=repros.map(r=>{
       const t=r.taureau?D.taureaux.find(x=>x.id===r.taureau):null;
-      const st=reproStatut(r);
-      const g=gestFor(a.race);
+      const st=reproStatut(r);const g=gestFor(a.race);
       const velPrev=r.dateSaillie&&!r.velageReel?fmt(addD(r.dateSaillie,g)):'';
-      return[r.dateSaillie?fmt(r.dateSaillie):'—',t?t.nom:'Inconnu',r.primo==='Oui'?'Oui':'Non',
-        st.l,r.velageReel?fmt(r.velageReel):(velPrev?'Prévu : '+velPrev:'—'),
-        r.sexeVeau||'—',r.poids?r.poids+'kg':'—',r.notes||''];
+      return[fmt(r.dateSaillie||''),t?t.nom:'—',r.primo==='Oui'?'Oui':'Non',st.l,
+        r.velageReel?fmt(r.velageReel):(velPrev?velPrev:'—'),r.sexeVeau||'—',r.poids?r.poids+'kg':'—'];
     });
-    doc.autoTable({startY:yPos,head:[['Saillie','Taureau','1ère MB','Statut','Vêlage','Sexe','Poids','Notes']],body:reproRows,
-      styles:{fontSize:7.5,cellPadding:2},headStyles:{fillColor:[45,106,79],textColor:255,fontStyle:'bold'},
-      alternateRowStyles:{fillColor:[244,241,235]},margin:{left:14,right:14}});
-    yPos=doc.lastAutoTable.finalY+7;
+    y=drawTable(['Saillie','Taureau','1ère MB','Statut','Vêlage','Sexe','Poids'],reproRows,y,[95,105,62,90,80,55,57]);
   }
 
-  // ── 4. Traitements
+  // ── 7. TRAITEMENTS ────────────────────────────────────────────────────────
   if(treats.length){
-    if(yPos>240){doc.addPage();yPos=15;}
-    yPos=addSection('Traitements medicamenteux ('+treats.length+')',yPos);
+    y=secTitle('💊 Traitements médicamenteux ('+treats.length+')',y);
     const treatRows=[];
     treats.forEach(t=>{
       const lignes=getLignesSante(t);
       lignes.forEach((l,li)=>{
-        const dl=parseInt(l.delaiLait)||0,dv=parseInt(l.delaiViande)||0;
-        treatRows.push([li===0?fmt(t.date):'',li===0?(t.ordonnance||''):'',
+        treatRows.push([li===0?fmt(t.date||''):'',li===0?(t.ordonnance||''):'',
           l.type||'',l.produit||'',l.posologie||'',
-          dl?dl+'j':'—',dv?dv+'j':'—',li===0&&t.notes?t.notes:'']);
+          (parseInt(l.delaiLait)||0)?(parseInt(l.delaiLait))+'j':'—',
+          (parseInt(l.delaiViande)||0)?(parseInt(l.delaiViande))+'j':'—']);
       });
     });
-    doc.autoTable({startY:yPos,head:[['Date','Ordonnance','Type','Produit','Posologie','Délai lait','Délai viande','Notes']],body:treatRows,
-      styles:{fontSize:7,cellPadding:2},headStyles:{fillColor:[45,106,79],textColor:255,fontStyle:'bold'},
-      columnStyles:{7:{cellWidth:30}},
-      alternateRowStyles:{fillColor:[244,241,235]},margin:{left:14,right:14}});
-    yPos=doc.lastAutoTable.finalY+7;
+    y=drawTable(['Date','Ordonnance','Type','Produit','Posologie','D.lait','D.viande'],treatRows,y,[68,74,80,110,130,52,50]);
   }
 
-  // ── 5. Traçabilité BDNI
+  // ── 8. BDNI ────────────────────────────────────────────────────────────────
   if(a.dateEntree||a.provenance||a.ancienneBoucle||a.dateRebouclage){
-    if(yPos>255){doc.addPage();yPos=15;}
-    yPos=addSection('Tracabilite BDNI',yPos);
-    const bdniRows=[];
-    if(a.dateEntree)bdniRows.push(['Entrée troupeau',fmt(a.dateEntree)]);
-    if(a.provenance)bdniRows.push(['Provenance',a.provenance]);
-    if(a.dateRebouclage)bdniRows.push(['Rebouclage le',fmt(a.dateRebouclage)+(a.ancienneBoucle?' (ancienne boucle : '+a.ancienneBoucle+')':'')]);
-    doc.autoTable({startY:yPos,body:bdniRows,styles:{fontSize:9,cellPadding:2.5},
-      columnStyles:{0:{fontStyle:'bold',textColor:[45,106,79],cellWidth:50}},
-      alternateRowStyles:{fillColor:[244,241,235]},margin:{left:14,right:14}});
-    yPos=doc.lastAutoTable.finalY+7;
+    y=secTitle('🏛️ Traçabilité BDNI',y);
+    const items=[];
+    if(a.dateEntree)items.push(['Entrée troupeau',fmt(a.dateEntree)]);
+    if(a.provenance)items.push(['Provenance',a.provenance]);
+    if(a.dateRebouclage)items.push(['Rebouclage',fmt(a.dateRebouclage)+(a.ancienneBoucle?' (ancienne : '+a.ancienneBoucle+')':'')]);
+    items.forEach(([lbl,val])=>{
+      cx.fillStyle=INK3;cx.font=f(10,'600');cx.fillText(lbl,M,y+14);
+      cx.fillStyle=INK;cx.font=f(10);cx.fillText(val,M+150,y+14);
+      y+=22;
+    });
+    y+=8;
   }
 
-  // ── 6. Notes
+  // ── 9. NOTES ──────────────────────────────────────────────────────────────
   if(a.notes){
-    if(yPos>255){doc.addPage();yPos=15;}
-    yPos=addSection('Notes',yPos);
-    doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(60,55,50);
-    const lines=doc.splitTextToSize(a.notes,178);
-    doc.setFillColor(254,243,199);doc.roundedRect(13,yPos-1,182,lines.length*5+5,2,2,'F');
-    doc.text(lines,16,yPos+3);
-    yPos+=lines.length*5+8;
+    y=secTitle('📝 Notes',y);
+    const lines=a.notes.match(/.{1,90}/g)||[a.notes];
+    rr(M,y,CW,lines.length*18+16,8,AMBER_L);
+    cx.fillStyle='#78350F';cx.font=f(11);
+    lines.forEach((l,i)=>cx.fillText(l,M+12,y+18+i*18));
+    y+=lines.length*18+24;
   }
 
-  // ── Aucun contenu
-  if(!repros.length&&!treats.length&&!mere&&!pere&&!enfants.length&&a._categ_ml!=='VL'&&!a.notes){
-    doc.setFontSize(10);doc.setTextColor(140,132,116);doc.text('Aucun historique enregistré.',14,yPos);
-  }
+  // ── 10. PIED DE PAGE ──────────────────────────────────────────────────────
+  y+=16;
+  cx.strokeStyle=LINE;cx.lineWidth=1;cx.beginPath();cx.moveTo(M,y);cx.lineTo(W-M,y);cx.stroke();
+  y+=14;
+  cx.fillStyle=INK3;cx.font=f(9);
+  cx.fillText('BOVIQ — EARL La Rousselière — Fiche générée le '+dateStr,M,y);
+  cx.textAlign='right';cx.fillText('Art. L.234-1 Code rural',W-M,y);cx.textAlign='left';
+  y+=24;
 
-  // ── Courbes de contrôle laitier (canvas → base64 PNG)
-  if(a._categ_ml==='VL'){
-    try{
-      const mlRaw=localStorage.getItem('BOVIQ_MILKLIC');
-      if(mlRaw){
-        const ml=JSON.parse(mlRaw);
-        const ma=ml.animaux&&ml.animaux[a._trav];
-        if(ma){
-          await loadChartJs();
-          const sp=obj=>Object.entries(obj||{}).filter(([,v])=>v!=null).sort(([x],[y])=>x.localeCompare(y));
-          const lp=sp(ma.histoLait),tbp=sp(ma.histoTB),tpp=sp(ma.histoTP),cp=sp(ma.histoCell);
-          const fmtD=d=>d.slice(5).replace('-','/');
-          const baseOff={animation:false,responsive:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{grid:{display:false},ticks:{font:{size:8},maxRotation:45}},y:{grid:{color:'rgba(0,0,0,.06)'},ticks:{font:{size:8}}}}};
-          const makeChart=(canv,cfg)=>new Chart(canv,cfg);
-          const W=520,H=140;
-          const addChartToPdf=(chartCfg,titleStr)=>{
-            if(yPos>250){doc.addPage();yPos=15;}
-            yPos=addSection(titleStr,yPos);
-            const canv=document.createElement('canvas');canv.width=W;canv.height=H;
-            const ch=makeChart(canv,chartCfg);
-            const img=canv.toDataURL('image/png',1.0);
-            doc.addImage(img,'PNG',14,yPos,182,H*182/W);
-            yPos+=H*182/W+6;
-            ch.destroy();canv.remove();
-          };
-          if(lp.length>=2){
-            addChartToPdf({type:'line',data:{labels:lp.map(([d])=>fmtD(d)),datasets:[{label:'Lait L/j',data:lp.map(([,v])=>v),borderColor:'#2D6A4F',backgroundColor:'rgba(45,106,79,.10)',fill:true,tension:.3,pointRadius:3,borderWidth:1.5}]},options:baseOff},'Lait 24h (L/j)');
-          }
-          if((tbp.length>=2||tpp.length>=2)){
-            const allD=[...new Set([...tbp.map(([d])=>d),...tpp.map(([d])=>d)])].sort();
-            const tbM=Object.fromEntries(tbp),tpM=Object.fromEntries(tpp);
-            addChartToPdf({type:'line',data:{labels:allD.map(fmtD),datasets:[{label:'TB',data:allD.map(d=>tbM[d]??null),borderColor:'#D97706',backgroundColor:'rgba(217,119,6,.05)',fill:false,tension:.3,pointRadius:3,borderWidth:1.5,spanGaps:false},{label:'TP',data:allD.map(d=>tpM[d]??null),borderColor:'#1D4ED8',backgroundColor:'rgba(29,78,216,.04)',fill:false,tension:.3,pointRadius:3,borderWidth:1.5,spanGaps:false}]},options:{...baseOff,plugins:{legend:{display:true,labels:{boxWidth:8,font:{size:8}}},tooltip:{enabled:false}}}},'TB / TP (g/kg)');
-          }
-          if(cp.length>=2){
-            addChartToPdf({type:'line',data:{labels:cp.map(([d])=>fmtD(d)),datasets:[{label:'Leucos',data:cp.map(([,v])=>+(v/1000).toFixed(1)),borderColor:'#DC2626',backgroundColor:'rgba(220,38,38,.08)',fill:true,tension:.3,pointRadius:3,borderWidth:1.5,pointBackgroundColor:cp.map(([,v])=>v/1000>800?'#DC2626':v/1000>400?'#D97706':'#2D6A4F')},{data:cp.map(()=>400),borderColor:'rgba(220,38,38,.35)',borderWidth:1,borderDash:[4,3],fill:false,pointRadius:0,label:'Seuil 400k'}]},options:{...baseOff,plugins:{legend:{display:false},tooltip:{enabled:false}}}},'Cellules (x1000 cell/mL) — seuil 400k');
-          }
-        }
-      }
-    }catch(e){console.warn('PDF courbes erreur',e);}
-  }
-
-  // ── Pied de page
-  const pages=doc.internal.getNumberOfPages();
-  for(let i=1;i<=pages;i++){
-    doc.setPage(i);doc.setFontSize(8);doc.setTextColor(140,132,116);
-    doc.text('BOVIQ - Code rural Art.L.234-1 - Page '+i+'/'+pages,14,290);
-    doc.text(dateStr,180,290);
-  }
-  doc.save('Fiche_'+a.nom+'_'+(a.boucle||'').replace(/\s/g,'')+'.pdf');
+  // ── CROP + DOWNLOAD ───────────────────────────────────────────────────────
+  const out=document.createElement('canvas');out.width=W;out.height=y;
+  out.getContext('2d').drawImage(canvas,0,0);
+  const link=document.createElement('a');
+  link.download='Fiche_'+a.nom.replace(/\s+/g,'_')+'_'+(a.boucle||'').replace(/\s/g,'')+'.png';
+  link.href=out.toDataURL('image/png',1.0);
+  link.click();
 }
+
 
 // ========================================
 // JOURNAL D'ÉLEVAGE
