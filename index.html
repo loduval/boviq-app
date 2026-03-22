@@ -71,38 +71,40 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
 
 /* ═══ MÉTÉO ═══ */
+/* MÉTÉO — bande unique 1 ligne */
 .meteo{
   background:linear-gradient(130deg,#14532D 0%,#166534 45%,#15803D 100%);
   border-radius:var(--r);margin-bottom:28px;
   overflow:hidden;color:#fff;
   box-shadow:0 4px 24px rgba(20,83,45,.2);
 }
-.meteo-body{padding:20px 26px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:start}
-.meteo-loc{font-size:10px;opacity:.6;display:flex;align-items:center;gap:4px;margin-bottom:10px;letter-spacing:.5px;text-transform:uppercase}
-.meteo-main{display:flex;align-items:center;gap:14px}
-.meteo-ico{font-size:50px;line-height:1}
-.meteo-temp{font-family:'Playfair Display',serif;font-size:44px;line-height:1}
-.meteo-desc{font-size:13.5px;opacity:.9;text-transform:capitalize;margin-top:3px}
-.meteo-meta{font-size:11px;opacity:.55;display:flex;gap:10px;margin-top:3px}
+.meteo-body{padding:8px 20px;display:flex;flex-direction:row;align-items:center;gap:16px;flex-wrap:nowrap}
+.meteo-loc{font-size:9px;opacity:.55;display:flex;align-items:center;gap:3px;letter-spacing:.4px;text-transform:uppercase;margin-bottom:2px}
+.meteo-main{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.meteo-ico{font-size:28px;line-height:1}
+.meteo-temp{font-family:'Playfair Display',serif;font-size:22px;line-height:1}
+.meteo-desc{font-size:11px;opacity:.85;text-transform:capitalize}
+.meteo-meta{font-size:10px;opacity:.55;display:flex;gap:8px;margin-top:1px}
 .verdict{
   background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.2);
-  border-radius:12px;padding:14px 18px;text-align:center;min-width:150px;
+  border-radius:8px;padding:5px 12px;text-align:center;flex-shrink:0;
+  display:flex;align-items:center;gap:6px;
 }
 .verdict.ok{background:rgba(134,239,172,.2);border-color:rgba(134,239,172,.35)}
 .verdict.warn{background:rgba(253,224,71,.15);border-color:rgba(253,224,71,.3)}
-.v-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.8px;opacity:.6;margin-bottom:5px}
-.v-ico{font-size:26px;margin-bottom:4px}
-.v-txt{font-size:12px;font-weight:600}
-.slots{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;padding:0 26px 16px}
-.slot{background:rgba(255,255,255,.09);border-radius:8px;padding:7px 4px;text-align:center;border:1px solid rgba(255,255,255,.07)}
+.v-lbl{display:none}
+.v-ico{font-size:16px}
+.v-txt{font-size:11px;font-weight:600;white-space:nowrap}
+.slots{display:flex;gap:5px;flex:1;min-width:0;padding:0}
+.slot{background:rgba(255,255,255,.09);border-radius:7px;padding:5px 6px;text-align:center;border:1px solid rgba(255,255,255,.07);flex:1;min-width:36px}
 .slot.now{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.3)}
-.s-t{font-size:9px;opacity:.55;margin-bottom:2px}
-.s-i{font-size:18px;margin:2px 0}
-.s-v{font-size:12px;font-weight:600}
-.s-r{font-size:9px;opacity:.45;margin-top:1px}
-.meteo-foot{font-size:9px;opacity:.3;text-align:right;padding:0 26px 8px}
-.meteo-err{padding:22px;text-align:center;opacity:.7;font-size:13px}
-@media(max-width:600px){.meteo-body{grid-template-columns:1fr}.slots{grid-template-columns:repeat(3,1fr)}}
+.s-t{font-size:9px;opacity:.55;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.s-i{font-size:15px;line-height:1.3}
+.s-v{font-size:11px;font-weight:600}
+.s-r{font-size:9px;opacity:.45}
+.meteo-foot{font-size:9px;opacity:.25;text-align:right;padding:0 20px 4px;margin-top:-2px}
+.meteo-err{padding:10px 20px;opacity:.7;font-size:12px}
+@media(max-width:700px){.slots{display:none}}
 
 /* ═══ SECTION ═══ */
 .sec{margin-bottom:26px}
@@ -256,25 +258,21 @@ function renderM(data){
   const v=verd(c.weathercode,c.precipitation,c.windspeed_10m);
   z.innerHTML=`<div class="meteo">
 <div class="meteo-body">
-  <div>
-    <div class="meteo-loc">📍 ${MC.lieu}</div>
-    <div class="meteo-main">
-      <div class="meteo-ico">${wi(c.weathercode)}</div>
-      <div>
-        <div class="meteo-temp">${Math.round(c.temperature_2m)}<sup style="font-size:.38em;vertical-align:super">°C</sup></div>
-        <div class="meteo-desc">${wd(c.weathercode)}</div>
-        <div class="meteo-meta"><span>💨 ${Math.round(c.windspeed_10m)} km/h</span><span>🌧 ${c.precipitation} mm</span></div>
-      </div>
+  <div class="meteo-main" style="flex-shrink:0">
+    <div class="meteo-ico">${wi(c.weathercode)}</div>
+    <div>
+      <div class="meteo-loc">📍 ${MC.lieu}</div>
+      <div class="meteo-temp">${Math.round(c.temperature_2m)}<sup style="font-size:.38em;vertical-align:super">°C</sup> <span style="font-family:'DM Sans';font-size:12px;opacity:.85;font-weight:400">${wd(c.weathercode)}</span></div>
+      <div class="meteo-meta"><span>💨 ${Math.round(c.windspeed_10m)} km/h</span><span>🌧 ${c.precipitation} mm</span></div>
     </div>
   </div>
   <div class="verdict ${v.cls}">
-    <div class="v-lbl">Sortie au pré</div>
     <div class="v-ico">${v.ico}</div>
     <div class="v-txt">${v.txt}</div>
   </div>
+  <div class="slots">${sl.map(s=>`<div class="slot${s.first?' now':''}"><div class="s-t">${s.first?'Maint.':s.t}</div><div class="s-i">${wi(s.wmo)}</div><div class="s-v">${s.temp}°</div><div class="s-r">${s.rain>0?s.rain+'mm':'—'}</div></div>`).join('')}</div>
+  <div style="font-size:9px;opacity:.25;white-space:nowrap;align-self:flex-end;padding-bottom:2px">Open-Meteo · ${now.getHours()}h${String(now.getMinutes()).padStart(2,'0')}</div>
 </div>
-<div class="slots">${sl.map(s=>`<div class="slot${s.first?' now':''}"><div class="s-t">${s.first?'Maintenant':s.t}</div><div class="s-i">${wi(s.wmo)}</div><div class="s-v">${s.temp}°</div><div class="s-r">${s.rain>0?s.rain+'mm':'—'}</div></div>`).join('')}</div>
-<div class="meteo-foot">Open-Meteo · ${now.getHours()}h${String(now.getMinutes()).padStart(2,'0')}</div>
 </div>`;
 }
 
