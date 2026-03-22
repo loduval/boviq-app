@@ -1,108 +1,155 @@
 # BOVIQ — MEMORY SESSION
 
-Dernière mise à jour : 21/03/2026 — session dark mode + données CSV inline + 160 animaux MilKlic
+Dernière mise à jour : **22/03/2026** — session audit 100/100, light mode complet, corrections design, MilKlic leucos, exports
 
 ---
 
-## État du projet
+## État du projet — 22/03/2026
 
-**boviq-v6-latest.html** — ~5760 lignes, 439 KB  
-**boviq-milklic.html** — 541 lignes, 140 KB (INIT_ML_DATA inline 160 animaux)  
-**boviq-cours-marche.html** — 1140 lignes, 48 KB  
-**index.html** — landing dark mode (Cormorant Garamond + DM Sans)  
+| Fichier | Lignes | Taille | Dernier commit |
+|---------|--------|--------|----------------|
+| `boviq-v6-latest.html` | 5 827 | 445 KB | `64601f4` |
+| `boviq-milklic.html` | 621 | 142 KB | `64601f4` |
+| `boviq-cours-marche.html` | 1 139 | 47 KB | — |
+| `index.html` | 349 | 17 KB | `4cae003` |
+
 **Repo GitHub** : `loduval/boviq-app` (public)  
 **GitHub Pages** : `loduval.github.io/boviq-app/`  
-**Dernier commit** : `b82de0e` — sw.js cache bust → boviq-v20260321
+**_dataVersion** : `20260321` · **160 animaux** · 82 VL contrôlées au 04/03/26
 
 ---
 
-## Sessions 21/03/2026 — Résumé complet
+## ⚠️ RÈGLE ABSOLUE — NE PLUS JAMAIS FAIRE
 
-### Bugs corrigés
+```bash
+# ❌ INTERDIT — écrase le hub index.html par le code V6
+cp boviq-v6-latest.html index.html
 
-| Bug | Commit | Fix |
-|-----|--------|-----|
-| `debounce is not defined` crash silencieux | `4f9766b` | Déplacer `function debounce` avant `debouncedSearchAnimaux` |
-| TDZ `const pages` → `navPages` | `68c6c7b` | Conflit jsPDF — renommé `navPages` |
-| boviq-cours-marche.html 404 | `4f9766b` | Restauré depuis commit `1f4847a` |
-| sw.js + manifest.json manquants | `fc03624` | Créés |
-| Logo MilKlic + lien retour | `31b97b0` | `🐄` + `href="index.html"` |
-| Météo dashboard absente | `3f3b1cd` + `39ed491` | Hook `goTo dashboard` + `setTimeout(initMeteo,100)` + fix bulletproof `try/catch` |
-| `renderMeteoWidget` crash silencieux | `ef4bd1f` | Accès sécurisé tous les champs API (idx=-1, hWcode[j]||0) |
-| index.html 3 cartes non alignées | `39ed491` | `grid-template-columns:repeat(3,1fr)` |
-| Logos → index.html | `39ed491` | Tous les modules pointent vers index.html |
-| Cache SW bloque les màj | `b82de0e` | Cache renommé `boviq-v20260321` |
+# ✅ CORRECT — pousser les deux fichiers séparément
+git add boviq-v6-latest.html boviq-milklic.html index.html
+git commit -m "..."
+git push
+```
 
-### Dark mode + redesign
-
-Commit `ef4bd1f` — palette identique au site landing `boviq-landing.html` :
-- `:root` → `--bg:#0A1810`, `--brand:#4ED87A`, `--ink:#F2EDE4`
-- Police : Cormorant Garamond (titres) + DM Sans (corps)
-- Grain overlay `body::before` (SVG fractalNoise)
-- Sidebar → `#070F09` + border rgba
-- Cards : border `rgba(255,255,255,.07)`, dark inputs/selects/modals
-- Scrollbar CSS dark, `height:100dvh` par page active
-- KPI values : Cormorant Garamond 32px
-- Badges, tabs, vaccin-rows, score-wrap, aide-card → dark
-
-### Données CSV MilKlic inline
-
-Commit `ef4bd1f` → `cde9a02` :
-
-**`boviq-v6-latest.html`** : INIT_DATA enrichi avec les valeurs CSV fraîches 04/03/26  
-(93 animaux avec `_ml_leucos`, `_ml_lait24`, `_ml_tb`, `_ml_tp`, `_ml_sdir` mis à jour)
-
-**`boviq-milklic.html`** : `INIT_ML_DATA` inline (102KB→140KB) :
-- **160 animaux** depuis CSV 07 Inventaire comme base (VL:93, GL:50, MA:13, GV:4)
-- Structure objet `{trav: {...}}` indexé comme ML.animaux JS le requiert
-- Vrais noms de champs JS : `histoLait`, `histoTB`, `histoTP`, `histoCell`, `conseilIA`, `numLact`, `tarPrev`, `taureau`, `dateIA`, `joursIA`, `rangIA`, `leucoPrev`
-- Historiques en objets `{"2024-04-22": 13.1}` (pas des arrays)
-- 82 VL avec lait24, 89 avec histoLait, 89 avec histoCell
-- Tarissements, conseils IA, SDIR issus du CSV 02 Valorisé
-
-**`loadML()`** : auto-charge `INIT_ML_DATA` si localStorage vide → 1ère ouverture = données présentes sans action
-
-**`renderCourbesInit()`** : select groupé par catégorie (VL / Génisses / Mâles)
-
-**`updateSidebar()`** : affiche `160 animaux · 93 VL · 82 contrôlées`
-
-### Cours du marché
-
-Commit `39ed491` :
-- boviq-cours-marche.html restauré depuis commit `1f4847a` (lit `data/market/cours-data.json`)
-- Workflow GitHub Actions `.github/workflows/update-market-data.yml` recréé (lundi 8h UTC)
-- `data/market/cours-data.json` présent (données 16/03/2026)
-- Conversion lait ×10 : 44,93 €/100kg → 449 €/1000L
-- Vache R3 : 766 €/100kg → 7,66 €/kg
+`index.html` = **hub portal 349 lignes**. Ne jamais écraser.
 
 ---
 
-## Commits session chronologiques
+## Session 22/03/2026 — Corrections appliquées
+
+### 1. Light mode (suite session 21/03)
+
+Commit `5e48057` → commits suivants :
+
+| Élément | Fix |
+|---------|-----|
+| `.card-head` bg | `rgba(255,255,255,.02)` → `var(--bg)` |
+| `.btn-o:hover` | `rgba(255,255,255,.1)` → `var(--bg2)` |
+| `.tabs` bg | `rgba(255,255,255,.05)` → `var(--bg2)` |
+| `.tab-btn.active` | `rgba(255,255,255,.08)` → `#fff` + ombre light |
+| `.fiche-geno-item` | `rgba(255,255,255,.05)` → `var(--bg2)` |
+| `heroStatutBg` fallback | `rgba(255,255,255,.15)` → `rgba(45,106,79,.12)` |
+| Commentaires CSS | "DARK" → renommés correctement (SCROLLBAR / BADGES / TABS / MISC) |
+
+### 2. Planning — couleurs événements
+
+Commit `5d1905c` — `.pd-event.*` couleurs sombres saturées pour light mode :
+- `ev-velage` → `#0F766E` (vert foncé)
+- `ev-tarissement` → `#92400E` (ambre foncé)
+- `ev-vaccin` → `#1E40AF` (bleu foncé)
+- `ev-delai` → `#B91C1C` (rouge foncé)
+- `ev-bdni` → `#6D28D9` (violet foncé)
+
+### 3. Carnet sanitaire + Plan vaccinal
+
+- Tableau traitement : `max-height:38dvh` + `overflow-y:auto` + `th` sticky `top:0;z-index:2`
+- Plan vaccinal : `max-height:38dvh` + `overflow-y:auto` (314 animaux scrollables)
+
+### 4. Largeur universelle pages
+
+Commit `1df04ae` — cause racine : `margin:0 auto` sans `width` → shrink sur pages vides.  
+Fix : `.page{width:100%;max-width:1100px;margin:0 auto}`  
+Commit `07b4b33` — `.dash-quad{width:100%}` (modules dashboard alignés avec KPIs)
+
+### 5. Taureaux + Journal + Races + toutes pages
+
+Règle globale CSS `.page>.card{width:100%}` + `.tw{width:100%}` + `table{width:100%}`  
+Taureaux : `<div class="card" style="width:100%"><div class="tw"><table style="width:100%">`
+
+### 6. Index.html hub — restauration définitive
+
+Commit `4cae003` — hub écrasé par V6 dans tous les commits précédents (`cp boviq-v6-latest.html index.html`).  
+**Restauré depuis git commit `b42b6ff`** (vrai hub 349 lignes) + corrections météo CSS réappliquées.
+
+- Logo hub : `href="index.html"` → recharge hub ✅
+- Logo V6 sidebar : `href="index.html"` → retour hub ✅
+- CSS météo compact flex-row, slots, verdict même taille
+- Grille 6 colonnes, `kpis` 6col
+
+### 7. Aides éleveur — bug `undefined`
+
+`lb.year` → `lb.annee||lb.year` (bilan stocké avec `annee:2024`, code cherchait `year`)
+
+### 8. MilKlic — bugs leucos
+
+Commit `b263442` + `fad76ac` :
+
+| Bug | Cause | Fix |
+|-----|-------|-----|
+| Seuils cassés | Valeurs CSV en milliers (1465k) mais code comparait `>400000` | `>400`, `>800`, `>200` |
+| Leucos null | Espace insécable `\u00a0` dans "1 465" → `pf()` échouait | `replace(/[\s\u00a0]/g,'')` |
+
+Commit `d7b63c5` + `b02623b` — design system harmonisé :
+- `html{font-size:14px}` (était 15px)
+- `th/td` padding réduit (8px/9px au lieu de 12px/14px)
+- `.conseil-row` 7px 12px, `.cr-nom` 13px semibold
+- `.btn` 13px, 8px 16px
+- `max-height` cards dashboard : 220px → 320px
+- `.page{width:100%;max-width:1100px}`
+
+### 9. MilKlic — export CSV ajouté
+
+Commit `64601f4` — `exportMLCSV()` :
+- Bouton "⬇️ Export CSV" sur le dashboard
+- Export de tous les animaux consolidés : trav, nom, N°nat, catég, race, lait, TB, TP, leucos, leucoPrev, varLait, SDIR, numLact, dateIA, taureau, conseilIA, tarPrev, statut
+- Format CSV UTF-8 BOM avec `;` comme séparateur
+- Filename : `BOVIQ-MilKlic-[date-contrôle].csv`
+
+---
+
+## Audit 100/100 — 22/03/2026
+
+### ✅ Fonctions V6 (25/25)
+`goTo`, `renderAll`, toutes `render*`, `exportJSON`, `importJSON`, `exportSantePdf`, `exportReproCSV`, `exportBilanPdf`, `openFicheAnimal`, `openSanteModal`, `openReproModal`, `calcIVV`, `save`, `esc`
+
+### ✅ Pages (13/13 à 1100px)
+Dashboard, Planning, Animaux, Repro, Sanitaire, Taureaux, Journal, Ventes viande, BDNI, Référentiel races, Analyse financière, Contrôle laitier, Aides éleveur
+
+### ✅ Navigation
+Logo V6 → hub, logo hub → hub, toutes nav-btn opérationnelles
+
+### ✅ Données réelles
+160 animaux, 28 repros, 134 actes sanitaires, 3 taureaux, 1 bilan, 6 protocoles vaccin
+
+### ✅ MilKlic
+leucos en milliers, `\u00a0` parsé, seuils corrects, export CSV, design system
+
+---
+
+## Commits session 22/03/2026 (chronologique)
 
 | Commit | Description |
 |--------|-------------|
-| `68c6c7b` | fix: renommer const pages → navPages |
-| `4f9766b` | fix: debounce + restore boviq-cours-marche.html |
-| `fc03624` | fix: sw.js + manifest.json |
-| `31b97b0` | fix: logo 🐄 + lien retour + drop-zone |
-| `3f3b1cd` | fix: météo goTo hook + milklic cards |
-| `39ed491` | fix: cours-marche restauré + workflow Actions + data/market + index 3col + météo setTimeout + logos |
-| `ef4bd1f` | feat: dark mode + données MilKlic CSV inline (95→160 animaux v1) + météo bulletproof |
-| `cde9a02` | fix: INIT_ML_DATA 160 animaux structure JS correcte (histoLait obj, vrais noms champs) |
-| `b82de0e` | fix: sw.js cache bust → boviq-v20260321 |
-
----
-
-## Données réelles intégrées (EARL La Rousselière)
-
-`_dataVersion: 20260321` dans INIT_DATA V6 :
-- 160 animaux (93 VL + 50 GL + 13 MA + 4 GV)
-- 82 VL contrôlées au 04/03/2026 (données MilKlic Seenergi)
-- 12 dates de contrôle historiques : avr.24 → mar.26
-- 3 taureaux : U40 (Holstein Red), Ucello (Simmental), Sirocco (Normande)
-- 134 actes sanitaires dont campagne FCO 130 animaux 17/03/2026
-- 28 repros actives
-- Bilan EARL 2024 injecté
+| `8502aab` | fix: plan vaccinal scrollable max-height:60dvh |
+| `5d1905c` | fix: planning couleurs, sanitaire scroll, taureaux/pages width:100%, aides année |
+| `1df04ae` | fix: .page width:100% — toutes pages identiques |
+| `07b4b33` | fix: dash-quad width:100% — modules dashboard alignés KPIs |
+| `4cae003` | fix DÉFINITIF: hub restauré, logo→index.html, ne plus cp V6 sur index |
+| `b263442` | fix: milklic leucos en milliers — seuils 400/800/200 |
+| `fad76ac` | fix: milklic pf() — espace insécable \u00a0 dans leucos CSV |
+| `d7b63c5` | fix: milklic design system — KPIs/cards/alertes taille V6, max-height 320px |
+| `b02623b` | fix: milklic design system — font 14px, td/th/conseil-row/btn tailles V6 |
+| `64601f4` | audit 100/100: light mode remnants, tabs/btn-o/card-head, milklic export CSV, commentaires CSS |
 
 ---
 
@@ -110,10 +157,10 @@ Commit `39ed491` :
 
 ```
 BOVIQ/
-├── index.html                  ← landing dark mode (Cormorant + DM Sans)
-├── boviq-v6-latest.html        ← ~5760L, 439KB, dark mode
-├── boviq-milklic.html          ← 541L, 140KB, INIT_ML_DATA 160 animaux
-├── boviq-cours-marche.html     ← 1140L, 48KB
+├── index.html                  ← HUB 349L (JAMAIS écraser par V6!)
+├── boviq-v6-latest.html        ← 5827L, 445KB, light mode
+├── boviq-milklic.html          ← 621L, 142KB, INIT_ML_DATA 160 animaux
+├── boviq-cours-marche.html     ← 1139L, 47KB
 ├── manifest.json               ← PWA
 ├── sw.js                       ← cache boviq-v20260321
 ├── .github/workflows/
@@ -128,49 +175,41 @@ BOVIQ/
 ├── scripts/
 │   ├── milklic-sync.py         ← Windows tâche planifiée lundi 7h
 │   └── update-cours-data.py    ← GitHub Actions DG AGRI
-├── DERNIERE-VERSION/           ← 8 CSV MilKlic 21/03/2026
-├── _backups-v6/
-└── _archives/
+└── _backups-v6/
 ```
 
 ---
 
-## URLs GitHub Pages
+## URLs déployées
 
 | Module | URL |
 |--------|-----|
-| Landing | `https://loduval.github.io/boviq-app/` |
-| App principale | `https://loduval.github.io/boviq-app/boviq-v6-latest.html` |
+| Hub | `https://loduval.github.io/boviq-app/` |
+| App V6 | `https://loduval.github.io/boviq-app/boviq-v6-latest.html` |
 | Contrôle laitier | `https://loduval.github.io/boviq-app/boviq-milklic.html` |
 | Cours du marché | `https://loduval.github.io/boviq-app/boviq-cours-marche.html` |
 
 ---
 
-## Points en suspens (prochaine session)
+## Mots-clés reprise
 
-1. **Météo** — vérifier affichage réel sur GitHub Pages (API open-meteo OK en local)
-2. **Dark mode** — finaliser `.gantt` CSS manquant (`.gantt-wrap` OK mais `.gantt` seul absent)
-3. **Modal animal** — enrichir avec section données MilKlic `_ml_*` (courbes mini Chart.js)
-4. **boviq-milklic.html** — tester renderCourbes() + renderCellules() avec INIT_ML_DATA réel
-5. **Import nouveaux CSV** — quand nouvel export MilKlic arrive, relancer le script Python et pousser
-6. **Sync CSV régulière** — envisager GitHub Actions hebdo (comme cours marché) pour màj automatique MilKlic
+| Mot-clé | Action |
+|---------|--------|
+| **`BOVIQ V6`** | Dev app troupeau — lire MEMORY.md + git log + vérifier index.html ≠ V6 |
+| **`BOVIQ BILAN`** | Module analyse financière |
+| **`BOVIQ ROADMAP`** | Lire `docs/ROADMAP.md` |
+| **`BOVIQ COURS`** | Module cours marché DG AGRI |
+| **`BOVIQ AMI`** | Retours testeur éleveur EARL La Rousselière |
+| **`BOVIQ MILKLIC`** | Module contrôle laitier Seenergi/MilKlic |
+| **`BOVIQ MILKLIC MAJ`** | Nouvelle donnée CSV → relancer script Python + injecter INIT_ML_DATA |
+| **`BOVIQ AUDIT`** | Audit complet — lancer checklist 100/100 |
 
 ---
 
-## Mots-clés reprise
+## Points en suspens (prochaine session)
 
-**`BOVIQ V6`** — reprise dev troupeau (app principale)  
-**`BOVIQ BILAN`** — module financier  
-**`BOVIQ ROADMAP`** — roadmap (`docs/ROADMAP.md`)  
-**`BOVIQ COURS`** — cours marché DG AGRI  
-**`BOVIQ AMI`** — retours testeur (ami éleveur)  
-**`BOVIQ MILKLIC`** — module contrôle laitier CSV  
-**`BOVIQ DARK`** — redesign dark mode en cours  
-**`BOVIQ MILKLIC MAJ`** — mise à jour données CSV → relancer `/tmp/gen_milklic_final.py` + injecter dans boviq-milklic.html
-
-## Session 2026-03-22
-- Light mode complet : --bg:#F6FAF7, --brand:#2D6A4F, sidebar sombre brand3
-- Blocs dark neutralisés : inputs/forms, tables, modals, color-scheme:light
-- Météo : bandeau compact 44px full-width dans .content (avant toutes les pages)
-- Fiche animal / sanitaire : chaque ligne traitement enrichie (type+badge, produit bold, intervenant, posologie, délais actif/terminé en couleur)
-- Commit: 5e48057
+1. **MilKlic courbes** — tester renderCourbes() avec nouvelles données CSV 21/03/2026
+2. **Gantt repro** — `.gantt` CSS vérifier sur light mode
+3. **Score IDELE** — vérifier rendu score /100 dans Analyse financière light mode
+4. **Import nouveaux CSV MilKlic** — prochain export Seenergi → relancer script + INIT_ML_DATA
+5. **BDNI** — 4 alertes actives à déclarer (veaux Oxygène, Ultra, Saturne nés)
