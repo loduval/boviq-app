@@ -76,12 +76,12 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 
 /* === COMPONENTS === */
 .card{background:var(--card);border-radius:var(--r2);box-shadow:var(--sh);overflow:hidden;margin-bottom:16px;border:1px solid var(--line)}
-.card-head{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;background:rgba(255,255,255,.02)}
+.card-head{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;background:var(--bg)}
 .card-head h3{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;color:var(--ink2)}
 .card-body{padding:16px 18px}
 .btn{font:600 13px/1 'DM Sans',sans-serif;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
-.btn-p{background:var(--brand);color:#fff}.btn-p:hover{background:#6AE88A}
-.btn-o{background:rgba(255,255,255,.06);color:var(--ink2);border:1px solid var(--line2)}.btn-o:hover{background:rgba(255,255,255,.1)}
+.btn-p{background:var(--brand);color:#fff}.btn-p:hover{background:#245C3F}
+.btn-o{background:transparent;color:var(--ink2);border:1px solid var(--line2)}.btn-o:hover{background:var(--bg2)}
 .btn-d{background:transparent;color:var(--red);border:1px solid rgba(220,38,38,.25)}.btn-d:hover{background:var(--red-l)}
 .btn-s{padding:5px 10px}
 .btn-icon{width:30px;height:30px;padding:0;justify-content:center;border-radius:7px}
@@ -119,7 +119,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 @media(max-width:500px){.ligne-sante .l-row-2,.ligne-sante .l-row-3{grid-template-columns:1fr}}
 
 /* === FICHE ANIMAL === */
-.fiche-hero{background:linear-gradient(135deg,var(--brand3) 0%,var(--brand2) 100%);border-radius:var(--r2) var(--r2) 0 0;padding:24px 24px 20px;color:white;margin:-0px}
+.fiche-hero{background:linear-gradient(135deg,var(--brand2) 0%,var(--brand) 100%);border-radius:var(--r2) var(--r2) 0 0;padding:24px 24px 20px;color:white;margin:-0px}
 .fiche-hero-name{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .fiche-hero-sub{font-size:13px;opacity:.75;margin-bottom:14px}
 .fiche-hero-boucle{font-size:12px;opacity:.6;font-family:monospace;letter-spacing:.5px}
@@ -651,7 +651,7 @@ tr:hover td{background:var(--brand-pale)}
 .modal-bg{background:rgba(0,0,0,.35);backdrop-filter:blur(4px)}
 .popup-bg{background:rgba(0,0,0,.35);backdrop-filter:blur(6px)}
 .popup-box{background:var(--card);border:1px solid var(--line2)}
-/* === SCROLLBAR DARK === */
+/* === SCROLLBAR === */
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.14);border-radius:3px}
@@ -664,7 +664,7 @@ tr:hover td{background:var(--brand-pale)}
   height:calc(100dvh);overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(0,0,0,.14) transparent
 }
 .content{overflow-y:hidden}
-/* === BADGE DARK === */
+/* === BADGES === */
 .b-green{background:var(--brand-light);color:var(--brand)}
 .b-amber{background:var(--amber-l);color:var(--amber)}
 .b-red{background:var(--red-l);color:var(--red)}
@@ -672,19 +672,19 @@ tr:hover td{background:var(--brand-pale)}
 .b-purple{background:var(--purple-l);color:var(--purple)}
 .b-teal{background:var(--teal-l);color:var(--teal)}
 .b-gray{background:rgba(0,0,0,.06);color:var(--ink3)}
-/* === TABS DARK === */
-.tabs{background:rgba(255,255,255,.05);border-radius:10px;padding:3px}
+/* === TABS === */
+.tabs{background:var(--bg2);border-radius:10px;padding:3px}
 .tab-btn{color:var(--ink3)}.tab-btn:hover{color:var(--ink2)}
-.tab-btn.active{background:rgba(255,255,255,.08);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.3)}
-/* === MISC DARK === */
+.tab-btn.active{background:#fff;color:var(--brand);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+/* === MISC LIGHT OVERRIDES === */
 .aide-card{background:var(--card);border:1px solid var(--line)}
-.vaccin-row{background:rgba(255,255,255,.04)}
-.vaccin-row:hover{background:rgba(255,255,255,.07)}
+.vaccin-row{background:var(--bg2)}
+.vaccin-row:hover{background:var(--brand-pale)}
 .advice-item{background:var(--brand-pale);border:1px solid var(--brand-light)}
 .advice-item.warn{background:var(--amber-l);border-color:rgba(251,191,36,.2)}
 .score-wrap{background:var(--card);border:1px solid var(--line)}
-.fiche-geno-item{background:rgba(255,255,255,.05)}
-.race-chip{background:rgba(255,255,255,.04)}
+.fiche-geno-item{background:var(--bg2)}
+.race-chip{background:var(--bg2)}
 .menu-toggle{background:rgba(15,32,22,.9);border:1px solid var(--line2)}
 .btn kbd{background:rgba(0,0,0,.12);border-color:rgba(0,0,0,.18);margin-left:5px;font-size:9px}
 /* Pastille état santé globale animal */
@@ -4801,7 +4801,7 @@ function openFicheAnimal(id){
   const enfants=D.animaux.filter(x=>x.mere===a.id);
 
   const heroStatutColors={Vendu:'rgba(140,132,116,.3)',Mort:'rgba(220,38,38,.3)',Réformé:'rgba(217,119,6,.3)'};
-  const heroStatutBg=heroStatutColors[a.statut]||'rgba(255,255,255,.15)';
+  const heroStatutBg=heroStatutColors[a.statut]||'rgba(45,106,79,.12)';
   const ss=calcSanteScore(a.id);
   const scoreColors={A:'#D1FAE5',B:'#FEF3C7',C:'#FEE2E2'};
   const scoreTextColors={A:'#065F46',B:'#92400E',C:'#991B1B'};

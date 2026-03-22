@@ -216,7 +216,10 @@ tbody tr:hover td{background:#F7F4EE}
 <div class="page" id="page-dashboard">
   <div class="page-head">
     <div><h2>Tableau de bord</h2><p class="page-sub" id="dash-date">—</p></div>
-    <button class="btn btn-o btn-s" onclick="showPage('import')">🔄 Nouvel import</button>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-o btn-s" onclick="exportMLCSV()">⬇️ Export CSV</button>
+      <button class="btn btn-o btn-s" onclick="showPage('import')">🔄 Nouvel import</button>
+    </div>
   </div>
   <div class="grid4" id="dash-kpis"></div>
   <div class="grid2" style="margin-top:16px;align-items:stretch">
@@ -569,6 +572,26 @@ function renderBridge(){
 }
 
 function saveML(){if(ML)localStorage.setItem(ML_KEY,JSON.stringify(ML))}
+
+function exportMLCSV(){
+  if(!ML||!Object.keys(ML.animaux).length){alert('Aucune donnée à exporter.');return}
+  const rows=[['Trav','Nom','N°National','Catég','Race','Lait24','TB','TP','Leucos','LeucoPrev','VarLait','SDIR','NumLact','DateIA','Taureau','ConseilIA','TarPrev','Statut']];
+  Object.values(ML.animaux).sort((a,b)=>(a.nom||a.trav).localeCompare(b.nom||b.trav)).forEach(a=>{
+    rows.push([a.trav||'',a.nom||'',a.numNat||'',a.categ||'',a.race||'',
+      a.lait24??'',a.tb??'',a.tp??'',
+      a.leucos!=null?a.leucos.toFixed(0):'',
+      a.leucoPrev!=null?a.leucoPrev.toFixed(0):'',
+      a.varLait??'',a.sdir||'',a.numLact??'',
+      a.dateIA||'',a.taureau||'',a.conseilIA||'',a.tarPrev||'',a.statut||'']);
+  });
+  const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\r\n');
+  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`BOVIQ-MilKlic-${ML.controleDate||ML.importDate||'export'}.csv`;
+  a.click();URL.revokeObjectURL(a.href);
+}
+
+
 function loadML(){
   try{
     const r=localStorage.getItem(ML_KEY);
