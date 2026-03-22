@@ -46,17 +46,17 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 
 /* ── CONTENT ── */
 .content{flex:1;margin-left:240px;min-height:100dvh}
-.page{display:none;padding:32px 36px 48px;max-width:1340px;margin:0 auto}
+.page{display:none;padding:24px;max-width:1100px;margin:0 auto;width:100%}
 .page.active{display:block}
-.page-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;gap:16px;flex-wrap:wrap;padding-bottom:20px;border-bottom:2px solid var(--brand2)}
-.page-head h2{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--brand);letter-spacing:-.4px}
-.page-sub{font-size:13px;color:var(--ink3);margin-top:4px;font-style:italic}
+.page-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap;padding-bottom:14px;border-bottom:2px solid var(--brand2)}
+.page-head h2{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--brand);letter-spacing:-.3px}
+.page-sub{font-size:12px;color:var(--ink3);margin-top:3px;font-style:italic}
 
 /* ── CARDS ── */
-.card{background:var(--card);border-radius:var(--r2);box-shadow:var(--sh);overflow:hidden;margin-bottom:20px;border:1px solid var(--line)}
-.card-head{padding:16px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;background:var(--bg)}
-.card-head h3{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--brand);letter-spacing:.1px}
-.card-body{padding:20px 22px}
+.card{background:var(--card);border-radius:var(--r2);box-shadow:var(--sh);overflow:hidden;margin-bottom:14px;border:1px solid var(--line)}
+.card-head{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;background:var(--bg)}
+.card-head h3{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;color:var(--brand);letter-spacing:.1px}
+.card-body{padding:14px 16px}
 
 /* ── GRIDS ── */
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
@@ -70,10 +70,10 @@ body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(-
 #page-repro .grid2 .card .card-body{flex:1;overflow-y:auto;max-height:520px}
 
 /* ── KPI CARDS ── */
-.kpi{background:var(--card);border-radius:var(--r2);box-shadow:var(--sh);padding:22px 22px 18px;border:1px solid var(--line);border-top:3px solid var(--brand2)}
-.kpi-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin-bottom:10px}
-.kpi-val{font-size:38px;font-weight:700;font-family:'Playfair Display',serif;color:var(--brand);line-height:1}
-.kpi-sub{font-size:13px;color:var(--ink3);margin-top:7px}
+.kpi{background:var(--card);border-radius:var(--r2);box-shadow:var(--sh);padding:16px 15px 13px;border:1px solid var(--line);border-top:3px solid var(--brand2)}
+.kpi-label{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3);margin-bottom:8px}
+.kpi-val{font-size:2.2rem;font-weight:700;font-family:'Playfair Display',serif;color:var(--brand);line-height:1}
+.kpi-sub{font-size:10.5px;color:var(--ink3);margin-top:5px}
 
 /* ── BUTTONS ── */
 .btn{font:600 13.5px/1 'DM Sans',sans-serif;border:none;padding:10px 18px;border-radius:9px;cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
@@ -125,12 +125,12 @@ tbody tr:hover td{background:#F7F4EE}
 .sdir-I{background:#F3E8FF;color:#6D28D9}
 
 /* ── ALERT ROWS ── */
-.alert-row{display:flex;align-items:center;gap:14px;padding:13px 18px;border-radius:var(--r);margin-bottom:10px;font-size:14px;border:1px solid transparent}
-.alert-row.crit{background:var(--red-l);border-color:rgba(185,28,28,.2);border-left:4px solid var(--red)}
-.alert-row.warn{background:var(--amber-l);border-color:rgba(180,83,9,.2);border-left:4px solid var(--amber)}
-.alert-row.info{background:var(--blue-l);border-color:rgba(29,78,216,.2);border-left:4px solid var(--blue)}
-.alert-row .anom{font-weight:700;min-width:160px;font-size:15px}
-.alert-row .aval{margin-left:auto;font-weight:700;font-size:17px}
+.alert-row{display:flex;align-items:center;gap:10px;padding:7px 12px;border-radius:var(--r);margin-bottom:6px;font-size:13px;border:1px solid transparent}
+.alert-row.crit{background:var(--red-l);border-color:rgba(185,28,28,.2);border-left:3px solid var(--red)}
+.alert-row.warn{background:var(--amber-l);border-color:rgba(180,83,9,.2);border-left:3px solid var(--amber)}
+.alert-row.info{background:var(--blue-l);border-color:rgba(29,78,216,.2);border-left:3px solid var(--blue)}
+.alert-row .anom{font-weight:600;min-width:120px;font-size:13px}
+.alert-row .aval{margin-left:auto;font-weight:700;font-size:13px}
 
 /* ── REPRO IA CONSEIL ROWS ── */
 .conseil-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--r);margin-bottom:8px;font-size:14px;border:1px solid transparent}
@@ -221,12 +221,12 @@ tbody tr:hover td{background:#F7F4EE}
   <div class="grid4" id="dash-kpis"></div>
   <div class="grid2" style="margin-top:16px;align-items:stretch">
     <div style="display:flex;flex-direction:column;gap:16px">
-      <div class="card" style="flex:1"><div class="card-head"><h3>🦠 Alertes cellulaires</h3></div><div class="card-body" id="dash-cell-alerts" style="max-height:220px;overflow-y:auto"></div></div>
-      <div class="card" style="flex:1"><div class="card-head"><h3>⚠️ Statuts à surveiller</h3></div><div class="card-body" id="dash-statuts" style="max-height:220px;overflow-y:auto"></div></div>
+      <div class="card" style="flex:1"><div class="card-head"><h3>🦠 Alertes cellulaires</h3></div><div class="card-body" id="dash-cell-alerts" style="max-height:320px;overflow-y:auto"></div></div>
+      <div class="card" style="flex:1"><div class="card-head"><h3>⚠️ Statuts à surveiller</h3></div><div class="card-body" id="dash-statuts" style="max-height:320px;overflow-y:auto"></div></div>
     </div>
     <div style="display:flex;flex-direction:column;gap:16px">
-      <div class="card" style="flex:1"><div class="card-head"><h3>🔬 Conseils reproduction</h3></div><div class="card-body" id="dash-repro-conseils" style="max-height:220px;overflow-y:auto"></div></div>
-      <div class="card" style="flex:1"><div class="card-head"><h3>📉 Signaux faibles production</h3></div><div class="card-body" id="dash-prod-signals" style="max-height:220px;overflow-y:auto"></div></div>
+      <div class="card" style="flex:1"><div class="card-head"><h3>🔬 Conseils reproduction</h3></div><div class="card-body" id="dash-repro-conseils" style="max-height:320px;overflow-y:auto"></div></div>
+      <div class="card" style="flex:1"><div class="card-head"><h3>📉 Signaux faibles production</h3></div><div class="card-body" id="dash-prod-signals" style="max-height:320px;overflow-y:auto"></div></div>
     </div>
   </div>
 </div>
