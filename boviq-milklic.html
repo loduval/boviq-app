@@ -869,6 +869,8 @@ async function saveML(){
   if(!ML)return;
   showSyncStatus('saving');
   const ok=await ghSave(ML);
+  // Bridge V6 : synchroniser aussi dans localStorage
+  try{localStorage.setItem(ML_KEY,JSON.stringify(ML));}catch(e){console.warn('localStorage MilKlic:',e);}
   showSyncStatus(ok?'ok':'error');
   // ── Archivage historique leucos dans boviq (D.mlControles) ──────────────
   // Chaque contrôle est archivé par date — structure compacte : {date, vaches:[{trav,lc,l,tb,tp}]}
@@ -927,7 +929,6 @@ async function loadML(){
     if(ghData){
       ML=ghData;
     }else{
-      // Première utilisation : charger INIT_ML_DATA et le pousser sur GitHub
       ML=JSON.parse(JSON.stringify(INIT_ML_DATA));
       showSyncStatus('saving');
       await ghSave(ML);
@@ -936,6 +937,8 @@ async function loadML(){
     console.warn('loadML:',e);
     ML=JSON.parse(JSON.stringify(INIT_ML_DATA));
   }
+  // ── Bridge V6 : écrire dans localStorage pour que boviq-v6-latest.html puisse lire les données ML ──
+  try{localStorage.setItem(ML_KEY,JSON.stringify(ML));}catch(e){console.warn('localStorage MilKlic:',e);}
   updateSidebar();
   showSyncStatus('ok');
 }
