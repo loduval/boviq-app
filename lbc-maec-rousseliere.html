@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dossier LBC & MAEC — EARL La Rousselière</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --green:#1A6B3C;--green-l:#E8F5EE;--green-m:#2D6A4F;
+  --amber:#B45309;--amber-l:#FEF3C7;
+  --blue:#1D4ED8;--blue-l:#EFF6FF;
+  --gray:#F3F4F6;--ink:#1A1A1A;--ink2:#444;--ink3:#666;
+}
+body{font-family:'Segoe UI',Arial,sans-serif;font-size:11pt;color:var(--ink);background:#fff;line-height:1.55}
+.wrap{max-width:800px;margin:0 auto;padding:32px 40px}
+
+/* PRINT BUTTON */
+.print-bar{position:fixed;top:0;left:0;right:0;background:var(--green-m);color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.print-bar h1{font-size:14px;font-weight:600;letter-spacing:-.2px}
+.btn-print{background:#fff;color:var(--green-m);border:none;padding:7px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer}
+.btn-print:hover{background:#f0f0f0}
+body{padding-top:48px}
+
+/* COVER */
+.cover{padding:28px 0 24px;border-bottom:3px solid var(--green)}
+.cover .eyebrow{font-size:10pt;color:var(--ink3);margin-bottom:6px}
+.cover h1{font-size:24pt;font-weight:700;color:var(--green);line-height:1.2;margin-bottom:6px}
+.cover .sub{font-size:14pt;color:var(--ink2);margin-bottom:18px}
+.cover-box{background:var(--green-l);border-left:4px solid var(--green);padding:14px 18px;border-radius:4px;font-size:10.5pt;color:var(--ink)}
+.cover-box li{list-style:none;padding:2px 0}
+.cover-box li::before{content:"➜  ";color:var(--green);font-weight:700}
+
+/* HEADINGS */
+h2{font-size:16pt;font-weight:700;color:var(--green);margin:32px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--green-l)}
+h3{font-size:12pt;font-weight:700;color:var(--ink);margin:20px 0 7px}
+h4{font-size:10.5pt;font-weight:700;color:var(--green-m);margin:14px 0 5px}
+
+p{margin:6px 0;font-size:10.5pt}
+ul,ol{margin:8px 0 8px 22px;font-size:10.5pt}
+li{margin:3px 0;line-height:1.5}
+
+/* CALLOUTS */
+.box{border-radius:5px;padding:13px 16px;margin:14px 0;font-size:10.5pt}
+.box-green{background:var(--green-l);border-left:4px solid var(--green)}
+.box-amber{background:var(--amber-l);border-left:4px solid var(--amber)}
+.box-blue{background:var(--blue-l);border-left:4px solid var(--blue)}
+.box strong{display:block;margin-bottom:4px;font-size:11pt}
+
+/* TABLES */
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:10pt}
+th{background:var(--green-m);color:#fff;padding:8px 10px;text-align:left;font-weight:600;font-size:9.5pt}
+td{padding:7px 10px;border-bottom:1px solid #e5e7eb;vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:nth-child(even) td{background:#fafafa}
+
+/* EMAIL BLOCKS */
+.email{background:#F0FFF4;border-left:4px solid var(--green);border:1px solid #bbf7d0;border-radius:5px;padding:14px 18px;margin:14px 0;font-size:10pt}
+.email .email-header{font-weight:700;color:var(--green-m);margin-bottom:8px;font-size:10.5pt}
+.email p{margin:4px 0;line-height:1.6}
+.email .indent{padding-left:16px}
+
+/* STEP NUMBERS */
+.steps ol{counter-reset:step}
+.steps li{margin:7px 0;padding-left:4px}
+
+/* PAGE BREAK */
+.page-break{page-break-before:always;padding-top:8px}
+
+/* BADGE */
+.badge{display:inline-block;padding:2px 9px;border-radius:12px;font-size:9pt;font-weight:700}
+.badge-green{background:var(--green-l);color:var(--green)}
+.badge-amber{background:var(--amber-l);color:var(--amber)}
+.badge-blue{background:var(--blue-l);color:var(--blue)}
+
+/* FOOTER */
+.footer{margin-top:40px;padding-top:14px;border-top:1px solid #ddd;font-size:9pt;color:var(--ink3);text-align:center}
+
+/* PRINT */
+@media print{
+  .print-bar{display:none!important}
+  body{padding-top:0}
+  .wrap{padding:20px 28px}
+  h2{page-break-after:avoid}
+  h3{page-break-after:avoid}
+  .email{page-break-inside:avoid}
+  table{page-break-inside:avoid}
+  .box{page-break-inside:avoid}
+  @page{size:A4;margin:18mm 15mm}
+}
+</style>
+</head>
+<body>
+<div class="print-bar">
+  <h1>📄 Dossier LBC &amp; MAEC — EARL La Rousselière</h1>
+  <button class="btn-print" onclick="window.print()">🖨️ Imprimer / Enregistrer PDF</button>
+</div>
+<div class="wrap">
+
+<!-- COVER -->
+<div class="cover">
+  <div class="eyebrow">EARL La Rousselière · La Chapelle-Rainsouin (53150) · Mars 2026</div>
+  <h1>Label Bas Carbone &amp; MAEC</h1>
+  <div class="sub">Dossier de démarches — Optimisation des revenus</div>
+  <div class="cover-box">
+    <li>Les étapes complètes pour obtenir le Label Bas Carbone (Carbon'Agri)</li>
+    <li>L'état des MAEC et PSE accessibles en Mayenne en 2025</li>
+    <li>Les mails prêts à envoyer aux bons interlocuteurs</li>
+  </div>
+</div>
+
+<!-- PARTIE 1 -->
+<h2>Partie 1 — Label Bas Carbone (Carbon'Agri)</h2>
+<div class="box box-green">
+  <strong>Gain potentiel : 1 000 – 4 000 €/an sur 5 ans</strong>
+  Méthode officielle : Carbon'Agri (IDELE) — Dispositif du Ministère de la Transition Écologique<br>
+  Outil de calcul : CAP2ER (outil certifié Label Bas Carbone)
+</div>
+
+<h3>1.1 — C'est quoi concrètement ?</h3>
+<p>Le Label Bas Carbone (LBC) est un dispositif officiel du gouvernement français créé en 2019. Il permet à un éleveur de monétiser les réductions d'émissions de CO₂ de son exploitation en vendant des « crédits carbone » à des entreprises ou collectivités qui veulent compenser leurs émissions.</p>
+<p>Pour l'élevage bovin, la méthode s'appelle <strong>Carbon'Agri</strong>, développée par l'IDELE. Elle compare l'empreinte carbone de l'exploitation à un scénario de référence sur 5 ans, et génère des crédits carbone certifiés pour chaque tonne de CO₂ évitée.</p>
+
+<h3>1.2 — Pourquoi c'est intéressant pour La Rousselière ?</h3>
+<p>L'EARL La Rousselière présente plusieurs atouts dans le calcul Carbon'Agri :</p>
+<ul>
+  <li><strong>Race Simmental</strong> : reconnue pour sa longévité (10% des vaches font ≥ 6 lactations, 2× la moyenne nationale), ce qui réduit le renouvellement et donc les émissions liées aux génisses improductives.</li>
+  <li><strong>Prairies existantes</strong> : le stockage de carbone dans les prairies permanentes est valorisé dans le calcul.</li>
+  <li><strong>Système herbager</strong> : tout allongement de pâturage est un levier carbone direct.</li>
+  <li><strong>Troupeau de 93 VL</strong> : taille suffisante pour générer des crédits significatifs (seuil min ~20 VL).</li>
+</ul>
+<div class="box box-amber">
+  <strong>Estimation de gain annuel (source FCAA / Bureau Veritas) :</strong>
+  Un élevage de 90-100 VL engageant 3-4 leviers peut générer <strong>40 à 120 tonnes CO₂ évitées/an</strong>.<br>
+  Prix actuel : <strong>30 €/tonne CO₂</strong> → <strong>1 200 à 3 600 €/an</strong> sur 5 ans.<br>
+  ⚠️ La rémunération est versée en <em>fin de projet</em> (au bout de 5 ans), sous forme de solde vérifié par auditeur.
+</div>
+
+<h3>1.3 — Les 10 leviers de la méthode Carbon'Agri</h3>
+<table>
+  <tr><th>Levier</th><th>Action concrète pour La Rousselière</th></tr>
+  <tr><td><strong>Amélioration de l'IVV</strong></td><td>Réduire l'IVV de 390j → 365j → moins de génisses → moins d'émissions</td></tr>
+  <tr><td><strong>Allongement du pâturage</strong></td><td>Augmenter le temps au pâturage → moins de concentrés importés</td></tr>
+  <tr><td><strong>Autonomie fourragère</strong></td><td>Réduire les achats de soja brésilien → baisse empreinte amont</td></tr>
+  <tr><td><strong>Gestion des effluents</strong></td><td>Couvrir la fosse à lisier → réduction émissions méthane/ammoniac</td></tr>
+  <tr><td><strong>Réduction âge au 1er vêlage</strong></td><td>Génisses vêlant à 28-30 mois vs 32+ → moins de mois improductifs</td></tr>
+  <tr><td><strong>Optimisation de la ration</strong></td><td>Remplacer soja import → légumineuses locales, luzerne, méteil</td></tr>
+  <tr><td><strong>Économies d'énergie</strong></td><td>Récupérateur de chaleur, éclairage LED bâtiment</td></tr>
+  <tr><td><strong>Gestion des prairies</strong></td><td>Semis prairie, entretien haies, maintien stockage carbone sol</td></tr>
+</table>
+
+<h3>1.4 — Les étapes du dossier — dans l'ordre</h3>
+<div class="box box-amber"><strong>Durée totale avant 1er paiement : ~6 ans (5 ans de projet + vérification finale)</strong></div>
+
+<h4>Étape 1 — Trouver un porteur de projet (FCAA ou Chambre d'agriculture)</h4>
+<p>L'éleveur ne dépose pas le dossier seul. Il doit passer par un <strong>porteur de projet agréé</strong> qui l'accompagne et regroupe plusieurs exploitations dans un projet collectif (réduction des coûts de vérification).</p>
+<ul>
+  <li>France Carbon Agri Association (FCAA) : porteur de référence national</li>
+  <li>Chambre d'Agriculture de la Mayenne (CAMA) : souvent l'intermédiaire local</li>
+  <li>Certaines coopératives laitières (Lactalis, Sodiaal) proposent ce service à leurs livreurs</li>
+</ul>
+
+<h4>Étape 2 — Réaliser un diagnostic CAP2ER de niveau 1</h4>
+<p>Le technicien réalise un diagnostic CAP2ER (niveau 1 = générique, sans historique) sur l'exploitation. Ce diagnostic établit le <strong>scénario de référence de départ</strong> (l'empreinte carbone actuelle).</p>
+<p>Durée : 1/2 journée avec un technicien. Coût : souvent pris en charge dans le cadre du projet collectif. Sinon : 300-500 €.</p>
+
+<h4>Étape 3 — Définir les leviers et le plan d'action sur 5 ans</h4>
+<p>Sur la base du diagnostic, le technicien identifie 2-5 leviers réalistes et construit le plan d'action. L'éleveur s'engage sur ces leviers pour 5 ans.</p>
+
+<h4>Étape 4 — Notification officielle du projet</h4>
+<p>Le porteur de projet notifie le projet sur la plateforme <strong>Démarches Simplifiées</strong>. Cette étape déclenche l'éligibilité au Label Bas Carbone. À faire <em>AVANT</em> tout changement de pratique.</p>
+
+<h4>Étape 5 — Mise en œuvre des leviers sur 5 ans</h4>
+<p>L'éleveur applique les changements de pratiques convenus. Des suivis annuels peuvent être réalisés.</p>
+
+<h4>Étape 6 — Audit final et vérification (an 5)</h4>
+<p>Un auditeur agréé (Bureau Veritas ou équivalent) réalise le diagnostic CAP2ER final et compare avec le scénario de référence. Les réductions d'émissions vérifiées génèrent les <strong>crédits carbone certifiés</strong>.</p>
+
+<h4>Étape 7 — Vente des crédits carbone et paiement</h4>
+<p>Le porteur de projet vend les crédits carbone à des entreprises. L'éleveur perçoit sa part : <strong>30 €/tonne CO₂ évitée certifiée</strong>.</p>
+
+<h3>1.5 — Points importants avant de se lancer</h3>
+<ul>
+  <li><strong>Pas de paiement anticipé</strong> : tout est versé en fin de projet (an 5). C'est un revenu différé.</li>
+  <li><strong>Engagement contraignant</strong> : si les leviers ne sont pas mis en œuvre, les crédits sont réduits.</li>
+  <li><strong>Méthode en révision</strong> : une mise à jour V2 de Carbon'Agri est en cours depuis 2025, avec élargissement des leviers éligibles.</li>
+  <li><strong>Prime verte Lactalis</strong> : indépendamment du LBC, Lactalis propose depuis 2025 une prime verte à ses livreurs. À vérifier avec le conseiller.</li>
+</ul>
+
+<h3>1.6 — Mails à envoyer — Label Bas Carbone</h3>
+
+<div class="email">
+  <div class="email-header">📧 Mail 1 — Chambre d'Agriculture de la Mayenne (premier contact)</div>
+  <p><strong>À :</strong> accueil@mayenne.chambagri.fr</p>
+  <p><strong>Objet :</strong> Renseignement Label Bas Carbone — Élevage bovin lait — La Chapelle-Rainsouin</p>
+  <br>
+  <p>Madame, Monsieur,</p>
+  <br>
+  <p>Je suis éleveur de vaches laitières (race Simmental, 93 VL) à La Chapelle-Rainsouin (53150). Je souhaite me renseigner sur les démarches pour m'engager dans le Label Bas Carbone via la méthode Carbon'Agri.</p>
+  <br>
+  <p>Pourriez-vous m'indiquer :</p>
+  <p class="indent">– si votre chambre accompagne des exploitations laitières mayennaises dans ce dispositif ;</p>
+  <p class="indent">– les modalités de réalisation du diagnostic CAP2ER et son coût éventuel ;</p>
+  <p class="indent">– les projets collectifs en cours ou à venir sur le département.</p>
+  <br>
+  <p>Je reste disponible pour un rendez-vous à la ferme ou par téléphone à votre convenance.</p>
+  <br>
+  <p>Cordialement,<br>[Prénom NOM]<br>EARL La Rousselière — La Chapelle-Rainsouin (53150)<br>[Téléphone]</p>
+</div>
+
+<div class="email">
+  <div class="email-header">📧 Mail 2 — France Carbon Agri Association (porteur national)</div>
+  <p><strong>À :</strong> contact@carbonagri.fr</p>
+  <p><strong>Objet :</strong> Demande d'information — Adhésion projet Carbon'Agri — Élevage lait 93 VL</p>
+  <br>
+  <p>Madame, Monsieur,</p>
+  <br>
+  <p>Éleveur laitier en Mayenne (EARL La Rousselière, 53150 La Chapelle-Rainsouin), je gère un troupeau de 93 vaches laitières Simmental.</p>
+  <br>
+  <p>Je souhaite m'informer sur les conditions d'adhésion à un projet collectif Carbon'Agri. Mon système présente plusieurs leviers potentiels : amélioration de l'IVV (plusieurs vaches > 390j), allongement possible du pâturage, et optimisation de la ration (réduction soja importé).</p>
+  <br>
+  <p>Pourriez-vous me préciser :</p>
+  <p class="indent">– les projets collectifs actifs ou en cours sur la Mayenne / Pays de la Loire ;</p>
+  <p class="indent">– le processus d'intégration et les délais ;</p>
+  <p class="indent">– une estimation du gain potentiel pour un troupeau de cette taille.</p>
+  <br>
+  <p>Cordialement,<br>[Prénom NOM] — EARL La Rousselière — [Téléphone]</p>
+</div>
+
+<div class="email">
+  <div class="email-header">📧 Mail 3 — Conseiller Lactalis (si livreur Lactalis)</div>
+  <p><strong>À :</strong> [Conseiller Lactalis local]</p>
+  <p><strong>Objet :</strong> Prime verte Lactalis + Label Bas Carbone — EARL La Rousselière</p>
+  <br>
+  <p>Madame, Monsieur,</p>
+  <br>
+  <p>Dans le cadre de notre relation de collecte, je souhaite me renseigner sur deux points :</p>
+  <br>
+  <p><strong>1/ Prime verte Lactalis 2025</strong> : quels sont les critères exacts, le montant applicable à mon exploitation (93 VL, Simmental), et les démarches à suivre ?</p>
+  <br>
+  <p><strong>2/ Label Bas Carbone</strong> : Lactalis accompagne-t-il ses producteurs dans la démarche Carbon'Agri (diagnostic CAP2ER, porteur de projet) ? Si oui, selon quelles modalités ?</p>
+  <br>
+  <p>Cordialement,<br>[Prénom NOM] — EARL La Rousselière — La Chapelle-Rainsouin (53150)</p>
+</div>
+
+<!-- PARTIE 2 -->
+<div class="page-break"></div>
+<h2>Partie 2 — MAEC et PSE en Mayenne (2025)</h2>
+<div class="box box-green">
+  <strong>Résultat de la vérification : situation tendue mais des dispositifs existent</strong>
+  Sources : CIVAM Bio 53 (avril 2025), Agence de l'eau Loire-Bretagne, DRAAF Pays-de-la-Loire
+</div>
+
+<h3>2.1 — La réalité des MAEC en Mayenne en 2025</h3>
+<div class="box box-amber">
+  <strong>État des MAEC Mayenne 2025 :</strong>
+  • En 2024 : <strong>572 dossiers déposés</strong> en DDT 53 → seulement <strong>400 retenus</strong> (manque d'enveloppe).<br>
+  • Priorité accordée aux : renouvellements MAEC système, jeunes agriculteurs (JA), exploitations à <strong>100% herbe</strong>.<br>
+  • Tous les dossiers « non 100% herbe » ont été rejetés en 2024.<br>
+  • 2025 : MAEC HBV à nouveau ouverte mais enveloppe encore inconnue, probablement insuffisante.
+</div>
+
+<h3>2.2 — La MAEC HBV (Herbivores) : conditions d'éligibilité</h3>
+<table>
+  <tr><th>Condition</th><th>Détail</th></tr>
+  <tr><td><strong>Taux d'herbe minimum</strong></td><td>Au moins <strong>60% d'herbe</strong> dans l'assolement de l'exploitation</td></tr>
+  <tr><td><strong>Chargement</strong></td><td>Respecter un taux de chargement minimal (0,5 – 1,4 UGB/ha selon niveau)</td></tr>
+  <tr><td><strong>Surface minimum</strong></td><td>Engagement sur au minimum 90% des surfaces éligibles</td></tr>
+  <tr><td><strong>Durée</strong></td><td>Contrat de 5 ans (en 2026 : possiblement 3 ans, réforme PAC 2028)</td></tr>
+  <tr><td><strong>Montant (si retenu)</strong></td><td>Variable selon niveau : <strong>80 à 160 €/ha/an</strong> — plafonné à ~6 000-7 500 €/exploitation/an</td></tr>
+  <tr><td><strong>Fenêtre de dépôt</strong></td><td>Avec la déclaration PAC — entre le <strong>1er avril et le 15 mai</strong> chaque année</td></tr>
+  <tr><td><strong>Via</strong></td><td>TéléPAC + dossier DDT 53 (accompagnement conseiller CAMA ou CIVAM Bio 53)</td></tr>
+</table>
+<div class="box box-green">
+  <strong>Point clé pour La Rousselière :</strong>
+  Si le taux d'herbe est ≥ 60%, l'exploitation est potentiellement éligible. Mais l'enveloppe étant limitée, la priorité va aux exploitations 100% herbe ou aux renouvellements. Il faut se renseigner <strong>en amont</strong> auprès de la DDT 53.
+</div>
+
+<h3>2.3 — Le PSE (Paiements pour Services Environnementaux) : le vrai levier méconnu</h3>
+<p>Le PSE est un dispositif de l'<strong>Agence de l'eau Loire-Bretagne</strong>, distinct des MAEC. Il est géré localement par des syndicats de bassins versants. Plusieurs éleveurs mayennais en bénéficient déjà.</p>
+<div class="box box-blue">
+  <strong>PSE Haies &amp; Prairies — Mayenne (données confirmées, source Web-Agri / Agence de l'eau)</strong>
+  • Financeur : <strong>Agence de l'eau Loire-Bretagne</strong><br>
+  • Montant : jusqu'à <strong>60 000 € sur 5 ans</strong> (soit 12 000 €/an) par exploitation<br>
+  • Critères d'éligibilité :<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;– Au moins <strong>10% de prairies permanentes</strong> dans la SAU<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;– Au moins <strong>63 mètres linéaires de haies</strong> par hectare<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;– Ne pas percevoir d'aides bio ou de MAEC système (non cumulable)<br>
+  • Engagement : 5 ans, avec entrée dans le <strong>label haie</strong> (plan de gestion durable)<br>
+  • 26 territoires actifs en Mayenne liés aux bassins versants Oudon et affluents
+</div>
+<p>Le PSE rémunère <strong>l'existant</strong> : si La Rousselière a déjà des haies et des prairies permanentes, elle touche de l'argent pour ce qu'elle fait déjà, sans changer ses pratiques.</p>
+
+<h3>2.4 — Tableau de synthèse</h3>
+<table>
+  <tr><th>Dispositif</th><th>Situation 2025</th></tr>
+  <tr><td><strong>MAEC HBV</strong> (si ≥ 60% herbe)</td><td>Ouvert mais enveloppe limitée — probabilité d'être retenu : incertaine. Tenter si 100% herbe ou renouvellement.</td></tr>
+  <tr><td><strong>MAEC autres mesures</strong></td><td>Peu accessibles en 2025 — prioriser PSE et LBC</td></tr>
+  <tr><td><strong>PSE Agence de l'eau</strong></td><td><span class="badge badge-green">ACTIF</span> — jusqu'à 12 000 €/an — à vérifier selon le bassin versant de la ferme</td></tr>
+  <tr><td><strong>Prime verte Lactalis</strong></td><td><span class="badge badge-blue">NOUVEAU 2025</span> — à vérifier avec conseiller, montant non publié</td></tr>
+</table>
+
+<h3>2.5 — Mails à envoyer — MAEC et PSE</h3>
+
+<div class="email">
+  <div class="email-header">📧 Mail 4 — DDT 53 (Mayenne) — MAEC</div>
+  <p><strong>À :</strong> ddt@mayenne.gouv.fr</p>
+  <p><strong>Objet :</strong> Renseignement MAEC HBV 2025 — élevage laitier 53150</p>
+  <br>
+  <p>Madame, Monsieur,</p>
+  <br>
+  <p>Éleveur laitier (93 vaches laitières, Simmental) à La Chapelle-Rainsouin (53150), je souhaite me renseigner sur les possibilités de contractualisation d'une MAEC pour la campagne PAC 2025.</p>
+  <br>
+  <p>Mon exploitation dispose de surfaces en herbe significatives. Pourriez-vous m'indiquer :</p>
+  <p class="indent">– si une MAEC de type HBV est accessible sur mon territoire en 2025 ;</p>
+  <p class="indent">– les critères de priorisation retenus pour la Mayenne cette année ;</p>
+  <p class="indent">– la procédure et les délais pour une demande d'engagement avant le 15 mai 2025.</p>
+  <br>
+  <p>Cordialement,<br>[Prénom NOM] — EARL La Rousselière — [Téléphone]</p>
+</div>
+
+<div class="email">
+  <div class="email-header">📧 Mail 5 — Syndicat de bassin versant (PSE haies et prairies)</div>
+  <p><strong>À :</strong> [syndicat bassin versant Oudon ou Jouanne, selon localisation de la ferme]</p>
+  <p><strong>Objet :</strong> Renseignement PSE haies et prairies permanentes — EARL La Rousselière</p>
+  <br>
+  <p>Madame, Monsieur,</p>
+  <br>
+  <p>Je suis éleveur laitier à La Chapelle-Rainsouin (53150). J'ai connaissance du dispositif de Paiements pour Services Environnementaux (PSE) financé par l'Agence de l'eau Loire-Bretagne pour les exploitations disposant de haies et prairies permanentes.</p>
+  <br>
+  <p>Je souhaite savoir :</p>
+  <p class="indent">– si mon exploitation est située dans un territoire éligible à ce dispositif ;</p>
+  <p class="indent">– les critères requis (taux de prairies permanentes, linéaires de haies) ;</p>
+  <p class="indent">– les montants applicables et les conditions d'engagement.</p>
+  <br>
+  <p>Je suis disponible pour un diagnostic de terrain si cela s'avère utile.</p>
+  <br>
+  <p>Cordialement,<br>[Prénom NOM] — EARL La Rousselière — La Chapelle-Rainsouin (53150) — [Téléphone]</p>
+</div>
+
+<div class="email">
+  <div class="email-header">📧 Mail 6 — CIVAM Bio 53 (accompagnement MAEC en Mayenne)</div>
+  <p><strong>À :</strong> contact@civambio53.fr</p>
+  <p><strong>Objet :</strong> Accompagnement MAEC 2025 — élevage laitier conventionnel</p>
+  <br>
+  <p>Madame, Monsieur,</p>
+  <br>
+  <p>Je suis éleveur laitier (non bio) à La Chapelle-Rainsouin (53150). J'ai lu sur votre site que vous accompagnez les éleveurs mayennais dans les demandes de MAEC HBV.</p>
+  <br>
+  <p>Bien que je sois en agriculture conventionnelle, je m'interroge sur ma potentielle éligibilité et sur les démarches pour cette campagne 2025. Accompagnez-vous également des éleveurs conventionnels, ou uniquement vos adhérents bio ?</p>
+  <br>
+  <p>Dans tous les cas, sauriez-vous me rediriger vers le bon interlocuteur en Mayenne pour un accompagnement MAEC ?</p>
+  <br>
+  <p>Cordialement,<br>[Prénom NOM] — EARL La Rousselière — [Téléphone]</p>
+</div>
+
+<!-- RÉCAP -->
+<div class="page-break"></div>
+<h2>Récapitulatif — Actions par priorité</h2>
+<table>
+  <tr><th>#</th><th>Action</th><th>Interlocuteur</th></tr>
+  <tr><td><strong>1</strong></td><td>PSE haies/prairies <span class="badge badge-green">Quick win</span></td><td>Syndicat bassin versant Oudon/Jouanne — Mail 5</td></tr>
+  <tr><td><strong>2</strong></td><td>Label Bas Carbone — Contact chambre</td><td>Chambre Agriculture Mayenne — Mail 1</td></tr>
+  <tr><td><strong>3</strong></td><td>Prime verte Lactalis (si livreur)</td><td>Conseiller Lactalis — Mail 3</td></tr>
+  <tr><td><strong>4</strong></td><td>Carbon'Agri FCAA (dossier national)</td><td>France Carbon Agri Association — Mail 2</td></tr>
+  <tr><td><strong>5</strong></td><td>MAEC HBV (fenêtre 1er avril – 15 mai)</td><td>DDT 53 + CIVAM Bio 53 — Mails 4 &amp; 6</td></tr>
+</table>
+
+<div class="box box-blue">
+  <strong>⚠️ À vérifier en priorité sur le terrain :</strong>
+  1/ Quel est le % de surfaces en herbe sur la SAU totale de La Rousselière ?<br>
+  2/ Combien de mètres linéaires de haies par hectare ?<br>
+  3/ La ferme est-elle sur le bassin versant de l'Oudon ou de la Jouanne ?<br><br>
+  Ces trois questions déterminent l'éligibilité PSE et MAEC — sans ces chiffres, les dossiers ne peuvent pas être instruits.
+</div>
+
+<div class="footer">Document préparé avec BOVIQ — EARL La Rousselière — Mars 2026</div>
+</div><!-- /wrap -->
+</body>
+</html>

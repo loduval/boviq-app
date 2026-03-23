@@ -4667,6 +4667,14 @@ function renderAides(){
   // Get latest bilan data for eligibility check
   const lb=D.bilans.length?D.bilans.reduce((a,b)=>a.year>b.year?a:b):null;
   const AIDES=[
+    {icon:'🌿',nom:'Label Bas Carbone & MAEC — Dossier complet',montant:'1 000 – 12 000 €/an selon dispositif',
+     desc:`Carbon'Agri (Label Bas Carbone) et MAEC/PSE sont deux leviers complémentaires pour valoriser les pratiques environnementales de l'élevage. Un dossier complet a été préparé spécifiquement pour EARL La Rousselière : étapes, contacts, et 6 mails prêts à envoyer.`,
+     eligible:`Élevage bovin lait avec prairies et/ou démarche de réduction d'empreinte carbone. EARL La Rousselière est potentiellement éligible sur les deux dispositifs.`,
+     demarche:`Consultez le dossier complet ci-dessous pour les étapes détaillées et les mails à envoyer à la Chambre d'agriculture 53, France Carbon Agri Association, la DDT 53, le syndicat de bassin versant et le CIVAM Bio 53.`,
+     contact:'Chambre Agriculture Mayenne · DDT 53 · Syndicat bassin versant Oudon/Jouanne',
+     lienHtml:'lbc-maec-rousseliere.html',
+     checkElig:()=>({status:'yes',est:'Dossier personnalisé EARL La Rousselière — 6 mails prêts à envoyer'})},
+
     {icon:'\u{1F1EA}\u{1F1FA}',nom:'Aides PAC \u2014 Paiements d\u00e9coupl\u00e9s (DPB)',montant:'~270 \u20ac/ha en moyenne',
      desc:`Les Droits \u00e0 Paiement de Base sont vers\u00e9s annuellement \u00e0 tout exploitant agricole qui d\u00e9pose une d\u00e9claration PAC. Ils constituent la base des aides du 1er pilier.`,
      eligible:`Exploitant agricole avec des terres d\u00e9clar\u00e9es \u00e0 la PAC.`,
@@ -4793,9 +4801,9 @@ function renderAides(){
         <div style="margin-top:12px"><strong>\u{1F4CB} D\u00e9marches \u00e0 suivre</strong></div>
         <div class="aide-step">${a.demarche.replace(/\n/g,'<br>')}</div>
         <div style="margin-top:8px"><strong>\u{1F4DE} Contact</strong> : ${a.contact}</div>
-        ${a.lien?`<div style="margin-top:6px">\u{1F517} <a href="${a.lien}" target="_blank">Plus d'informations</a></div>`:''}
-        ${a.mail?`<div style="margin-top:10px"><strong>\u2709\u{FE0F} Mod\u00e8le de mail</strong><div class="mail-tpl">${a.mail}</div></div>`:''}
-      </div>
+        ${a.lienHtml?`<div style="margin-top:12px"><a href="${a.lienHtml}" target="_blank" class="btn btn-p btn-s" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px">📄 Ouvrir le dossier complet (impression PDF)</a></div>`:''}
+        ${a.lien?`<div style="margin-top:6px">🔗 <a href="${a.lien}" target="_blank">Plus d'informations</a></div>`:''}
+        ${a.mail?`<div style="margin-top:10px"><strong>✉️ Modèle de mail</strong><div class="mail-tpl">${a.mail}</div></div>`:''}      </div>
     </div>`;
   }).join('');
 }
