@@ -6118,6 +6118,67 @@ ${ureeHaute.length?`<strong>Urée > 300 (${ureeHaute.length}) :</strong> ${ureeH
     });
   }
 
+  // ── Analyse 16 : Coût du renouvellement — génisses excédentaires ──
+  const genissesL=D.animaux.filter(a=>a._categ_ml==='GL'&&a.naissance);
+  const TAUX_RENOUV_CIBLE=0.28; // 28% IDELE — taux de renouvellement optimal
+  const COUT_ELEVAGE_GENISSE=1600; // €/génisse élevée jusqu'à mise en production (IDELE 2023)
+  const PRIX_VENTE_GENISSE=2000; // €/génisse prête à vêler (marché moyen)
+  const genissesNecessaires=Math.ceil(nbVL*TAUX_RENOUV_CIBLE);
+  const genissesExcedent=Math.max(0,genissesL.length-genissesNecessaires);
+  // Génisses proches du vêlage (>= 24 mois) = plus mûres à vendre
+  const genissesMures=genissesL.filter(a=>{
+    const ageMois=Math.round((now-new Date(a.naissance))/864e5/30.5);
+    return ageMois>=24;
+  });
+  if(genissesExcedent>0||genissesL.length/nbVL>0.40){
+    const cashPotentiel=Math.min(genissesExcedent,genissesMures.length)*PRIX_VENTE_GENISSE;
+    const coutImmobilise=genissesExcedent*COUT_ELEVAGE_GENISSE;
+    results.push({
+      id:'renouvellement',niveau:genissesExcedent>10?'attn':'ok',
+      icon:'💰',titre:'Génisses excédentaires — cash mobilisable',
+      resume:`${genissesL.length} génisses laitières pour ${nbVL} VL (besoin ~${genissesNecessaires} à 28%)`,
+      gainAnnuel:cashPotentiel,
+      detail:`<strong>Taux de renouvellement actuel :</strong> ${Math.round(genissesL.length/nbVL*100)}% — la référence IDELE est de 25-30%.<br><br>
+<strong>Excédent estimé :</strong> ${genissesExcedent} génisses au-dessus du besoin, soit ~${coutImmobilise.toLocaleString('fr-FR')} € immobilisés en coûts d'élevage non productifs.<br><br>
+<strong>Génisses ≥ 24 mois (prêtes à vendre) :</strong> ${genissesMures.length} — valeur marché ~${(genissesMures.length*PRIX_VENTE_GENISSE).toLocaleString('fr-FR')} €<br>
+${genissesMures.map(a=>{const m=Math.round((now-new Date(a.naissance))/864e5/30.5);return`<span class="badge b-green">${a.nom} (${m}m)</span>`}).join(' ')}<br><br>
+<strong>Décision :</strong> Vendre les génisses excédentaires avant le vêlage libère du cash immédiat ET réduit le chargement. Garder uniquement ce qui couvre le renouvellement naturel (réformes + mortalité).`,
+    });
+  }
+
+  // ── Analyse 17 : Prime qualité manquée ───────────────────────────
+  const vlPrime=vaches.filter(a=>a._ml_lait24>0&&a._ml_tb>0&&a._ml_tp>0);
+  if(vlPrime.length>0){
+    // TB : prime déclenchée > 36g (0.5€/1000L/point)
+    const perteTB=vlPrime.filter(a=>a._ml_tb<36).reduce((s,a)=>s+(36-a._ml_tb)*0.5*(a._ml_lait24*305)/1000,0);
+    // TP : prime déclenchée > 30g (0.5€/1000L/point)
+    const perteTP=vlPrime.filter(a=>a._ml_tp<30).reduce((s,a)=>s+(30-a._ml_tp)*0.5*(a._ml_lait24*305)/1000,0);
+    // CCS : malus collecte ~1€/1000L au-delà de 300k
+    const perteCCS=vaches.filter(a=>(a._ml_leucos||0)>300&&a._ml_lait24>0)
+      .reduce((s,a)=>s+1*(a._ml_lait24*305)/1000,0);
+    const totalPerte=Math.round(perteTB+perteTP+perteCCS);
+    // Calcul du gain si troupeau atteignait les seuils
+    const nbTBKo=vlPrime.filter(a=>a._ml_tb<36).length;
+    const nbTPKo=vlPrime.filter(a=>a._ml_tp<30).length;
+    const nbCCSKo=vaches.filter(a=>(a._ml_leucos||0)>300&&a._ml_lait24>0).length;
+    if(totalPerte>100){
+      results.push({
+        id:'prime-qualite',niveau:totalPerte>1000?'attn':'ok',
+        icon:'🏆',titre:'Primes qualité laiterie non atteintes',
+        resume:`~${totalPerte.toLocaleString('fr-FR')} €/an de primes manquées sur TB, TP et CCS`,
+        gainAnnuel:totalPerte,
+        detail:`<strong>Calcul basé sur les seuils courants :</strong> TB ≥ 36 g/kg, TP ≥ 30 g/kg, CCS < 300k — écart estimé à 0,5 €/1 000 L/point hors seuil.<br><br>
+<div class="cc-detail">
+  <strong>TB < 36 g/kg :</strong> ${nbTBKo} VL — perte estimée <strong>${Math.round(perteTB).toLocaleString('fr-FR')} €/an</strong><br>
+  <strong>TP < 30 g/kg :</strong> ${nbTPKo} VL — perte estimée <strong>${Math.round(perteTP).toLocaleString('fr-FR')} €/an</strong><br>
+  <strong>CCS > 300k :</strong> ${nbCCSKo} VL — malus collecte estimé <strong>${Math.round(perteCCS).toLocaleString('fr-FR')} €/an</strong>
+</div><br>
+<strong>Note :</strong> Ces montants sont indicatifs — la grille exacte de votre laiterie peut différer. Comparer avec votre relevé mensuel de paiement du lait pour affiner.<br><br>
+<strong>Levier principal :</strong> Le TP (${nbTPKo} VL < 30g) est ici le poste le plus impactant — lié à l'alimentation énergétique (voir analyse TP insuffisant ci-dessus).`,
+      });
+    }
+  }
+
   // ── Analyse 6 : Candidates à la réforme ─────────────────────────
   const candidatesReforme=[];
   vaches.forEach(a=>{
