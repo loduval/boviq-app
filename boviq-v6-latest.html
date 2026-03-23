@@ -4801,7 +4801,7 @@ function renderAides(){
         <div style="margin-top:12px"><strong>\u{1F4CB} D\u00e9marches \u00e0 suivre</strong></div>
         <div class="aide-step">${a.demarche.replace(/\n/g,'<br>')}</div>
         <div style="margin-top:8px"><strong>\u{1F4DE} Contact</strong> : ${a.contact}</div>
-        ${a.lienHtml?`<div style="margin-top:12px"><a href="${a.lienHtml}" target="_blank" class="btn btn-p btn-s" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px">📄 Ouvrir le dossier complet (impression PDF)</a></div>`:''}
+        ${a.lienHtml?`<div style="margin-top:16px"><a href="${a.lienHtml}" target="_blank" style="text-decoration:none;display:inline-flex;align-items:center;gap:10px;background:var(--brand);color:#fff;font:700 13px/1 'DM Sans',sans-serif;padding:12px 22px;border-radius:10px;box-shadow:0 2px 8px rgba(45,106,79,.35);transition:all .15s" onmouseover="this.style.background='var(--brand2)'" onmouseout="this.style.background='var(--brand)'"><span style="font-size:20px">📄</span><span><span style="display:block;font-size:14px">Ouvrir le dossier complet</span><span style="display:block;font-size:11px;opacity:.8;font-weight:400;margin-top:2px">Étapes détaillées · 6 mails · Impression PDF</span></span><span style="font-size:16px;opacity:.7">→</span></a></div>`:''}
         ${a.lien?`<div style="margin-top:6px">🔗 <a href="${a.lien}" target="_blank">Plus d'informations</a></div>`:''}
         ${a.mail?`<div style="margin-top:10px"><strong>✉️ Modèle de mail</strong><div class="mail-tpl">${a.mail}</div></div>`:''}      </div>
     </div>`;
