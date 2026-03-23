@@ -3392,18 +3392,7 @@ async function renderDashCours(){
           <span style="font-size:14px;font-weight:700;color:${milkTrendColor}">${milkTrendIcon} ${Math.abs(milkTrend).toFixed(2)}</span>
         </div>
         <div style="font-size:11px;color:var(--ink3);margin-top:4px">${milk?milk.period:''} · France · DG AGRI</div>
-        <div style="display:flex;align-items:flex-end;gap:3px;height:40px;margin-top:10px">
-          ${milkPrices.map((p,i,arr)=>{
-            const min=Math.min(...arr.map(x=>x.price));const max=Math.max(...arr.map(x=>x.price));
-            const pct=max>min?Math.round((p.price-min)/(max-min)*100):50;
-            const isLast=i===arr.length-1;
-            const barH=Math.max(6,Math.round(pct*0.34));
-            return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px">
-              <div style="width:100%;background:${isLast?'var(--brand)':'var(--brand-light)'};border-radius:3px;height:${barH}px"></div>
-              <div style="font-size:8px;color:var(--ink4);white-space:nowrap">${p.period.replace('m','/')}</div>
-            </div>`;
-          }).join('')}
-        </div>
+        <div style="margin-top:10px;height:50px;position:relative"><canvas id="chart-milk-spark" style="width:100%;height:50px"></canvas></div>
       </div>
       <div style="background:var(--bg2);border-radius:10px;padding:16px 20px">
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);margin-bottom:10px">🥩 Cotations viande (${meta.beef_unit||'€/100kg'})</div>
@@ -3420,6 +3409,36 @@ async function renderDashCours(){
         <div style="font-size:10px;color:var(--ink4);margin-top:10px">Sem. ${weekDate} · France · DG AGRI</div>
       </div>
     </div>`;
+    // Sparkline lait Chart.js (après injection innerHTML)
+    await loadChartJs();
+    const sparkCanvas=document.getElementById('chart-milk-spark');
+    if(sparkCanvas&&milkPrices.length>1){
+      const sparkLabels=milkPrices.map(p=>p.period.replace('m','/'));
+      const sparkData=milkPrices.map(p=>p.price);
+      const ptColors=sparkData.map((_,i)=>i===sparkData.length-1?'rgba(45,106,79,1)':'transparent');
+      const ptSizes=sparkData.map((_,i)=>i===sparkData.length-1?4:0);
+      new Chart(sparkCanvas,{
+        type:'line',
+        data:{labels:sparkLabels,datasets:[{
+          data:sparkData,
+          borderColor:'rgba(45,106,79,.85)',
+          borderWidth:2,
+          backgroundColor:'rgba(45,106,79,.08)',
+          fill:true,tension:.35,
+          pointBackgroundColor:ptColors,
+          pointRadius:ptSizes,
+          pointHoverRadius:4,
+        }]},
+        options:{
+          responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.raw} €/100kg`}}},
+          scales:{
+            x:{ticks:{font:{size:8},color:'#9AB0A0',maxRotation:0},grid:{display:false},border:{display:false}},
+            y:{ticks:{font:{size:8},color:'#9AB0A0',callback:v=>v+'€'},grid:{color:'rgba(0,0,0,.04)'},border:{display:false}}
+          }
+        }
+      });
+    }
   }catch(e){
     if(el)el.innerHTML='<div class="empty" style="padding:12px"><p>Cours non disponibles — <a href="boviq-cours-marche.html" target="_blank">ouvrir l\'outil cours</a></p></div>';
   }
