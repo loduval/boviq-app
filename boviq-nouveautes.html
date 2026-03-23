@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BOVIQ — Nouveautés du 23 mars 2026</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐄</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --brand:#1B4332;--brand2:#2D6A4F;--brand3:#40916C;--brand4:#74C69D;--brand5:#D8F3DC;
+  --bg:#F4F1EB;--card:#FFFFFF;--card2:#FAFAF7;
+  --ink:#1E1B16;--ink2:#3D3A34;--ink3:#8C8474;--ink4:#B5AC9E;
+  --amber:#B45309;--amber-bg:#FEF3C7;
+  --line:#E3DED4;--line2:#EDE9E2;
+  --sh:0 1px 3px rgba(30,27,22,.06),0 4px 12px rgba(30,27,22,.06);
+  --sh-md:0 2px 8px rgba(30,27,22,.08),0 8px 28px rgba(30,27,22,.08);
+  --sh-lg:0 4px 16px rgba(30,27,22,.1),0 16px 48px rgba(30,27,22,.1);
+  --r:14px;--r-sm:8px;
+}
+
+html{font-size:15px;scroll-behavior:smooth}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+
+/* ── HERO ── */
+.hero{
+  background:linear-gradient(145deg,#0F2D1E 0%,#14532D 40%,#166534 70%,#1A7A3E 100%);
+  color:#fff;padding:52px 48px 60px;position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 700px 400px at 80% 50%,rgba(116,198,157,.15) 0%,transparent 70%);
+}
+.hero-inner{max-width:1100px;margin:0 auto;position:relative;z-index:1}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);
+  border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;
+  letter-spacing:.4px;text-transform:uppercase;margin-bottom:22px;
+}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5vw,3.5rem);line-height:1.1;font-weight:900;margin-bottom:14px}
+.hero h1 em{font-style:italic;color:#86EFAC}
+.hero-sub{font-size:1.05rem;opacity:.75;max-width:580px;line-height:1.65;margin-bottom:32px}
+.hero-stats{display:flex;gap:28px;flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat .n{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:700;line-height:1;color:#86EFAC}
+.hero-stat .l{font-size:12px;opacity:.55;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.hero-deco{
+  position:absolute;right:-20px;top:50%;transform:translateY(-50%);
+  font-size:180px;opacity:.06;line-height:1;pointer-events:none;
+}
+
+/* ── LAYOUT ── */
+.wrap{max-width:1100px;margin:0 auto;padding:52px 32px 80px}
+@media(max-width:640px){.wrap{padding:32px 16px 60px}.hero{padding:36px 20px 44px}}
+
+/* ── SECTION HEADER ── */
+.sec-hd{display:flex;align-items:baseline;gap:10px;margin-bottom:24px;margin-top:52px;padding-bottom:10px;border-bottom:2px solid var(--brand3)}
+.sec-hd:first-child{margin-top:0}
+.sec-hd h2{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--brand)}
+.sec-hd .ct{font-size:11px;color:var(--ink3);margin-left:auto;font-weight:600;letter-spacing:.3px}
+
+/* ── FEATURE GRID ── */
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+
+/* ── FEATURE CARD ── */
+.feat{
+  background:var(--card);border-radius:var(--r);
+  border:1px solid var(--line);box-shadow:var(--sh);
+  overflow:hidden;display:flex;flex-direction:column;
+  opacity:0;transform:translateY(20px);
+  animation:fadeUp .5s ease forwards;
+}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+.feat:nth-child(1){animation-delay:.05s}
+.feat:nth-child(2){animation-delay:.1s}
+.feat:nth-child(3){animation-delay:.15s}
+.feat:nth-child(4){animation-delay:.2s}
+.feat:nth-child(5){animation-delay:.25s}
+.feat:nth-child(6){animation-delay:.3s}
+.feat:nth-child(7){animation-delay:.35s}
+.feat:nth-child(8){animation-delay:.4s}
+.feat:hover{box-shadow:var(--sh-md);transform:translateY(-3px);transition:.2s}
+
+.feat-vis{
+  height:120px;display:flex;align-items:center;justify-content:center;
+  background:var(--brand5);font-size:52px;position:relative;overflow:hidden;flex-shrink:0;
+}
+.feat-vis svg{position:absolute;inset:0;width:100%;height:100%}
+
+.feat-body{padding:20px;flex:1;display:flex;flex-direction:column;gap:8px}
+.feat-tag{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.4px;
+  background:var(--brand5);color:var(--brand2);
+  align-self:flex-start;margin-bottom:2px;
+}
+.feat-tag.new{background:#D1FAE5;color:#065F46}
+.feat-tag.fix{background:#FEF9C3;color:#854D0E}
+.feat-tag.arch{background:#E0F2FE;color:#0369A1}
+.feat-h{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--brand);font-weight:700;line-height:1.3}
+.feat-p{font-size:13px;color:var(--ink2);line-height:1.6;flex:1}
+.feat-path{
+  display:flex;align-items:center;gap:7px;margin-top:10px;padding:10px 12px;
+  background:var(--bg);border-radius:var(--r-sm);border:1px solid var(--line2);
+}
+.feat-path .pi{font-size:16px;flex-shrink:0}
+.feat-path .pt{font-size:11.5px;color:var(--ink3);line-height:1.45}
+.feat-path .pt strong{color:var(--brand2);display:block;font-size:12px}
+
+/* ── KEYBOARD CARD ── */
+.kb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.kb{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-sm);
+  padding:13px 15px;display:flex;align-items:center;gap:12px;
+  box-shadow:var(--sh);
+}
+.kbd{
+  display:inline-flex;align-items:center;justify-content:center;
+  background:var(--brand);color:#fff;border-radius:6px;
+  min-width:44px;height:32px;padding:0 8px;
+  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;
+  letter-spacing:.5px;flex-shrink:0;box-shadow:0 2px 0 rgba(0,0,0,.25);
+}
+.kb-info .k{font-size:12.5px;font-weight:600;color:var(--ink);line-height:1.3}
+.kb-info .v{font-size:11px;color:var(--ink3)}
+
+/* ── GITHUB ARCH CARD ── */
+.arch-card{
+  background:var(--brand);color:#fff;border-radius:var(--r);
+  padding:28px 28px 24px;margin-bottom:0;
+  box-shadow:var(--sh-lg);position:relative;overflow:hidden;
+}
+.arch-card::before{
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:200px;height:200px;border-radius:50%;
+  background:rgba(255,255,255,.05);
+}
+.arch-card h3{font-family:'Playfair Display',serif;font-size:1.15rem;margin-bottom:12px;color:#86EFAC}
+.arch-card p{font-size:13.5px;opacity:.8;line-height:1.65;margin-bottom:18px}
+.arch-flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px}
+.arch-node{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);
+  border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;
+  display:flex;align-items:center;gap:6px;
+}
+.arch-arrow{color:rgba(255,255,255,.4);font-size:18px}
+
+/* ── FIXES ── */
+.fixes{display:flex;flex-direction:column;gap:10px}
+.fix-item{
+  display:flex;gap:14px;background:var(--card);
+  border-radius:var(--r-sm);padding:15px 16px;
+  border:1px solid var(--line);box-shadow:var(--sh);
+  align-items:flex-start;
+}
+.fix-ico{font-size:20px;flex-shrink:0;line-height:1.3}
+.fix-txt .t{font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:3px}
+.fix-txt .d{font-size:12.5px;color:var(--ink3);line-height:1.55}
+.fix-txt code{background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:11px;font-family:monospace;color:var(--brand2)}
+
+/* ── STATS BANNER ── */
+.stats-row{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
+  background:var(--card);border-radius:var(--r);padding:24px;
+  border:1px solid var(--line);box-shadow:var(--sh);
+}
+.stat-b .n{font-family:'Playfair Display',serif;font-size:2rem;color:var(--brand);line-height:1}
+.stat-b .l{font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.4px;margin-top:4px}
+
+/* ── CONSEILS ── */
+.conseils-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.conseil{
+  background:var(--card);border-radius:var(--r-sm);
+  border-left:3px solid var(--brand3);border:1px solid var(--line);
+  border-left:3px solid var(--brand3);
+  padding:12px 14px;box-shadow:var(--sh);
+}
+.conseil.urgent{border-left-color:#DC2626}
+.conseil.ok{border-left-color:#16A34A}
+.conseil-n{font-size:10px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.conseil-t{font-size:12.5px;font-weight:600;color:var(--ink);line-height:1.4}
+.conseil-lvl{
+  display:inline-block;margin-top:5px;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600;
+  background:var(--brand5);color:var(--brand2);
+}
+.conseil-lvl.urgent{background:#FEE2E2;color:#DC2626}
+.conseil-lvl.ok{background:#D1FAE5;color:#065F46}
+
+footer{
+  text-align:center;padding:24px 16px;font-size:12px;color:var(--ink3);
+  border-top:1px solid var(--line);margin-top:60px;
+}
+footer a{color:var(--brand2);text-decoration:none}
+footer a:hover{text-decoration:underline}
+@media(max-width:640px){.stats-row{grid-template-columns:repeat(2,1fr)}.hero-stats{gap:16px}}
+</style>
+</head>
+<body>
+
+<!-- ══════════ HERO ══════════ -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">🐄 BOVIQ · Release Notes</div>
+    <h1>Session du <em>23 mars 2026</em></h1>
+    <p class="hero-sub">8 nouvelles fonctionnalités, 3 corrections critiques et une refonte complète de l'architecture de stockage — tout ce qui a été livré ce matin.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="n">8</div><div class="l">Fonctionnalités</div></div>
+      <div class="hero-stat"><div class="n">3</div><div class="l">Corrections</div></div>
+      <div class="hero-stat"><div class="n">23</div><div class="l">Analyses Conseils</div></div>
+      <div class="hero-stat"><div class="n">7&thinsp;404</div><div class="l">Lignes de code</div></div>
+    </div>
+  </div>
+  <div class="hero-deco">🐄</div>
+</div>
+
+<div class="wrap">
+
+<!-- ══════════ STATS ══════════ -->
+<div class="stats-row" style="margin-bottom:0">
+  <div class="stat-b"><div class="n">160</div><div class="l">Animaux dans le troupeau</div></div>
+  <div class="stat-b"><div class="n">82</div><div class="l">VL en traite</div></div>
+  <div class="stat-b"><div class="n">24</div><div class="l">Gestantes probables</div></div>
+  <div class="stat-b"><div class="n">9.4 L</div><div class="l">Lait moyen / vache</div></div>
+</div>
+
+<!-- ══════════ NOUVELLES FONCTIONNALITÉS ══════════ -->
+<div class="sec-hd" style="margin-top:52px">
+  <h2>✨ Nouvelles fonctionnalités</h2>
+  <span class="ct">8 features · 23/03/2026</span>
+</div>
+
+<div class="feat-grid">
+
+  <!-- F1 Raccourcis -->
+  <div class="feat">
+    <div class="feat-vis" style="background:linear-gradient(135deg,#1B4332,#2D6A4F)">
+      <svg viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg">
+        <rect x="20" y="35" width="50" height="30" rx="6" fill="rgba(255,255,255,.12)" stroke="rgba(255,255,255,.25)" stroke-width="1.2"/>
+        <text x="45" y="56" fill="#86EFAC" font-family="monospace" font-size="13" font-weight="bold" text-anchor="middle">Alt</text>
+        <text x="82" y="56" fill="rgba(255,255,255,.4)" font-family="monospace" font-size="18">+</text>
+        <rect x="95" y="35" width="30" height="30" rx="6" fill="rgba(255,255,255,.22)" stroke="rgba(255,255,255,.4)" stroke-width="1.2"/>
+        <text x="110" y="56" fill="#fff" font-family="monospace" font-size="14" font-weight="bold" text-anchor="middle">S</text>
+        <text x="145" y="56" fill="rgba(255,255,255,.3)" font-family="monospace" font-size="10">Tableau de bord</text>
+        <rect x="20" y="75" width="30" height="26" rx="5" fill="rgba(255,255,255,.12)" stroke="rgba(255,255,255,.2)" stroke-width="1"/>
+        <text x="35" y="93" fill="#74C69D" font-family="monospace" font-size="12" text-anchor="middle">D</text>
+        <text x="58" y="93" fill="rgba(255,255,255,.3)" font-family="monospace" font-size="9">Troupeau</text>
+        <rect x="100" y="75" width="30" height="26" rx="5" fill="rgba(255,255,255,.12)" stroke="rgba(255,255,255,.2)" stroke-width="1"/>
+        <text x="115" y="93" fill="#74C69D" font-family="monospace" font-size="12" text-anchor="middle">A</text>
+        <text x="138" y="93" fill="rgba(255,255,255,.3)" font-family="monospace" font-size="9">Ajout animal</text>
+        <rect x="185" y="35" width="30" height="26" rx="5" fill="rgba(255,255,255,.12)" stroke="rgba(255,255,255,.2)" stroke-width="1"/>
+        <text x="200" y="53" fill="#74C69D" font-family="monospace" font-size="12" text-anchor="middle">V</text>
+        <text x="223" y="53" fill="rgba(255,255,255,.3)" font-family="monospace" font-size="9">Vaccinations</text>
+        <rect x="185" y="70" width="30" height="26" rx="5" fill="rgba(255,255,255,.12)" stroke="rgba(255,255,255,.2)" stroke-width="1"/>
+        <text x="200" y="88" fill="#74C69D" font-family="monospace" font-size="12" text-anchor="middle">C</text>
+        <text x="223" y="88" fill="rgba(255,255,255,.3)" font-family="monospace" font-size="9">Conseils</text>
+        <rect x="255" y="52" width="30" height="26" rx="5" fill="rgba(255,255,255,.12)" stroke="rgba(255,255,255,.2)" stroke-width="1"/>
+        <text x="270" y="70" fill="#74C69D" font-family="monospace" font-size="12" text-anchor="middle">B</text>
+        <text x="293" y="70" fill="rgba(255,255,255,.3)" font-family="monospace" font-size="9">Bilan</text>
+      </svg>
+    </div>
+    <div class="feat-body">
+      <span class="feat-tag new">Nouveau</span>
+      <div class="feat-h">Raccourcis clavier</div>
+      <p class="feat-p">Navigation instantanée dans toute l'application sans toucher la souris. 7 raccourcis principaux + fermeture de modal avec Échap.</p>
+      <div class="feat-path">
+        <span class="pi">⌨️</span>
+        <div class="pt"><strong>Accès immédiat dans BOVIQ V6</strong>Alt+S=Tableau bord · Alt+D=Troupeau · Alt+T=Sanitaire · Alt+A=Ajouter · Alt+V=Vaccinations · Alt+C=Conseils · Alt+B=Bilan</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F4 Courbe lactation -->
+  <div class="feat">
+    <div class="feat-vis" style="background:#EFF8F2">
+      <svg viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="lg1" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#40916C" stop-opacity=".25"/>
+            <stop offset="100%" stop-color="#40916C" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <!-- Axes -->
+        <line x1="38" y1="15" x2="38" y2="95" stroke="#C8E6D4" stroke-width="1.5"/>
+        <line x1="38" y1="95" x2="295" y2="95" stroke="#C8E6D4" stroke-width="1.5"/>
+        <!-- Grille -->
+        <line x1="38" y1="55" x2="295" y2="55" stroke="#E8F5EE" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="38" y1="35" x2="295" y2="35" stroke="#E8F5EE" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="38" y1="75" x2="295" y2="75" stroke="#E8F5EE" stroke-width="1" stroke-dasharray="3,3"/>
+        <!-- Courbe aire -->
+        <path d="M55,80 C80,50 100,25 130,20 C160,15 185,28 210,42 C235,55 255,65 280,72 L280,95 L55,95 Z" fill="url(#lg1)"/>
+        <!-- Courbe lait -->
+        <path d="M55,80 C80,50 100,25 130,20 C160,15 185,28 210,42 C235,55 255,65 280,72" fill="none" stroke="#2D6A4F" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Labels rangs -->
+        <text x="55" y="108" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="8" text-anchor="middle">L1</text>
+        <text x="106" y="108" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="8" text-anchor="middle">L3</text>
+        <text x="157" y="108" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="8" text-anchor="middle">L5</text>
+        <text x="208" y="108" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="8" text-anchor="middle">L7</text>
+        <text x="259" y="108" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="8" text-anchor="middle">L10</text>
+        <!-- Label axe Y -->
+        <text x="32" y="22" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="8" text-anchor="end">14L</text>
+        <text x="32" y="58" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="8" text-anchor="end">9L</text>
+        <text x="32" y="98" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="8" text-anchor="end">4L</text>
+        <!-- TB/TP courbe légère -->
+        <path d="M55,60 C80,58 110,52 145,48 C175,44 205,46 240,50 C260,52 275,54 280,56" fill="none" stroke="#B45309" stroke-width="1.5" stroke-dasharray="4,2" opacity=".7"/>
+        <text x="285" y="56" fill="#B45309" font-family="DM Sans,sans-serif" font-size="8">TB</text>
+        <text x="285" y="72" fill="#2D6A4F" font-family="DM Sans,sans-serif" font-size="8">Lait</text>
+      </svg>
+    </div>
+    <div class="feat-body">
+      <span class="feat-tag new">Nouveau</span>
+      <div class="feat-h">Courbe de lactation</div>
+      <p class="feat-p">Graphique interactif Chart.js affichant la production moyenne et le TB/TP par rang de lactation (L1 à L13), calculé sur l'ensemble du troupeau.</p>
+      <div class="feat-path">
+        <span class="pi">📋</span>
+        <div class="pt"><strong>BOVIQ V6 → Tableau de bord (Alt+S)</strong>Faites défiler la page du tableau de bord → section « Lactation »</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F6 Saisonnalité vêlages -->
+  <div class="feat">
+    <div class="feat-vis" style="background:#EFF8F2">
+      <svg viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="lg2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#40916C" stop-opacity=".9"/>
+            <stop offset="100%" stop-color="#40916C" stop-opacity=".4"/>
+          </linearGradient>
+        </defs>
+        <line x1="28" y1="95" x2="300" y2="95" stroke="#C8E6D4" stroke-width="1.5"/>
+        <!-- Barres mois (histogramme) -->
+        <!-- Jan à Déc, hauteurs variées -->
+        <rect x="32"  y="78" width="18" height="17" rx="3" fill="url(#lg2)"/>
+        <rect x="54"  y="65" width="18" height="30" rx="3" fill="url(#lg2)"/>
+        <rect x="76"  y="45" width="18" height="50" rx="3" fill="#2D6A4F" opacity=".9"/>
+        <rect x="98"  y="38" width="18" height="57" rx="3" fill="#2D6A4F" opacity=".95"/>
+        <rect x="120" y="52" width="18" height="43" rx="3" fill="url(#lg2)"/>
+        <rect x="142" y="70" width="18" height="25" rx="3" fill="url(#lg2)"/>
+        <rect x="164" y="82" width="18" height="13" rx="3" fill="url(#lg2)"/>
+        <rect x="186" y="75" width="18" height="20" rx="3" fill="url(#lg2)"/>
+        <rect x="208" y="60" width="18" height="35" rx="3" fill="url(#lg2)"/>
+        <rect x="230" y="72" width="18" height="23" rx="3" fill="url(#lg2)"/>
+        <rect x="252" y="68" width="18" height="27" rx="3" fill="url(#lg2)"/>
+        <rect x="274" y="80" width="18" height="15" rx="3" fill="url(#lg2)"/>
+        <!-- Labels mois -->
+        <text x="41"  y="108" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="7.5" text-anchor="middle">J</text>
+        <text x="63"  y="108" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="7.5" text-anchor="middle">F</text>
+        <text x="85"  y="108" fill="#2D6A4F" font-family="DM Sans,sans-serif" font-size="7.5" text-anchor="middle" font-weight="bold">M</text>
+        <text x="107" y="108" fill="#2D6A4F" font-family="DM Sans,sans-serif" font-size="7.5" text-anchor="middle" font-weight="bold">A</text>
+        <text x="129" y="108" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="7.5" text-anchor="middle">M</text>
+        <text x="151" y="108" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="7.5" text-anchor="middle">J</text>
+        <text x="173" y="108" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="7.5" text-anchor="middle">J</text>
+        <text x="195" y="108" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="7.5" text-anchor="middle">A</text>
+        <text x="217" y="108" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="7.5" text-anchor="middle">S</text>
+        <text x="239" y="108" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="7.5" text-anchor="middle">O</text>
+        <text x="261" y="108" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="7.5" text-anchor="middle">N</text>
+        <text x="283" y="108" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="7.5" text-anchor="middle">D</text>
+        <!-- Titre interne -->
+        <text x="165" y="22" fill="#1B4332" font-family="Playfair Display,serif" font-size="11" text-anchor="middle" font-weight="700">Saisonnalité des vêlages</text>
+        <text x="165" y="34" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="8.5" text-anchor="middle">Pic : Mars · Avril</text>
+      </svg>
+    </div>
+    <div class="feat-body">
+      <span class="feat-tag new">Nouveau</span>
+      <div class="feat-h">Saisonnalité des vêlages</div>
+      <p class="feat-p">Histogramme 12 mois calculé à partir de l'historique réel du troupeau. Identifie les pics de vêlages pour anticiper les besoins en main-d'œuvre et en logistique.</p>
+      <div class="feat-path">
+        <span class="pi">📋</span>
+        <div class="pt"><strong>BOVIQ V6 → Tableau de bord (Alt+S)</strong>Faites défiler → section « Saisonnalité des vêlages »</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F7 Widget cours dashboard -->
+  <div class="feat">
+    <div class="feat-vis" style="background:#FFF9EF">
+      <svg viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="lg3" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#B45309" stop-opacity=".2"/>
+            <stop offset="100%" stop-color="#B45309" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <!-- Mini cards cours -->
+        <rect x="15" y="18" width="68" height="40" rx="6" fill="#fff" stroke="#E3DED4" stroke-width="1"/>
+        <text x="49" y="33" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="7.5" text-anchor="middle" font-weight="600">VACHE R·3</text>
+        <text x="49" y="48" fill="#1B4332" font-family="Playfair Display,serif" font-size="15" text-anchor="middle" font-weight="700">7.66</text>
+        <text x="49" y="56" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="7" text-anchor="middle">€/kg carc.</text>
+
+        <rect x="89" y="18" width="68" height="40" rx="6" fill="#fff" stroke="#E3DED4" stroke-width="1"/>
+        <text x="123" y="33" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="7.5" text-anchor="middle" font-weight="600">JB R·3</text>
+        <text x="123" y="48" fill="#1B4332" font-family="Playfair Display,serif" font-size="15" text-anchor="middle" font-weight="700">7.51</text>
+        <text x="123" y="56" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="7" text-anchor="middle">€/kg carc.</text>
+
+        <rect x="163" y="18" width="68" height="40" rx="6" fill="#fff" stroke="#E3DED4" stroke-width="1"/>
+        <text x="197" y="33" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="7.5" text-anchor="middle" font-weight="600">LAIT CONV.</text>
+        <text x="197" y="48" fill="#B45309" font-family="Playfair Display,serif" font-size="15" text-anchor="middle" font-weight="700">449</text>
+        <text x="197" y="56" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="7" text-anchor="middle">€/1000 L</text>
+
+        <!-- Courbe prix lait -->
+        <path d="M238,85 C248,80 255,75 263,70 C270,65 278,62 295,60" fill="none" stroke="#B45309" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+        <path d="M238,85 C248,80 255,75 263,70 C270,65 278,62 295,60 L295,100 L238,100 Z" fill="url(#lg3)"/>
+        <text x="267" y="105" fill="#B45309" font-family="DM Sans,sans-serif" font-size="8" text-anchor="middle" font-weight="600">Prix lait ↑</text>
+
+        <!-- Source badge -->
+        <rect x="15" y="74" width="68" height="22" rx="5" fill="#FEF3C7"/>
+        <text x="49" y="89" fill="#B45309" font-family="DM Sans,sans-serif" font-size="9" text-anchor="middle" font-weight="600">DG AGRI S11</text>
+      </svg>
+    </div>
+    <div class="feat-body">
+      <span class="feat-tag new">Nouveau</span>
+      <div class="feat-h">Widget cours marché dashboard</div>
+      <p class="feat-p">Affichage des cours de viande et du prix du lait directement sur le tableau de bord. Données DG AGRI mises à jour chaque lundi automatiquement.</p>
+      <div class="feat-path">
+        <span class="pi">📋</span>
+        <div class="pt"><strong>BOVIQ V6 → Tableau de bord (Alt+S)</strong>Section « Cours du marché » en bas du dashboard</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F5 Score économique fiche -->
+  <div class="feat">
+    <div class="feat-vis" style="background:#EFF8F2">
+      <svg viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg">
+        <!-- Fiche animal -->
+        <rect x="15" y="12" width="290" height="98" rx="8" fill="#fff" stroke="#D8F3DC" stroke-width="1.5"/>
+        <rect x="15" y="12" width="290" height="24" rx="8" fill="#1B4332"/>
+        <rect x="15" y="28" width="290" height="8" rx="0" fill="#1B4332"/>
+        <text x="160" y="28" fill="#86EFAC" font-family="Playfair Display,serif" font-size="11" text-anchor="middle" font-weight="700">Fiche animal — Score économique</text>
+        <!-- 6 critères -->
+        <text x="28" y="50" fill="#3D3A34" font-family="DM Sans,sans-serif" font-size="8.5">Production</text>
+        <rect x="95" y="43" width="80" height="7" rx="3" fill="#E3DED4"/>
+        <rect x="95" y="43" width="64" height="7" rx="3" fill="#40916C"/>
+        <text x="183" y="51" fill="#1B4332" font-family="DM Sans,sans-serif" font-size="8.5" font-weight="600">80%</text>
+
+        <text x="28" y="63" fill="#3D3A34" font-family="DM Sans,sans-serif" font-size="8.5">Qualité lait</text>
+        <rect x="95" y="56" width="80" height="7" rx="3" fill="#E3DED4"/>
+        <rect x="95" y="56" width="55" height="7" rx="3" fill="#40916C"/>
+        <text x="183" y="64" fill="#1B4332" font-family="DM Sans,sans-serif" font-size="8.5" font-weight="600">69%</text>
+
+        <text x="28" y="76" fill="#3D3A34" font-family="DM Sans,sans-serif" font-size="8.5">Fertilité</text>
+        <rect x="95" y="69" width="80" height="7" rx="3" fill="#E3DED4"/>
+        <rect x="95" y="69" width="72" height="7" rx="3" fill="#40916C"/>
+        <text x="183" y="77" fill="#1B4332" font-family="DM Sans,sans-serif" font-size="8.5" font-weight="600">90%</text>
+
+        <text x="28" y="89" fill="#3D3A34" font-family="DM Sans,sans-serif" font-size="8.5">Santé</text>
+        <rect x="95" y="82" width="80" height="7" rx="3" fill="#E3DED4"/>
+        <rect x="95" y="82" width="40" height="7" rx="3" fill="#B45309" opacity=".8"/>
+        <text x="183" y="90" fill="#B45309" font-family="DM Sans,sans-serif" font-size="8.5" font-weight="600">50%</text>
+
+        <!-- Score global -->
+        <text x="230" y="63" fill="#1B4332" font-family="Playfair Display,serif" font-size="26" text-anchor="middle" font-weight="700">72</text>
+        <text x="230" y="74" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="8" text-anchor="middle">/100</text>
+        <text x="230" y="86" fill="#2D6A4F" font-family="DM Sans,sans-serif" font-size="8" text-anchor="middle" font-weight="600">Top 35%</text>
+        <text x="230" y="96" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="7.5" text-anchor="middle">du troupeau</text>
+      </svg>
+    </div>
+    <div class="feat-body">
+      <span class="feat-tag new">Nouveau</span>
+      <div class="feat-h">Score économique fiche animal</div>
+      <p class="feat-p">Chaque vache reçoit un score /100 sur 6 critères (production, qualité, fertilité, santé, longévité, persistance) avec son classement dans le troupeau.</p>
+      <div class="feat-path">
+        <span class="pi">📋</span>
+        <div class="pt"><strong>BOVIQ V6 → Troupeau → cliquer sur un animal</strong>Onglet « Score éco » dans la fiche individuelle</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F8 Dark mode + Notifs -->
+  <div class="feat">
+    <div class="feat-vis" style="background:linear-gradient(135deg,#0F2D1E 50%,#1B4332 100%)">
+      <svg viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg">
+        <!-- Interface dark -->
+        <rect x="15" y="15" width="145" height="90" rx="8" fill="#1A2E1E" stroke="rgba(134,239,172,.2)" stroke-width="1.2"/>
+        <rect x="15" y="15" width="145" height="22" rx="8" fill="#0F2D1E"/>
+        <rect x="15" y="29" width="145" height="8" rx="0" fill="#0F2D1E"/>
+        <text x="55" y="29" fill="#86EFAC" font-family="DM Sans,sans-serif" font-size="9" font-weight="600">🌙  BOVIQ — Mode sombre</text>
+        <!-- Éléments dark -->
+        <rect x="24" y="48" width="55" height="28" rx="5" fill="#1F3A28" stroke="rgba(134,239,172,.15)" stroke-width="1"/>
+        <text x="51" y="60" fill="#86EFAC" font-family="Playfair Display,serif" font-size="14" text-anchor="middle" font-weight="700">9.4</text>
+        <text x="51" y="70" fill="rgba(255,255,255,.35)" font-family="DM Sans,sans-serif" font-size="7.5" text-anchor="middle">L/j</text>
+        <rect x="84" y="48" width="55" height="28" rx="5" fill="#1F3A28" stroke="rgba(134,239,172,.15)" stroke-width="1"/>
+        <text x="111" y="60" fill="rgba(255,200,80,.9)" font-family="Playfair Display,serif" font-size="14" text-anchor="middle" font-weight="700">4</text>
+        <text x="111" y="70" fill="rgba(255,255,255,.35)" font-family="DM Sans,sans-serif" font-size="7.5" text-anchor="middle">vêlages</text>
+        <!-- Toggle bouton -->
+        <rect x="24" y="84" width="50" height="16" rx="8" fill="#40916C"/>
+        <circle cx="43" cy="92" r="6" fill="#fff"/>
+        <text x="51" y="95" fill="rgba(255,255,255,.6)" font-family="DM Sans,sans-serif" font-size="8" font-weight="600">🌙 OFF</text>
+
+        <!-- Interface light + notif -->
+        <rect x="168" y="15" width="145" height="90" rx="8" fill="#F4F1EB" stroke="#E3DED4" stroke-width="1.2"/>
+        <rect x="168" y="15" width="145" height="22" rx="8" fill="#1B4332"/>
+        <rect x="168" y="29" width="145" height="8" rx="0" fill="#1B4332"/>
+        <text x="205" y="29" fill="#86EFAC" font-family="DM Sans,sans-serif" font-size="9" font-weight="600">☀️  BOVIQ — Mode clair</text>
+        <!-- Notif badge -->
+        <rect x="270" y="38" width="36" height="20" rx="10" fill="#FEE2E2" stroke="#FECACA" stroke-width="1"/>
+        <text x="288" y="52" fill="#DC2626" font-family="DM Sans,sans-serif" font-size="8.5" text-anchor="middle" font-weight="700">🔔 4</text>
+        <!-- Notif popup -->
+        <rect x="175" y="62" width="130" height="36" rx="6" fill="#fff" stroke="#E3DED4" stroke-width="1" filter="drop-shadow(0 2px 4px rgba(0,0,0,.08))"/>
+        <text x="185" y="74" fill="#1B4332" font-family="DM Sans,sans-serif" font-size="8" font-weight="600">⚠️ 4 alertes BDNI</text>
+        <text x="185" y="84" fill="#8C8474" font-family="DM Sans,sans-serif" font-size="7.5">Déclarations en attente</text>
+        <text x="185" y="93" fill="#2D6A4F" font-family="DM Sans,sans-serif" font-size="7.5">→ Voir maintenant</text>
+      </svg>
+    </div>
+    <div class="feat-body">
+      <span class="feat-tag new">Nouveau</span>
+      <div class="feat-h">Mode sombre + Notifications</div>
+      <p class="feat-p">Bascule 🌙/☀️ en haut de l'interface pour passer en mode sombre. Notifications navigateur 🔔 pour les alertes critiques (BDNI, vêlages, CCS).</p>
+      <div class="feat-path">
+        <span class="pi">📋</span>
+        <div class="pt"><strong>BOVIQ V6 → En-tête de l'application</strong>Bouton 🌙 (dark mode) et 🔔 (activer notifs) dans la barre de navigation</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F2+F3 Conseils 22+23 -->
+  <div class="feat">
+    <div class="feat-vis" style="background:#FFF9EF">
+      <svg viewBox="0 0 320 120" xmlns="http://www.w3.org/2000/svg">
+        <!-- Card conseil 22 -->
+        <rect x="15" y="18" width="135" height="82" rx="7" fill="#fff" stroke="#FDE68A" stroke-width="1.5"/>
+        <rect x="15" y="18" width="135" height="4" rx="7" fill="#B45309"/>
+        <rect x="15" y="22" width="135" height="0" rx="0"/>
+        <text x="23" y="36" fill="#B45309" font-family="DM Sans,sans-serif" font-size="8" font-weight="700">CONSEIL #22 · URGENT</text>
+        <text x="23" y="49" fill="#1E1B16" font-family="DM Sans,sans-serif" font-size="9.5" font-weight="600">Génisses non saillies</text>
+        <text x="23" y="61" fill="#3D3A34" font-family="DM Sans,sans-serif" font-size="8.5">24–34 mois sans IA</text>
+        <rect x="23" y="70" width="90" height="20" rx="5" fill="#FEF3C7"/>
+        <text x="68" y="84" fill="#B45309" font-family="Playfair Display,serif" font-size="16" text-anchor="middle" font-weight="700">3 <tspan font-size="9" font-family="DM Sans,sans-serif">génisses</tspan></text>
+
+        <!-- Card conseil 23 -->
+        <rect x="165" y="18" width="140" height="82" rx="7" fill="#fff" stroke="#D8F3DC" stroke-width="1.5"/>
+        <rect x="165" y="18" width="140" height="4" rx="7" fill="#2D6A4F"/>
+        <text x="173" y="36" fill="#2D6A4F" font-family="DM Sans,sans-serif" font-size="8" font-weight="700">CONSEIL #23 · ANALYSE</text>
+        <text x="173" y="49" fill="#1E1B16" font-family="DM Sans,sans-serif" font-size="9.5" font-weight="600">Perf. par taureau</text>
+        <text x="173" y="61" fill="#3D3A34" font-family="DM Sans,sans-serif" font-size="8.5">Taux réussite IA</text>
+        <text x="173" y="74" fill="#40916C" font-family="DM Sans,sans-serif" font-size="8.5">Sirocco · Ucello · U40</text>
+        <rect x="173" y="80" width="120" height="12" rx="4" fill="#D8F3DC"/>
+        <rect x="173" y="80" width="80" height="12" rx="4" fill="#40916C" opacity=".7"/>
+        <text x="310" y="90" fill="#2D6A4F" font-family="DM Sans,sans-serif" font-size="8" text-anchor="end" font-weight="600">67%</text>
+      </svg>
+    </div>
+    <div class="feat-body">
+      <span class="feat-tag new">Nouveau</span>
+      <div class="feat-h">Conseils #22 et #23</div>
+      <p class="feat-p"><strong>#22 — Alerte génisses prêtes :</strong> détecte les génisses de 24 à 34 mois sans saillie enregistrée. <strong>#23 — Performance par taureau :</strong> taux de réussite IA par reproducteur (Sirocco, Ucello, U40).</p>
+      <div class="feat-path">
+        <span class="pi">💡</span>
+        <div class="pt"><strong>BOVIQ V6 → Conseils & leviers (Alt+C)</strong>Faire défiler jusqu'aux cartes #22 et #23 en bas de la liste</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /feat-grid -->
+
+<!-- ══════════ ARCHITECTURE GITHUB STORAGE ══════════ -->
+<div class="sec-hd">
+  <h2>☁️ Architecture stockage centralisé</h2>
+  <span class="ct">GitHub API · Commit d6db446</span>
+</div>
+
+<div class="arch-card">
+  <h3>Les données voyagent vers le cloud !</h3>
+  <p>Auparavant, toutes les données BOVIQ étaient stockées uniquement dans le localStorage de votre navigateur — ce qui signifiait que si vous changiez de navigateur ou d'appareil, tout était perdu. Désormais, chaque modification est automatiquement sauvegardée sur GitHub.</p>
+  <div class="arch-flow">
+    <div class="arch-node">🖥️ Application</div>
+    <span class="arch-arrow">→</span>
+    <div class="arch-node">⏱️ Debounce 1.5s</div>
+    <span class="arch-arrow">→</span>
+    <div class="arch-node">🔑 API GitHub + PAT</div>
+    <span class="arch-arrow">→</span>
+    <div class="arch-node">📄 data/boviq-data.json</div>
+    <span class="arch-arrow">→</span>
+    <div class="arch-node">🌐 GitHub Pages</div>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:14px">
+  <div style="background:var(--card);border-radius:var(--r);padding:18px;border:1px solid var(--line);box-shadow:var(--sh)">
+    <div style="font-size:22px;margin-bottom:8px">🔑</div>
+    <div style="font-weight:600;font-size:13.5px;margin-bottom:6px;color:var(--brand)">Configurer votre PAT</div>
+    <div style="font-size:12.5px;color:var(--ink3);line-height:1.6">Dans BOVIQ V6, cliquez sur le badge de synchronisation (barre latérale) → entrez votre Personal Access Token GitHub. Le PAT est stocké uniquement dans votre navigateur.</div>
+  </div>
+  <div style="background:var(--card);border-radius:var(--r);padding:18px;border:1px solid var(--line);box-shadow:var(--sh)">
+    <div style="font-size:22px;margin-bottom:8px">💾</div>
+    <div style="font-weight:600;font-size:13.5px;margin-bottom:6px;color:var(--brand)">Sauvegarde automatique</div>
+    <div style="font-size:12.5px;color:var(--ink3);line-height:1.6">Chaque modification déclenche une sauvegarde après 1,5 seconde d'inactivité. Le badge indique l'état : <span style="color:#2D6A4F;font-weight:600">✓ Synchronisé</span>, ⏳ Sauvegarde en cours, ou ⚠️ Erreur.</div>
+  </div>
+  <div style="background:var(--card);border-radius:var(--r);padding:18px;border:1px solid var(--line);box-shadow:var(--sh)">
+    <div style="font-size:22px;margin-bottom:8px">🔄</div>
+    <div style="font-weight:600;font-size:13.5px;margin-bottom:6px;color:var(--brand)">Accès multi-appareils</div>
+    <div style="font-size:12.5px;color:var(--ink3);line-height:1.6">Ouvrez BOVIQ sur n'importe quel appareil : les données sont chargées depuis <code style="font-size:11px;background:var(--bg);padding:1px 4px;border-radius:3px">data/boviq-data.json</code> sur GitHub au démarrage. Fallback local si hors ligne.</div>
+  </div>
+</div>
+
+<!-- ══════════ BRIDGE MILKLIC ══════════ -->
+<div class="sec-hd">
+  <h2>🥛 Bridge MilKlic ↔ BOVIQ V6</h2>
+  <span class="ct">localStorage partagé</span>
+</div>
+
+<div style="background:var(--card);border-radius:var(--r);padding:22px;border:1px solid var(--line);box-shadow:var(--sh);display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap">
+  <div style="font-size:48px;line-height:1;flex-shrink:0">🔗</div>
+  <div style="flex:1;min-width:200px">
+    <div style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--brand);margin-bottom:8px">Les données de contrôle laitier apparaissent maintenant sur le tableau de bord V6</div>
+    <p style="font-size:13px;color:var(--ink2);line-height:1.7;margin-bottom:14px">Auparavant, les données importées dans l'application MilKlic restaient isolées. Désormais, les fonctions <code style="font-size:11px;background:var(--bg);padding:1px 4px;border-radius:3px;border:1px solid var(--line)">saveML()</code> et <code style="font-size:11px;background:var(--bg);padding:1px 4px;border-radius:3px;border:1px solid var(--line)">loadML()</code> écrivent simultanément dans <code style="font-size:11px;background:var(--bg);padding:1px 4px;border-radius:3px;border:1px solid var(--line)">localStorage['BOVIQ_MILKLIC']</code>, permettant à BOVIQ V6 d'afficher immédiatement les KPIs laitiers sur le tableau de bord.</p>
+    <div style="background:var(--brand5);border-radius:var(--r-sm);padding:12px 15px;font-size:12.5px;color:var(--brand2);line-height:1.6">
+      📍 <strong>Pour activer :</strong> Ouvrez d'abord <strong>boviq-milklic.html</strong> → importez votre CSV MilKlic → revenez sur <strong>BOVIQ V6</strong>. Les données s'affichent automatiquement sur le tableau de bord.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ RACCOURCIS CLAVIER COMPLETS ══════════ -->
+<div class="sec-hd">
+  <h2>⌨️ Référence complète des raccourcis</h2>
+  <span class="ct">Alt + touche</span>
+</div>
+
+<div class="kb-grid">
+  <div class="kb"><span class="kbd">Alt+S</span><div class="kb-info"><div class="k">Tableau de bord</div><div class="v">Vue synthétique générale</div></div></div>
+  <div class="kb"><span class="kbd">Alt+D</span><div class="kb-info"><div class="k">Gestion troupeau</div><div class="v">Liste et fiches animaux</div></div></div>
+  <div class="kb"><span class="kbd">Alt+T</span><div class="kb-info"><div class="k">Suivi sanitaire</div><div class="v">Soins et traitements</div></div></div>
+  <div class="kb"><span class="kbd">Alt+A</span><div class="kb-info"><div class="k">Ajouter un animal</div><div class="v">Ouvre le formulaire rapide</div></div></div>
+  <div class="kb"><span class="kbd">Alt+V</span><div class="kb-info"><div class="k">Vaccinations</div><div class="v">Calendrier vaccinal</div></div></div>
+  <div class="kb"><span class="kbd">Alt+C</span><div class="kb-info"><div class="k">Conseils & leviers</div><div class="v">23 analyses zootechniques</div></div></div>
+  <div class="kb"><span class="kbd">Alt+B</span><div class="kb-info"><div class="k">Bilan financier</div><div class="v">Score IDELE / exports PDF</div></div></div>
+  <div class="kb"><span class="kbd">Échap</span><div class="kb-info"><div class="k">Fermer les modales</div><div class="v">Ferme toute fenêtre ouverte</div></div></div>
+</div>
+
+<!-- ══════════ CORRECTIONS ══════════ -->
+<div class="sec-hd">
+  <h2>🔧 Corrections apportées</h2>
+  <span class="ct">3 bugs · cette session</span>
+</div>
+
+<div class="fixes">
+  <div class="fix-item">
+    <div class="fix-ico">📊</div>
+    <div class="fix-txt">
+      <div class="t">Graphiques du tableau de bord — courbes vides</div>
+      <div class="d">La fonction <code>loadChartJs()</code> retourne une Promise asynchrone mais était appelée de manière synchrone. Corrigé avec <code>async/await</code> pour garantir que Chart.js est chargé avant le rendu des courbes.</div>
+    </div>
+  </div>
+  <div class="fix-item">
+    <div class="fix-ico">📈</div>
+    <div class="fix-txt">
+      <div class="t">Widget cours — courbe des prix illisible</div>
+      <div class="d">La sparkline précédente ne prenait pas en compte l'échelle des données. Remplacée par une vraie courbe Chart.js avec axe Y borné <code>min±2€</code> autour de la valeur centrale, rendant les variations lisibles.</div>
+    </div>
+  </div>
+  <div class="fix-item">
+    <div class="fix-ico">🥛</div>
+    <div class="fix-txt">
+      <div class="t">Contrôle laitier — « données non disponibles » sur V6</div>
+      <div class="d">Le bridge entre MilKlic et BOVIQ V6 était manquant. Ajout des écritures dans <code>localStorage['BOVIQ_MILKLIC']</code> dans les fonctions <code>saveML()</code> et <code>loadML()</code> du module MilKlic.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ MODULE CONSEILS COMPLET ══════════ -->
+<div class="sec-hd">
+  <h2>💡 Module Conseils & Leviers — 23 analyses</h2>
+  <span class="ct">Alt+C dans BOVIQ V6</span>
+</div>
+
+<p style="font-size:13.5px;color:var(--ink2);margin-bottom:18px;line-height:1.7">Le module Conseils analyse en temps réel les données de votre troupeau et produit jusqu'à 23 recommandations zootechniques et économiques. Chaque analyse est classée par niveau d'urgence.</p>
+
+<div class="conseils-grid">
+  <div class="conseil urgent"><div class="conseil-n">#1</div><div class="conseil-t">CCS > 400 000</div><span class="conseil-lvl urgent">Urgent</span></div>
+  <div class="conseil"><div class="conseil-n">#2</div><div class="conseil-t">TB < 36 g/kg</div><span class="conseil-lvl">Attention</span></div>
+  <div class="conseil"><div class="conseil-n">#3</div><div class="conseil-t">IVV > 390 jours</div><span class="conseil-lvl">Attention</span></div>
+  <div class="conseil"><div class="conseil-n">#4</div><div class="conseil-t">Sans reprise repro 60–180 j</div><span class="conseil-lvl">Attention</span></div>
+  <div class="conseil"><div class="conseil-n">#5</div><div class="conseil-t">Génisses > 28 mois non vêlées</div><span class="conseil-lvl">Attention</span></div>
+  <div class="conseil"><div class="conseil-n">#6</div><div class="conseil-t">Candidates à la réforme</div><span class="conseil-lvl">Attention</span></div>
+  <div class="conseil urgent"><div class="conseil-n">#7</div><div class="conseil-t">TP < 30 g/kg</div><span class="conseil-lvl urgent">Urgent</span></div>
+  <div class="conseil urgent"><div class="conseil-n">#8</div><div class="conseil-t">Ratio TB/TP < 1,2 (SARA)</div><span class="conseil-lvl urgent">Urgent</span></div>
+  <div class="conseil"><div class="conseil-n">#9</div><div class="conseil-t">Urée hors normes</div><span class="conseil-lvl">Attention</span></div>
+  <div class="conseil"><div class="conseil-n">#10</div><div class="conseil-t">Production en forte baisse</div><span class="conseil-lvl">Attention</span></div>
+  <div class="conseil"><div class="conseil-n">#11</div><div class="conseil-t">CCS prévues > 400k</div><span class="conseil-lvl">Attention</span></div>
+  <div class="conseil urgent"><div class="conseil-n">#12</div><div class="conseil-t">Fortes productrices sans repro</div><span class="conseil-lvl urgent">Urgent</span></div>
+  <div class="conseil"><div class="conseil-n">#13</div><div class="conseil-t">Rang IA ≥ 3</div><span class="conseil-lvl">Attention</span></div>
+  <div class="conseil"><div class="conseil-n">#14</div><div class="conseil-t">Persistance de lactation faible</div><span class="conseil-lvl">Attention</span></div>
+  <div class="conseil urgent"><div class="conseil-n">#15</div><div class="conseil-t">Primipares < 7 L/j</div><span class="conseil-lvl urgent">Urgent</span></div>
+  <div class="conseil"><div class="conseil-n">#16</div><div class="conseil-t">Génisses excédentaires</div><span class="conseil-lvl">Attention</span></div>
+  <div class="conseil"><div class="conseil-n">#17</div><div class="conseil-t">Primes qualité manquées</div><span class="conseil-lvl">Attention</span></div>
+  <div class="conseil ok"><div class="conseil-n">#18</div><div class="conseil-t">Coût sanitaire par vache</div><span class="conseil-lvl ok">Information</span></div>
+  <div class="conseil"><div class="conseil-n">#19</div><div class="conseil-t">Vaches improductives</div><span class="conseil-lvl">Attention</span></div>
+  <div class="conseil ok"><div class="conseil-n">#20</div><div class="conseil-t">Projection vêlages → trésorerie</div><span class="conseil-lvl ok">Information</span></div>
+  <div class="conseil ok"><div class="conseil-n">#21</div><div class="conseil-t">Simulation changement de filière</div><span class="conseil-lvl ok">Information</span></div>
+  <div class="conseil urgent"><div class="conseil-n">#22 ✨</div><div class="conseil-t">Génisses 24–34 mois non saillies</div><span class="conseil-lvl urgent">Nouveau · Urgent</span></div>
+  <div class="conseil"><div class="conseil-n">#23 ✨</div><div class="conseil-t">Performance par taureau</div><span class="conseil-lvl">Nouveau · Analyse</span></div>
+</div>
+
+</div><!-- /wrap -->
+
+<footer>
+  BOVIQ · Release notes du 23 mars 2026 &nbsp;·&nbsp;
+  <a href="index.html">← Tableau de bord</a> &nbsp;·&nbsp;
+  <a href="boviq-v6-latest.html">Ouvrir BOVIQ V6 →</a> &nbsp;·&nbsp;
+  <a href="https://github.com/loduval/boviq-app" target="_blank">GitHub</a>
+</footer>
+
+<script>
+// Animation d'apparition progressive des éléments
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+      obs.unobserve(e.target);
+    }
+  });
+},{threshold:.1});
+
+document.querySelectorAll('.conseil, .fix-item, .kb').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(12px)';
+  el.style.transition = 'opacity .4s ease, transform .4s ease';
+  obs.observe(el);
+});
+</script>
+</body>
+</html>
