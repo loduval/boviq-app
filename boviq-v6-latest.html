@@ -31,6 +31,19 @@
   --sh2:0 4px 20px rgba(0,0,0,.10);
   --sh3:0 8px 32px rgba(0,0,0,.15);
 }
+/* === DARK MODE === */
+body.dark-mode{
+  --bg:#0D1A12;--bg2:#162018;--card:#1A2B1F;--card2:#1E3226;
+  --ink:#E8F0EB;--ink2:#A8C0B0;--ink3:#6B8A74;--ink4:#3D5445;
+  --line:rgba(255,255,255,.07);--line2:rgba(255,255,255,.13);
+  --brand-light:rgba(45,106,79,.22);--brand-pale:rgba(45,106,79,.12);
+  --sh:0 1px 0 rgba(0,0,0,.3),0 2px 8px rgba(0,0,0,.4);
+  --sh2:0 4px 20px rgba(0,0,0,.5);
+}
+body.dark-mode .sidebar{background:#050e08}
+body.dark-mode input,body.dark-mode select,body.dark-mode textarea{background:var(--card2)!important;color:var(--ink)!important;border-color:var(--line2)!important}
+body.dark-mode th{background:var(--card2)}
+body.dark-mode .card-head{background:var(--bg2)}
 html{font-size:14px}
 body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100dvh;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.15}
@@ -740,7 +753,13 @@ tr:hover td{background:var(--brand-pale)}
     <button class="nav-btn" data-p="aides"><span class="icon">🏛️</span>Aides éleveur</button>
     <button class="nav-btn" data-p="conseils"><span class="icon">💡</span>Conseils & leviers<span class="count" id="cnt-conseils" style="background:rgba(251,191,36,.4)">0</span></button>
   </nav>
-  <div class="sidebar-footer">Boviq v1.2 — Données en local<br>© 2026</div>
+  <div class="sidebar-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+    <span>Boviq v1.3 — GitHub<br>© 2026</span>
+    <div style="display:flex;gap:6px">
+      <button id="btn-dark" onclick="toggleDarkMode()" title="Mode sombre" style="background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.6);width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center">🌙</button>
+      <button id="btn-notif" onclick="toggleNotifications()" title="Notifications alertes" style="background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.6);width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center">🔔</button>
+    </div>
+  </div>
 </aside>
 
 <!-- ====== CONTENT ====== -->
@@ -769,6 +788,14 @@ tr:hover td{background:var(--brand-pale)}
   <div class="card" style="cursor:pointer" onclick="goTo('conseils')">
     <div class="card-head"><h3>💡 Conseils & leviers</h3><span class="badge b-amber" id="dash-conseils-badge" style="display:none"></span></div>
     <div class="card-body" id="dash-conseils-body"></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px" id="dash-charts-row">
+    <div class="card"><div class="card-head"><h3>📈 Courbe de lactation troupeau</h3><span class="badge b-gray" style="font-size:10px">Prod. moy. par rang</span></div><div class="card-body" style="padding:12px"><canvas id="chart-lactation" height="180"></canvas></div></div>
+    <div class="card"><div class="card-head"><h3>📆 Saisonnalité des vêlages</h3><span class="badge b-gray" style="font-size:10px">Vêlages prévus par mois</span></div><div class="card-body" style="padding:12px"><canvas id="chart-velages" height="180"></canvas></div></div>
+  </div>
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-head"><h3>📊 Cours du marché</h3><span class="badge b-gray" id="cours-date" style="font-size:10px"></span><a href="boviq-cours-marche.html" target="_blank" class="btn btn-o btn-s" style="margin-left:auto;font-size:11px">Détail →</a></div>
+    <div class="card-body" id="dash-cours" style="padding:12px"></div>
   </div>
 </div>
 
@@ -3262,6 +3289,9 @@ function renderDashboard(){
   renderCalendar();
   renderStats();
   renderDashConseils();
+  renderChartLactation();
+  renderChartVelages();
+  renderDashCours();
   setTimeout(initMeteo, 100);
 }
 
@@ -3321,6 +3351,150 @@ function renderStats(){
 // ========================================
 // CALENDRIER + ÉCHÉANCES
 // ========================================
+// ========================================
+// GRAPHIQUES DASHBOARD
+// ========================================
+let _chartLact=null, _chartVel=null;
+
+async function renderDashCours(){
+  const el=document.getElementById('dash-cours');
+  const dateBadge=document.getElementById('cours-date');
+  if(!el)return;
+  try{
+    const raw=await fetch('data/market/cours-data.json');
+    if(!raw.ok)throw new Error('fetch');
+    const data=await raw.json();
+    const milk=data.milk?.latest;
+    const beef=data.beef?.prices||{};
+    const weekDate=data.beef?.week_date||'';
+    const meta=data.meta||{};
+    if(dateBadge)dateBadge.textContent=weekDate?'Semaine du '+weekDate:(meta.generated||'').substring(0,10);
+    // Prix lait — historique sparkline
+    const milkPrices=(data.milk?.prices||[]).slice(-6);
+    const milkSparkPoints=milkPrices.map((p,i)=>({x:i,y:p.price}));
+    const milkTrend=milkPrices.length>=2?milkPrices[milkPrices.length-1].price-milkPrices[milkPrices.length-2].price:0;
+    const milkTrendIcon=milkTrend>0?'▲':milkTrend<0?'▼':'→';
+    const milkTrendColor=milkTrend>0?'var(--teal)':milkTrend<0?'var(--red)':'var(--ink3)';
+    // Cotations viande clés pour Simmental laitier
+    const viandeItems=[
+      {key:'vache_r3',label:'Vache R3'},
+      {key:'vache_o3',label:'Vache O3'},
+      {key:'genisse_r3',label:'Génisse R3'},
+      {key:'genisse_u3',label:'Génisse U3'},
+    ].filter(x=>beef[x.key]!=null);
+    el.innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div style="background:var(--brand-pale);border-radius:10px;padding:12px 16px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);margin-bottom:4px">🥛 Prix du lait (${meta.milk_unit||'€/100kg'})</div>
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="font-size:26px;font-weight:800;font-family:'Playfair Display',serif;color:var(--brand)">${milk?milk.price.toFixed(2):'—'}</span>
+          <span style="font-size:13px;color:var(--ink3)">€/100 kg</span>
+          <span style="font-size:13px;font-weight:700;color:${milkTrendColor}">${milkTrendIcon} ${Math.abs(milkTrend).toFixed(2)}</span>
+        </div>
+        <div style="font-size:11px;color:var(--ink3);margin-top:3px">${milk?milk.period:''} · France · DG AGRI</div>
+        <div style="display:flex;align-items:flex-end;gap:2px;height:24px;margin-top:8px">
+          ${milkPrices.map((p,i,arr)=>{
+            const min=Math.min(...arr.map(x=>x.price));const max=Math.max(...arr.map(x=>x.price));
+            const pct=max>min?Math.round((p.price-min)/(max-min)*100):50;
+            const isLast=i===arr.length-1;
+            return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:1px">
+              <div style="width:100%;background:${isLast?'var(--brand)':'var(--brand-light)'};border-radius:2px;height:${Math.max(4,Math.round(pct*0.2))}px;min-height:3px"></div>
+              <div style="font-size:7px;color:var(--ink4)">${p.period.replace('m','/')}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+      <div style="background:var(--bg2);border-radius:10px;padding:12px 16px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);margin-bottom:8px">🥩 Cotations viande (${meta.beef_unit||'€/100kg'})</div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          ${viandeItems.map(x=>{
+            const val=beef[x.key];
+            const color=val>=780?'var(--brand)':val>=730?'var(--teal)':val>=680?'var(--amber)':'var(--red)';
+            return`<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px">
+              <span style="color:var(--ink2)">${x.label}</span>
+              <span style="font-weight:700;color:${color}">${val} €</span>
+            </div>`;
+          }).join('')}
+        </div>
+        <div style="font-size:10px;color:var(--ink4);margin-top:8px">Sem. ${weekDate} · France · DG AGRI</div>
+      </div>
+    </div>`;
+  }catch(e){
+    if(el)el.innerHTML='<div class="empty" style="padding:12px"><p>Cours non disponibles — <a href="boviq-cours-marche.html" target="_blank">ouvrir l\'outil cours</a></p></div>';
+  }
+}
+
+function renderChartLactation(){
+  const canvas=document.getElementById('chart-lactation');
+  if(!canvas)return;
+  const vaches=D.animaux.filter(a=>a._categ_ml==='VL'&&a._ml_lait24>0&&a._ml_lact>0);
+  if(vaches.length<5){canvas.parentElement.innerHTML='<div class="empty"><div class="e-icon">📈</div><p>Données insuffisantes</p></div>';return;}
+  // Calcul prod moy / TB moy / TP moy par rang
+  const parLact={};
+  vaches.forEach(a=>{
+    const l=Math.min(a._ml_lact,12);
+    if(!parLact[l])parLact[l]={sumL:0,sumTB:0,sumTP:0,n:0,nTaux:0};
+    parLact[l].sumL+=a._ml_lait24;parLact[l].n++;
+    if(a._ml_tb&&a._ml_tp){parLact[l].sumTB+=a._ml_tb;parLact[l].sumTP+=a._ml_tp;parLact[l].nTaux++;}
+  });
+  const labels=Object.keys(parLact).sort((a,b)=>+a-+b).map(l=>'L'+l);
+  const dataLait=Object.keys(parLact).sort((a,b)=>+a-+b).map(l=>(parLact[l].sumL/parLact[l].n).toFixed(1));
+  const dataTB=Object.keys(parLact).sort((a,b)=>+a-+b).map(l=>parLact[l].nTaux?(parLact[l].sumTB/parLact[l].nTaux).toFixed(1):null);
+  const dataTP=Object.keys(parLact).sort((a,b)=>+a-+b).map(l=>parLact[l].nTaux?(parLact[l].sumTP/parLact[l].nTaux).toFixed(1):null);
+  loadChartJs(()=>{
+    if(_chartLact){_chartLact.destroy();_chartLact=null;}
+    _chartLact=new Chart(canvas,{
+      type:'bar',
+      data:{labels,datasets:[
+        {type:'bar',label:'Lait (L/j)',data:dataLait,backgroundColor:'rgba(45,106,79,.7)',yAxisID:'y'},
+        {type:'line',label:'TB (g/kg)',data:dataTB,borderColor:'rgba(251,191,36,1)',backgroundColor:'transparent',pointRadius:3,tension:.3,yAxisID:'y2'},
+        {type:'line',label:'TP (g/kg)',data:dataTP,borderColor:'rgba(96,165,250,1)',backgroundColor:'transparent',pointRadius:3,tension:.3,yAxisID:'y2'},
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+        plugins:{legend:{labels:{font:{size:10},boxWidth:10}}},
+        scales:{
+          y:{title:{display:true,text:'L/j',font:{size:10}},beginAtZero:true,ticks:{font:{size:10}}},
+          y2:{position:'right',title:{display:true,text:'g/kg',font:{size:10}},min:20,max:50,ticks:{font:{size:10}},grid:{drawOnChartArea:false}}
+        }
+      }
+    });
+  });
+}
+
+function renderChartVelages(){
+  const canvas=document.getElementById('chart-velages');
+  if(!canvas)return;
+  const now=new Date();now.setHours(0,0,0,0);
+  const reprosAVenir=D.repros.filter(r=>r.dateSaillie&&!r.velageReel);
+  if(!reprosAVenir.length){canvas.parentElement.innerHTML='<div class="empty"><div class="e-icon">📆</div><p>Aucune gestation en cours</p></div>';return;}
+  // 12 mois à venir
+  const moisLabels=[];const moisData=new Array(12).fill(0);
+  for(let i=0;i<12;i++){
+    const d=new Date(now);d.setMonth(d.getMonth()+i);
+    moisLabels.push(d.toLocaleDateString('fr-FR',{month:'short',year:'2-digit'}));
+  }
+  reprosAVenir.forEach(r=>{
+    const vache=D.animaux.find(a=>a.id===r.vache);
+    const g=gestFor(vache?vache.race:'Autre');
+    const dv=new Date(r.dateSaillie);dv.setDate(dv.getDate()+g);
+    if(dv<now)return;
+    const diffMois=((dv.getFullYear()-now.getFullYear())*12)+(dv.getMonth()-now.getMonth());
+    if(diffMois>=0&&diffMois<12)moisData[diffMois]++;
+  });
+  const colors=moisData.map(n=>n>=4?'rgba(248,113,113,.8)':n>=2?'rgba(251,191,36,.8)':'rgba(45,106,79,.7)');
+  loadChartJs(()=>{
+    if(_chartVel){_chartVel.destroy();_chartVel=null;}
+    _chartVel=new Chart(canvas,{
+      type:'bar',
+      data:{labels:moisLabels,datasets:[{label:'Vêlages',data:moisData,backgroundColor:colors,borderRadius:4}]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.raw} vêlage${ctx.raw>1?'s':''}`}}},
+        scales:{y:{beginAtZero:true,ticks:{stepSize:1,font:{size:10}}},x:{ticks:{font:{size:10}}}}
+      }
+    });
+  });
+}
+
 let calMonth=new Date().getMonth(), calYear=new Date().getFullYear(), calSelected=null;
 
 function getAllEcheances(){
@@ -5110,6 +5284,54 @@ function openFicheAnimal(id){
     h+=`</div></div>`;
   }
   if(a.notes)h+=`<div class="fiche-section"><div class="fiche-section-title">📝 Notes</div><div style="background:var(--amber-l);border-radius:8px;padding:10px 14px;color:var(--ink2);font-size:13px">${esc(a.notes)}</div></div>`;
+
+  // ── Score valeur économique (VL uniquement) ─────────────────────────────────
+  if(a._categ_ml==='VL'&&a._ml_lait24>0){
+    const PRIX_LAIT=0.42;
+    const prodAnn=Math.round(a._ml_lait24*305*PRIX_LAIT);
+    const bonusTaux=((a._ml_tb||0)>=36?1:0)+((a._ml_tp||0)>=30?1:0);
+    const malusCCS=(a._ml_leucos||0)>400?-2:0;
+    const bonusLongevite=(a._ml_lact||0)>=5?2:0;
+    const bonusGest=D.repros.some(r=>r.vache===a.id&&!r.velageReel&&r.dateSaillie)?2:0;
+    const bonusIVV=D.repros.filter(r=>r.vache===a.id&&!r.velageReel&&r.dateSaillie).length===0?-1:0;
+    const score=Math.round(prodAnn/100)+bonusTaux*5+malusCCS*10+bonusLongevite*5+bonusGest*8+bonusIVV*3;
+    // Position dans le troupeau
+    const allVL=D.animaux.filter(x=>x._categ_ml==='VL'&&x._ml_lait24>0);
+    const allScores=allVL.map(x=>{
+      const s=Math.round(x._ml_lait24*305*PRIX_LAIT/100);
+      return s+(((x._ml_tb||0)>=36?1:0)+((x._ml_tp||0)>=30?1:0))*5+((x._ml_leucos||0)>400?-20:0)+(((x._ml_lact||0)>=5)?10:0);
+    }).sort((a,b)=>b-a);
+    const rank=allScores.indexOf(score)+1||allVL.length;
+    const pctile=Math.round((1-rank/allVL.length)*100);
+    const scoreColor=pctile>=75?'var(--brand)':pctile>=40?'var(--amber)':'var(--red)';
+    const criteres=[
+      {label:'Production annuelle estimée',val:`${prodAnn.toLocaleString('fr-FR')} €/an (${a._ml_lait24} L/j × 305j × ${PRIX_LAIT}€)`,ok:true},
+      {label:'Taux butyreux',val:`${a._ml_tb||'—'} g/kg`,ok:(a._ml_tb||0)>=36},
+      {label:'Taux protéique',val:`${a._ml_tp||'—'} g/kg`,ok:(a._ml_tp||0)>=30},
+      {label:'Cellules somatiques',val:`${a._ml_leucos||'—'} k/mL`,ok:(a._ml_leucos||0)<=400},
+      {label:'Longévité (rang lact.)',val:`Lactation ${a._ml_lact||'?'}`,ok:(a._ml_lact||0)>=5},
+      {label:'Gestation en cours',val:bonusGest>0?'Oui ✓':'Non',ok:bonusGest>0},
+    ];
+    h+=`<div class="fiche-section"><div class="fiche-section-title">💰 Score valeur économique</div>
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px">
+      <div style="text-align:center;min-width:80px">
+        <div style="font-size:36px;font-weight:800;font-family:'Playfair Display',serif;color:${scoreColor}">${score}</div>
+        <div style="font-size:11px;color:var(--ink3)">score</div>
+      </div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700;color:${scoreColor};margin-bottom:4px">Top ${100-pctile}% du troupeau (${rank}e sur ${allVL.length} VL)</div>
+        <div style="height:8px;background:var(--bg2);border-radius:4px;overflow:hidden"><div style="width:${pctile}%;height:100%;background:${scoreColor};border-radius:4px;transition:width .4s"></div></div>
+        <div style="font-size:11px;color:var(--ink3);margin-top:4px">Critères : production, taux, cellules, longévité, gestation</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:5px">
+      ${criteres.map(c=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 10px;background:${c.ok?'var(--brand-pale)':'var(--red-l)'};border-radius:7px;font-size:12px">
+        <span style="color:var(--ink2)">${c.label}</span>
+        <span style="font-weight:700;color:${c.ok?'var(--brand)':'var(--red)'}">${c.val}</span>
+      </div>`).join('')}
+    </div></div>`;
+  }
+
   // ── Section courbes de contrôle laitier (données depuis BOVIQ_MILKLIC) ──────
   if(a._categ_ml==='VL') h+=`<div class="fiche-section" id="fiche-ml-charts-section"><div class="fiche-section-title">📈 Courbes de contrôle laitier</div><div id="fiche-charts-content" style="text-align:center;padding:20px 0;color:var(--ink3);font-size:13px"><span style="opacity:.6">Chargement…</span></div></div>`;
   if(!repros.length&&!treats.length&&!mere&&!pere)h+=`<div style="text-align:center;padding:24px;color:var(--ink3)"><div style="font-size:28px;margin-bottom:8px">📋</div><p>Aucun historique enregistré.</p></div>`;
@@ -6364,6 +6586,64 @@ ${resultatsGrilles.map((g,i)=>`${g.emoji} <strong>${g.nom}</strong> — ${g.prix
     });
   }
 
+  // ── Analyse 22 : Génisses 24-30 mois non saillies ────────────────
+  const genissesGL=D.animaux.filter(a=>a._categ_ml==='GL'&&a.naissance);
+  const genissesPrêtes=genissesGL.filter(a=>{
+    const ageMois=Math.round((now-new Date(a.naissance))/864e5/30.5);
+    if(ageMois<24||ageMois>34)return false;
+    return !D.repros.some(r=>r.vache===a.id&&r.dateSaillie);
+  });
+  if(genissesPrêtes.length>0){
+    const coutRetard=genissesPrêtes.reduce((s,a)=>{
+      const m=Math.round((now-new Date(a.naissance))/864e5/30.5);
+      return s+Math.max(0,m-28)*50;
+    },0);
+    results.push({
+      id:'genisses-pretes',niveau:genissesPrêtes.length>5?'urgent':'attn',
+      icon:'🐮',titre:'Génisses prêtes non encore saillies',
+      resume:`${genissesPrêtes.length} génisse(s) de 24 à 34 mois sans saillie enregistrée`,
+      gainAnnuel:Math.max(coutRetard,genissesPrêtes.length*50),
+      detail:`<strong>Objectif :</strong> Première saillie entre 15 et 18 mois (selon poids ≥ 340 kg) pour un 1er vêlage à 28-30 mois. Au-delà, chaque mois perdu coûte ~50 €/génisse (IDELE).<br><br>
+<strong>Génisses concernées :</strong> ${genissesPrêtes.map(a=>{const m=Math.round((now-new Date(a.naissance))/864e5/30.5);return`<span class="badge b-amber">${a.nom} (${m}m)</span>`}).join(' ')}<br><br>
+<strong>Action immédiate :</strong> Contrôle de croissance, insémination ou mise avec taureau, échographie si déjà en contact avec un mâle.`,
+    });
+  }
+
+  // ── Analyse 23 : Performance par taureau ─────────────────────────
+  if(D.repros.length>3){
+    const parTaureau={};
+    D.repros.forEach(r=>{
+      const tid=r.taureau||'__naturel__';
+      if(!parTaureau[tid])parTaureau[tid]={total:0,veles:0,nom:'',sailliesIds:[]};
+      parTaureau[tid].total++;
+      if(r.velageReel)parTaureau[tid].veles++;
+    });
+    // Attacher les noms
+    Object.keys(parTaureau).forEach(tid=>{
+      const t=D.taureaux.find(x=>x.id===tid);
+      parTaureau[tid].nom=t?t.nom:(tid==='__naturel__'?'Monte naturelle':'Inconnu');
+    });
+    const entries=Object.values(parTaureau).filter(t=>t.total>=3);
+    if(entries.length>0){
+      const rows=entries.sort((a,b)=>b.total-a.total).map(t=>{
+        const tx=t.total>0?Math.round(t.veles/t.total*100):0;
+        const badge=tx>=50?'b-green':tx>=25?'b-amber':'b-red';
+        return`<span class="badge ${badge}">${t.nom}</span> ${t.veles}/${t.total} vêlages confirmés (${tx}%)`;
+      });
+      const alertTaureau=entries.find(t=>t.total>=5&&t.veles/t.total<0.2);
+      results.push({
+        id:'perf-taureau',niveau:alertTaureau?'attn':'ok',
+        icon:'🐂',titre:'Résultats de reproduction par taureau',
+        resume:`${entries.length} taureaux analysés — ${entries.map(t=>t.nom+' '+Math.round(t.veles/t.total*100)+'%').join(' · ')}`,
+        gainAnnuel:null,
+        detail:`<strong>Taux de vêlages confirmés :</strong><br><br>
+${rows.map(r=>`<div style="margin:4px 0">${r}</div>`).join('')}<br>
+<strong>Note :</strong> Ces taux reflètent les vêlages enregistrés dans BOVIQ. Un taux bas peut indiquer un problème de fertilité du taureau, ou des données de vêlage non encore saisies.<br><br>
+<strong>Leviers :</strong> Bilan de fertilité vétérinaire pour les taureaux < 25%, vérification de la saison de monte, croisement IA × monte naturelle.`,
+      });
+    }
+  }
+
   return results;
 }
 
@@ -6758,7 +7038,97 @@ document.addEventListener('keydown',function(e){
   if(c==='KeyS'){e.preventDefault();goTo('repro');setTimeout(openReproModal,50);}
   else if(c==='KeyD'){e.preventDefault();goTo('repro');setTimeout(openVelageModal,50);}
   else if(c==='KeyT'){e.preventDefault();goTo('sante');setTimeout(openSanteModal,50);}
+  else if(c==='KeyA'){e.preventDefault();goTo('animaux');setTimeout(openAnimalModal,50);}
+  else if(c==='KeyV'){e.preventDefault();goTo('vaccinal');}
+  else if(c==='KeyC'){e.preventDefault();goTo('conseils');}
+  else if(c==='KeyB'){e.preventDefault();goTo('bilan');}
 });
+// Ctrl+Shift variants (alias pour utilisateurs Windows/Mac)
+document.addEventListener('keydown',function(e){
+  if(!e.ctrlKey||!e.shiftKey)return;
+  const tag=document.activeElement.tagName;
+  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;
+  const c=e.code;
+  if(c==='KeyS'){e.preventDefault();goTo('repro');setTimeout(openReproModal,50);}
+  else if(c==='KeyD'){e.preventDefault();goTo('repro');setTimeout(openVelageModal,50);}
+  else if(c==='KeyT'){e.preventDefault();goTo('sante');setTimeout(openSanteModal,50);}
+});
+
+// ========================================
+// DARK MODE
+// ========================================
+(function(){
+  const saved=localStorage.getItem('boviq_dark');
+  if(saved==='1')document.body.classList.add('dark-mode');
+  const btn=document.getElementById('btn-dark');
+  if(btn)btn.textContent=saved==='1'?'☀️':'🌙';
+})();
+function toggleDarkMode(){
+  const on=document.body.classList.toggle('dark-mode');
+  localStorage.setItem('boviq_dark',on?'1':'0');
+  const btn=document.getElementById('btn-dark');
+  if(btn)btn.textContent=on?'☀️':'🌙';
+}
+
+// ========================================
+// NOTIFICATIONS NAVIGATEUR
+// ========================================
+let _notifEnabled=false;
+function updateNotifBtn(){
+  const btn=document.getElementById('btn-notif');
+  if(!btn)return;
+  const perm=Notification?.permission;
+  if(perm==='granted'&&_notifEnabled){btn.textContent='🔔';btn.style.color='rgba(255,255,255,.9)';}
+  else{btn.textContent='🔕';btn.style.color='rgba(255,255,255,.4)';}
+}
+async function toggleNotifications(){
+  if(!('Notification' in window)){alert('Notifications non supportées par ce navigateur.');return;}
+  if(_notifEnabled){_notifEnabled=false;localStorage.setItem('boviq_notif','0');updateNotifBtn();return;}
+  let perm=Notification.permission;
+  if(perm==='default')perm=await Notification.requestPermission();
+  if(perm==='granted'){
+    _notifEnabled=true;
+    localStorage.setItem('boviq_notif','1');
+    new Notification('BOVIQ — Notifications activées',{body:'Vous recevrez les alertes critiques (termes dépassés, délais attente).',icon:'icons/boviq-192.png'});
+    updateNotifBtn();
+    scheduleNotifications();
+  } else {
+    alert('Notifications refusées par le navigateur.');
+  }
+}
+function scheduleNotifications(){
+  if(!_notifEnabled||Notification?.permission!=='granted')return;
+  // Notifier les termes dépassés
+  const now=new Date();now.setHours(0,0,0,0);
+  D.repros.forEach(r=>{
+    if(!r.dateSaillie||r.velageReel)return;
+    const vache=D.animaux.find(a=>a.id===r.vache);
+    const g=282;
+    const dv=new Date(r.dateSaillie);dv.setDate(dv.getDate()+g);
+    const diff=Math.round((dv-now)/864e5);
+    if(diff<0){
+      setTimeout(()=>{
+        new Notification('🚨 BOVIQ — Terme dépassé',{
+          body:`${vache?vache.nom:'?'} — terme dépassé de ${Math.abs(diff)} jours`,
+          icon:'icons/boviq-192.png',tag:'terme-'+r.id
+        });
+      },2000);
+    } else if(diff<=3){
+      setTimeout(()=>{
+        new Notification('🍼 BOVIQ — Vêlage imminent',{
+          body:`${vache?vache.nom:'?'} — vêlage dans ${diff} jour${diff>1?'s':''}`,
+          icon:'icons/boviq-192.png',tag:'velage-'+r.id
+        });
+      },3000);
+    }
+  });
+}
+// Init au chargement
+(function(){
+  _notifEnabled=localStorage.getItem('boviq_notif')==='1';
+  document.addEventListener('DOMContentLoaded',updateNotifBtn);
+  setTimeout(updateNotifBtn,500);
+})();
 
 // PWA : enregistrement du Service Worker
 if('serviceWorker' in navigator){
