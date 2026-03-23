@@ -6044,6 +6044,80 @@ ${ureeHaute.length?`<strong>Urée > 300 (${ureeHaute.length}) :</strong> ${ureeH
     });
   }
 
+  // ── Analyse 12 : Fortes productrices sans repro en cours ─────────
+  const topNonGest=vaches.filter(a=>{
+    if((a._ml_lait24||0)<11||a._ml_statut==='T'||a._ml_statut==='TT')return false;
+    return !D.repros.some(r=>r.vache===a.id&&!r.velageReel&&r.dateSaillie);
+  });
+  if(topNonGest.length>0){
+    const perteIVV=topNonGest.length*80; // 80€/vache anoestrus non détecté × prod élevée
+    const prodMoyTop=topNonGest.reduce((s,a)=>s+(a._ml_lait24||0),0)/topNonGest.length;
+    results.push({
+      id:'top-nongest',niveau:topNonGest.length>6?'urgent':'attn',
+      icon:'🚨',titre:'Fortes productrices sans reproduction en cours',
+      resume:`${topNonGest.length} VL > 11 L/j sans saillie ni IA enregistrée`,
+      gainAnnuel:Math.round(topNonGest.length*0.8*365*prodMoyTop*PRIX_LAIT/365*30),
+      detail:`<strong>Double risque :</strong> Ces vaches font du lait mais ne sont pas en gestation. L'IVV va dépasser 450+ jours si rien n'est fait — perte de lactation sur la prochaine courbe.<br><br>
+<strong>Production moyenne du groupe :</strong> ${prodMoyTop.toFixed(1)} L/j — ce sont les vaches les plus précieuses à féconder en priorité.<br><br>
+<strong>Vaches concernées :</strong> ${topNonGest.map(a=>`<span class="badge b-red">${a.nom} (${a._ml_lait24}L)</span>`).join(' ')}<br><br>
+<strong>Action immédiate :</strong> Vérification chaleurs, échographie pour écarter kyste, synchronisation si anoestrus confirmé.`,
+    });
+  }
+
+  // ── Analyse 13 : Rang d'IA élevé ─────────────────────────────────
+  const rangEleve=vaches.filter(a=>(a._ml_rang_ia||0)>=3&&a._ml_statut!=='T'&&a._ml_statut!=='TT');
+  if(rangEleve.length>0){
+    const coutIAs=rangEleve.reduce((s,a)=>s+(a._ml_rang_ia-1)*18,0); // ~18€/IA supplémentaire
+    const coutIVV=rangEleve.length*120; // allongement IVV estimé
+    results.push({
+      id:'rang-ia',niveau:'attn',
+      icon:'🎯',titre:'Vaches à fertilité insuffisante (rang IA ≥ 3)',
+      resume:`${rangEleve.length} VL à leur 3e IA ou plus`,
+      gainAnnuel:Math.round(coutIAs+coutIVV),
+      detail:`<strong>Coût direct :</strong> Chaque IA supplémentaire = ~18€ de semence + temps de travail. Au-delà de 3 tentatives, le coût total d'obtention d'une gestation dépasse souvent le gain attendu.<br><br>
+<strong>Signal :</strong> Un rang IA élevé peut indiquer une pathologie sous-jacente (kyste ovarien, métrite, bilan énergétique négatif persistant) ou une erreur de détection des chaleurs.<br><br>
+<strong>Vaches concernées :</strong> ${rangEleve.map(a=>`<span class="badge b-amber">${a.nom} (r${a._ml_rang_ia})</span>`).join(' ')}<br><br>
+<strong>Leviers :</strong> Bilan gynécologique vétérinaire, protocole de synchronisation (Ovsynch), révision de la détection des chaleurs, évaluation de la réforme pour les >4 IAs.`,
+    });
+  }
+
+  // ── Analyse 14 : Persistance de lactation faible ──────────────────
+  const persistFaible=vaches.filter(a=>a._ml_var_lait!=null&&a._ml_var_lait<-10&&(a._ml_lact||0)>=3&&(a._ml_lact||0)<=7&&!a._ml_statut);
+  if(persistFaible.length>0){
+    const gainPers=persistFaible.reduce((s,a)=>{
+      const prod=a._ml_lait24||0;
+      return s+prod*Math.abs(a._ml_var_lait)/100*0.5*305*PRIX_LAIT;
+    },0);
+    results.push({
+      id:'persistance',niveau:'attn',
+      icon:'📊',titre:'Persistance de lactation insuffisante',
+      resume:`${persistFaible.length} VL en milieu de lactation (rang 3-7) avec chute > 10%`,
+      gainAnnuel:Math.round(gainPers),
+      detail:`<strong>Référence :</strong> Une vache en lactation 3-7 ne devrait pas perdre plus de 6-8% par mois. Une chute > 10% en pleine lactation est le signe d'un stress — alimentaire, sanitaire ou de confort.<br><br>
+<strong>Vaches concernées :</strong> ${persistFaible.map(a=>`<span class="badge b-amber">${a.nom} (${a._ml_var_lait}%, L${a._ml_lact})</span>`).join(' ')}<br><br>
+<strong>Leviers :</strong> Contrôle de l'ingestion (logettes, abreuvement, concurrence à l'auge), bilan sanitaire individuel (boiterie, mammite), ajustement de la ration en énergie.`,
+    });
+  }
+
+  // ── Analyse 15 : Primipares sous-performantes ─────────────────────
+  const prima=vaches.filter(a=>(a._ml_lact||0)===1&&(a._ml_lait24||0)>0&&a._ml_lait24<7&&!a._ml_statut);
+  if(prima.length>0){
+    const moyPrima=prima.reduce((s,a)=>s+a._ml_lait24,0)/prima.length;
+    const moyTroupeau=vaches.filter(a=>a._ml_lait24>0).reduce((s,a)=>s+a._ml_lait24,0)/Math.max(1,vaches.filter(a=>a._ml_lait24>0).length);
+    const ecart=moyTroupeau-moyPrima;
+    const gainAnnuelPrima=Math.round(prima.length*ecart*305*PRIX_LAIT);
+    results.push({
+      id:'primipares',niveau:'attn',
+      icon:'🐮',titre:'Primipares sous-performantes',
+      resume:`${prima.length} primipares < 7 L/j (moy. ${moyPrima.toFixed(1)} L vs ${moyTroupeau.toFixed(1)} L troupeau)`,
+      gainAnnuel:gainAnnuelPrima,
+      detail:`<strong>Enjeu :</strong> Les primipares qui démarrent faiblement le restent souvent sur toute leur carrière. Un mauvais démarrage de 1ère lactation = perte sur 5-7 ans de carrière potentielle.<br><br>
+<strong>Causes fréquentes :</strong> Transition alimentaire insuffisante, stress social (mélange avec les adultes), âge au vêlage trop jeune, génétique.<br><br>
+<strong>Vaches concernées :</strong> ${prima.map(a=>`<span class="badge b-amber">${a.nom} (${a._ml_lait24}L)</span>`).join(' ')}<br><br>
+<strong>Leviers :</strong> Lot primipares séparé (lot transition dédié), alimentation spécifique 3 semaines avant/après vêlage, vérification de l'âge au vêlage (objectif 28-30 mois).`,
+    });
+  }
+
   // ── Analyse 6 : Candidates à la réforme ─────────────────────────
   const candidatesReforme=[];
   vaches.forEach(a=>{
