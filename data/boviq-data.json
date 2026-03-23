@@ -4442,7 +4442,7 @@
   "planVaccinal": [
     {
       "id": "ibr",
-      "actif": true
+      "actif": false
     },
     {
       "id": "bvd",
