@@ -6179,6 +6179,155 @@ ${genissesMures.map(a=>{const m=Math.round((now-new Date(a.naissance))/864e5/30.
     }
   }
 
+  // ── Analyse 18 : Coût sanitaire par vache ────────────────────────
+  const coutParVache={};
+  D.sante.forEach(s=>{
+    const anims=Array.isArray(s.animaux)?s.animaux:[s.animaux];
+    anims.forEach(id=>{
+      if(!coutParVache[id])coutParVache[id]=0;
+      const lignes=Array.isArray(s.lignes)?s.lignes:[s];
+      lignes.forEach(l=>{
+        const t=(l.type||s.type||'');
+        if(t.includes('Antibiotique'))coutParVache[id]+=80;
+        else if(t.includes('Anti-inflam'))coutParVache[id]+=25;
+        else if(t.includes('Vaccination'))coutParVache[id]+=5;
+        else coutParVache[id]+=30;
+      });
+    });
+  });
+  const coutVaches=Object.entries(coutParVache).map(([id,cout])=>{
+    const a=D.animaux.find(x=>x.id===id);
+    const lait=a?._ml_lait24||0;
+    const prod=lait*305*PRIX_LAIT;
+    return{id,nom:a?a.nom:'?',cout,prod:Math.round(prod),ratio:prod>0?cout/prod:null,lait};
+  }).filter(e=>e.cout>0&&e.prod>0&&e.lait>0); // VL uniquement
+  const coutVachesSort=[...coutVaches].sort((a,b)=>b.cout-a.cout);
+  const totalCoutVet=coutVaches.reduce((s,e)=>s+e.cout,0);
+  const moyProd=coutVaches.reduce((s,e)=>s+e.prod,0)/Math.max(1,coutVaches.length);
+  const puitsSante=coutVaches.filter(e=>e.ratio!==null&&e.ratio>0.15); // coût > 15% de la production
+  if(coutVaches.length>0&&(puitsSante.length>0||coutVachesSort[0]?.cout>100)){
+    results.push({
+      id:'cout-vet',niveau:puitsSante.length>2?'attn':'ok',
+      icon:'💊',titre:'Coût sanitaire par vache (soins enregistrés)',
+      resume:`${coutVaches.length} VL avec soins — total estimé ${totalCoutVet.toLocaleString('fr-FR')} € (coûts enregistrés dans BOVIQ)`,
+      gainAnnuel:null,
+      detail:`<strong>Note :</strong> Estimation basée sur les actes enregistrés dans le carnet sanitaire (antibio ~80€, anti-inflam ~25€, vaccin ~5€/dose). Ne comprend pas les honoraires de visite.<br><br>
+${puitsSante.length>0?`<strong>Vaches à fort ratio coût/production (> 15%) :</strong><br>${puitsSante.map(e=>`<span class="badge b-red">${e.nom} — ${e.cout}€ soins / ${e.prod}€ prod</span>`).join(' ')}<br><br>`:''}
+<strong>Top soins :</strong> ${coutVachesSort.slice(0,5).map(e=>`<span class="badge b-amber">${e.nom} (${e.cout}€)</span>`).join(' ')}<br><br>
+<strong>Utilisation :</strong> Croiser avec les candidates à la réforme — une vache coûteuse ET sous-productive est prioritaire.`,
+    });
+  }
+
+  // ── Analyse 19 : Vaches improductives — coût caché ───────────────
+  const improductives={taries:[],nc:[],fv:[]};
+  D.animaux.filter(a=>a._categ_ml==='VL').forEach(a=>{
+    if(a._ml_statut==='T'||a._ml_statut==='TT')improductives.taries.push(a);
+    else if(a._ml_statut==='NC')improductives.nc.push(a);
+    else if(a._ml_statut==='FV'||a._ml_statut==='TFV')improductives.fv.push(a);
+  });
+  const totalImprod=improductives.taries.length+improductives.nc.length+improductives.fv.length;
+  if(totalImprod>0){
+    const COUT_J=8; // €/j alimentation + amortissement logette
+    const coutTaries=improductives.taries.length*55*COUT_J; // 55j de tarissement moyen
+    const coutNC=improductives.nc.length*30*COUT_J; // non classées
+    const coutFV=improductives.fv.length*20*COUT_J; // fin de vie/réforme imminente
+    const totalCout=coutTaries+coutNC+coutFV;
+    results.push({
+      id:'improductives',niveau:'ok',
+      icon:'⚖️',titre:'Vaches improductives — coût de présence',
+      resume:`${totalImprod} VL hors production (${improductives.taries.length} taries, ${improductives.nc.length} non classées, ${improductives.fv.length} fin de vie)`,
+      gainAnnuel:null,
+      detail:`<strong>Coût estimé de présence :</strong> ~${COUT_J}€/vache/jour (alimentation + litière + amortissement).<br><br>
+<div class="cc-detail">
+  ${improductives.taries.length?`🛏️ <strong>Taries (${improductives.taries.length}) :</strong> ${improductives.taries.map(a=>`<span class="badge b-gray">${a.nom}</span>`).join(' ')} — ~${coutTaries.toLocaleString('fr-FR')}€ sur la période<br>`:''}\
+  ${improductives.nc.length?`⚠️ <strong>Non classées (${improductives.nc.length}) :</strong> ${improductives.nc.map(a=>`<span class="badge b-amber">${a.nom}</span>`).join(' ')} — à classer<br>`:''}\
+  ${improductives.fv.length?`🔴 <strong>Fin de vie (${improductives.fv.length}) :</strong> ${improductives.fv.map(a=>`<span class="badge b-red">${a.nom}</span>`).join(' ')} — décision urgente`:''}\
+</div><br>
+<strong>Information :</strong> Les taries sont un coût normal et nécessaire. Cet indicateur sert à vérifier la durée et à anticiper les réformes fin de vie.`,
+    });
+  }
+
+  // ── Analyse 20 : Projection entrées lait — vêlages attendus ──────
+  const velagesAttendus=[];
+  D.repros.forEach(r=>{
+    if(!r.dateSaillie||r.velageReel)return;
+    const vache=D.animaux.find(a=>a.id===r.vache);if(!vache)return;
+    const gDays=282;
+    const dv=new Date(r.dateSaillie);dv.setDate(dv.getDate()+gDays);
+    if(dv>now){
+      const mois=dv.toISOString().substring(0,7);
+      velagesAttendus.push({nom:vache.nom,mois,prodJ:vache._ml_lait24||9,dv:dv.toISOString().substring(0,10)});
+    }
+  });
+  if(velagesAttendus.length>0){
+    const parMois={};
+    velagesAttendus.forEach(v=>{
+      if(!parMois[v.mois])parMois[v.mois]={nb:0,prodJ:0,noms:[]};
+      parMois[v.mois].nb++;
+      parMois[v.mois].prodJ+=v.prodJ;
+      parMois[v.mois].noms.push(v.nom);
+    });
+    const moisSorted=Object.entries(parMois).sort();
+    const totalLait6m=moisSorted.slice(0,6).reduce((s,[,d])=>s+d.prodJ*30,0);
+    const picMois=moisSorted.reduce((best,[m,d])=>d.nb>best[1].nb?[m,d]:best,moisSorted[0]);
+    results.push({
+      id:'projection-velages',niveau:'ok',
+      icon:'📈',titre:'Projection entrées lait — vêlages à venir',
+      resume:`${velagesAttendus.length} vêlages attendus · pic en ${picMois[0]} (${picMois[1].nb} vêlages)`,
+      gainAnnuel:Math.round(totalLait6m*PRIX_LAIT),
+      detail:`<strong>Entrées de lait projetées sur 6 mois :</strong> ~${Math.round(totalLait6m).toLocaleString('fr-FR')} L → <strong>${Math.round(totalLait6m*PRIX_LAIT).toLocaleString('fr-FR')} €</strong><br><br>
+<div class="cc-detail" style="font-size:12px;line-height:1.8">
+${moisSorted.slice(0,8).map(([m,d])=>{
+  const label=new Date(m+'-15').toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+  const gain=Math.round(d.prodJ*30*PRIX_LAIT);
+  const bar='█'.repeat(Math.min(d.nb,8));
+  return`<strong>${label} :</strong> ${bar} ${d.nb} vêlage${d.nb>1?'s':''} — +${d.prodJ.toFixed(0)} L/j → +${gain.toLocaleString('fr-FR')} €/mois<br><span style="color:var(--ink3);font-size:11px;padding-left:8px">${d.noms.join(', ')}</span>`;
+}).join('<br>')}
+</div><br>
+<strong>Usage :</strong> Anticiper les pics de trésorerie et les creux (mois sans vêlage = production stable mais pas d'entrée nouvelle).`,
+    });
+  }
+
+  // ── Analyse 21 : Simulation changement de filière lait ───────────
+  {
+    const vlProd=vaches.filter(a=>a._ml_lait24>0&&a._ml_tb>0&&a._ml_tp>0);
+    if(vlProd.length>0){
+      const prodAnnTot=vlProd.reduce((s,a)=>s+a._ml_lait24,0)*305;
+      const moyTB=vlProd.reduce((s,a)=>s+a._ml_tb,0)/vlProd.length;
+      const moyTP=vlProd.reduce((s,a)=>s+a._ml_tp,0)/vlProd.length;
+      const moyLeuco=vaches.filter(a=>a._ml_leucos>0).reduce((s,a)=>s+a._ml_leucos,0)/Math.max(1,vaches.filter(a=>a._ml_leucos>0).length);
+      // Grilles simplifiées FR 2024-2025
+      const grilles=[
+        {nom:'Laiterie standard',emoji:'🏭',base:0.400,primeTB:0.003,primeTP:0.004,malusCCS:0.001,note:'Prix de base marché standard'},
+        {nom:'Laiterie qualité',emoji:'⭐',base:0.420,primeTB:0.004,primeTP:0.005,malusCCS:0.002,note:'Contrat qualité (TB/TP/CCS)'},
+        {nom:'Filière différenciée',emoji:'🌿',base:0.480,primeTB:0.005,primeTP:0.006,malusCCS:0.002,note:'AOP / label / bien-être (estimé)'},
+      ];
+      const resultatsGrilles=grilles.map(g=>{
+        const pTB=Math.max(0,moyTB-36)*g.primeTB;
+        const pTP=Math.max(0,moyTP-30)*g.primeTP;
+        const mCCS=moyLeuco>300?(moyLeuco-300)/100*g.malusCCS:0;
+        const prix1000=(g.base+pTB+pTP-mCCS)*1000;
+        const annuel=prix1000/1000*prodAnnTot;
+        return{...g,prix1000:Math.round(prix1000*10)/10,annuel:Math.round(annuel)};
+      });
+      const deltaQualite=resultatsGrilles[1].annuel-resultatsGrilles[0].annuel;
+      const deltaFiliere=resultatsGrilles[2].annuel-resultatsGrilles[0].annuel;
+      results.push({
+        id:'simulation-laiterie',niveau:deltaQualite>2000?'attn':'ok',
+        icon:'🏭',titre:'Simulation — impact du prix du lait',
+        resume:`Avec vos taux actuels (TB ${moyTB.toFixed(1)}g · TP ${moyTP.toFixed(1)}g) : écart standard → qualité = +${deltaQualite.toLocaleString('fr-FR')} €/an`,
+        gainAnnuel:deltaQualite,
+        detail:`<strong>Production annuelle estimée :</strong> ${Math.round(prodAnnTot/1000)} 000 L · TB moy. ${moyTB.toFixed(1)} g/kg · TP moy. ${moyTP.toFixed(1)} g/kg · CCS moy. ${Math.round(moyLeuco)}k<br><br>
+<div class="cc-detail" style="font-size:12px;line-height:2">
+${resultatsGrilles.map((g,i)=>`${g.emoji} <strong>${g.nom}</strong> — ${g.prix1000} €/1 000 L → <strong style="color:var(--brand)">${g.annuel.toLocaleString('fr-FR')} €/an</strong> <span style="color:var(--ink3)">(${g.note})</span>`).join('<br>')}
+</div><br>
+<strong>Gain filière qualité vs standard :</strong> <strong style="color:var(--brand)">+${deltaQualite.toLocaleString('fr-FR')} €/an</strong><br>
+<strong>Gain filière différenciée vs standard :</strong> <strong style="color:var(--brand)">+${deltaFiliere.toLocaleString('fr-FR')} €/an</strong><br><br>
+<strong>Note :</strong> Ces simulations sont indicatives — les grilles réelles varient selon la coopérative/privée, le volume, et les exigences qualité. À comparer avec votre relevé mensuel pour calibrer.`,
+      });
+    }
+  }
+
   // ── Analyse 6 : Candidates à la réforme ─────────────────────────
   const candidatesReforme=[];
   vaches.forEach(a=>{
