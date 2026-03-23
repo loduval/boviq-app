@@ -1,6 +1,6 @@
 # BOVIQ — INDEX DES FONCTIONS
 
-Mis à jour : **22/03/2026 soir** · boviq-v6-latest.html 6321L · boviq-milklic.html 658L
+Mis à jour : **23/03/2026** · boviq-v6-latest.html 6386L · boviq-milklic.html ~500L
 
 ---
 
@@ -11,8 +11,13 @@ Mis à jour : **22/03/2026 soir** · boviq-v6-latest.html 6321L · boviq-milklic
 |----------|------|
 | `goTo(page)` | Naviguer vers une page |
 | `renderAll()` | Re-render toutes les vues |
-| `save()` | Sauvegarder D dans localStorage `boviq` |
-| `load()` | Charger depuis localStorage ou INIT_DATA |
+| `save()` | Debounce 1.5s → GitHub API PUT |
+| `load()` | **async** — fetch GitHub raw + fallback INIT_DATA |
+| `_saveToGitHub()` | Commit effectif via GitHub API (PAT requis) |
+| `_migrate()` | Normalisation/migration données après chargement |
+| `getPAT()` / `setPAT()` | Lecture/écriture PAT dans localStorage |
+| `setSyncBadge(status)` | Mise à jour badge sync sidebar |
+| `savePAT()` / `clearPAT()` | Gestion token modal PAT |
 | `updateCounts()` | Mettre à jour les badges nav |
 | `updateTitle()` | Titre onglet avec badge alertes |
 | `toggleSidebar()` | Mobile : ouvrir/fermer sidebar |

@@ -1,22 +1,47 @@
 # BOVIQ — MEMORY SESSION
 
-Dernière mise à jour : **22/03/2026 — 20h30** — BOVIQ MilKlic : Santé Mamelles, fix import Windows, audit JS 32/32, backup complet
+Dernière mise à jour : **23/03/2026 — 09h00** — Migration GitHub Storage centralisé, audit 100% OK
 
 ---
 
-## État du projet — 22/03/2026 soir
+## État du projet — 23/03/2026
 
 | Fichier | Lignes | Taille | Dernier commit |
 |---------|--------|--------|----------------|
-| `boviq-v6-latest.html` | 6 321 | ~480 KB | `78d8946` |
+| `boviq-v6-latest.html` | 6 386 | ~488 KB | `c0fbc19` |
 | `boviq-milklic.html` | ~500 | ~158 KB | `db45218` |
 | `boviq-cours-marche.html` | 1 139 | 47 KB | — |
 | `index.html` | 370 | ~19 KB | `4cae003` |
-| `scripts/backup-nas.sh` | 82 | — | `db45218` |
+| `data/boviq-data.json` | — | ~480 KB | `d6db446` |
 
 **Repo GitHub** : `loduval/boviq-app` (public)  
 **GitHub Pages** : `loduval.github.io/boviq-app/`  
-**_dataVersion** : `20260321` · **162 animaux** · 82 VL contrôlées au 04/03/26
+**_dataVersion** : `20260321` · **160 animaux** · **134 soins** · **28 repros**
+
+---
+
+## 🔑 ARCHITECTURE STORAGE — GitHub centralisé (depuis 23/03/2026)
+
+**Plus de localStorage pour les données troupeau.**
+
+| Élément | Rôle |
+|---------|------|
+| `data/boviq-data.json` | Source de vérité unique sur GitHub |
+| `load()` | async fetch `raw.githubusercontent.com` au démarrage |
+| `save()` | debounce 1.5s → GitHub API PUT avec PAT |
+| `localStorage[boviq_gh_pat]` | Seule chose locale — token GitHub par appareil |
+| `localStorage[BOVIQ_MILKLIC]` | Cross-app MilKlic (inchangé) |
+| `localStorage[boviq_popup_snooze]` | Snooze alertes (inchangé) |
+
+**Badge sync** dans sidebar (cliquable → modal PAT `#m-pat`).  
+**Fallback** : si GitHub injoignable → INIT_DATA embarqué dans le HTML.
+
+### Configurer un nouvel appareil (une seule fois)
+1. Ouvrir BOVIQ → badge 🔑 token? dans sidebar
+2. Entrer le PAT GitHub (scope `repo`) → Enregistrer
+3. Toutes les modifications sauvegardées automatiquement sur GitHub
+
+**Audit 23/03/2026** : 16/16 fonctions OK · 8/8 éléments HTML OK · 7 localStorage (tous légitimes) · async init correct
 
 ---
 
