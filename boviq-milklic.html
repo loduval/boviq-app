@@ -218,6 +218,10 @@ tbody tr:hover td{background:#F7F4EE}
 ::-webkit-scrollbar-thumb:hover{background:var(--ink4)}
 
 @media(max-width:768px){.sidebar{display:none}.content{margin-left:0}.page{padding:16px}}
+.sync-status{font-size:10px;padding:5px 18px 8px;display:flex;align-items:center;gap:5px;color:rgba(255,255,255,.35);transition:color .3s}
+.sync-status.saving{color:rgba(255,200,60,.75)}
+.sync-status.error{color:rgba(255,100,100,.85)}
+.sync-status.ok{color:rgba(100,220,130,.55)}
 </style>
 </head>
 <body>
@@ -237,6 +241,7 @@ tbody tr:hover td{background:#F7F4EE}
     <button class="nav-btn" data-p="bridge"><span class="icon">🔗</span>Intégration BOVIQ</button>
   </nav>
   <div class="sidebar-info" id="sidebar-info">Aucun import</div>
+  <div class="sync-status" id="sync-status">✓ Synchronisé</div>
 </aside>
 <main class="content">
 
@@ -415,6 +420,54 @@ const INIT_ML_DATA={"importDate":"2026-03-21","controleDate":"04/03/26","animaux
 const ML_KEY='BOVIQ_MILKLIC';
 let ML=null,charts={};
 
+// ── GITHUB STORAGE ───────────────────────────────────────────────────────────
+const GH={
+  owner:'loduval',repo:'boviq-app',file:'data/milklic-live.json',
+  token:'REMPLACER_PAR_TOKEN_GH', // Fine-grained PAT : Contents R/W sur boviq-app uniquement
+  sha:null
+};
+function b64enc(str){return btoa(unescape(encodeURIComponent(str)))}
+function b64dec(str){return decodeURIComponent(escape(atob(str.replace(/\s/g,''))))}
+
+async function ghLoad(){
+  try{
+    const h=GH.token&&GH.token!=='REMPLACER_PAR_TOKEN_GH'?{Authorization:'token '+GH.token}:{};
+    const r=await fetch(`https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${GH.file}`,{headers:h});
+    if(r.status===404)return null; // Fichier pas encore créé
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    GH.sha=d.sha;
+    return JSON.parse(b64dec(d.content));
+  }catch(e){console.warn('ghLoad:',e);return null;}
+}
+
+async function ghSave(data){
+  if(!GH.token||GH.token==='REMPLACER_PAR_TOKEN_GH'){
+    console.warn('Token GH non configuré — sauvegarde ignorée');return false;
+  }
+  try{
+    const content=b64enc(JSON.stringify(data));
+    const body={message:'BOVIQ MilKlic '+new Date().toISOString().slice(0,10),content};
+    if(GH.sha)body.sha=GH.sha;
+    const r=await fetch(`https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${GH.file}`,{
+      method:'PUT',
+      headers:{Authorization:'token '+GH.token,'Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    });
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const res=await r.json();
+    GH.sha=res.content.sha;
+    return true;
+  }catch(e){console.warn('ghSave:',e);return false;}
+}
+
+function showSyncStatus(st){
+  const el=document.getElementById('sync-status');if(!el)return;
+  el.className='sync-status '+st;
+  el.textContent=st==='loading'?'⏳ Chargement…':st==='saving'?'⏳ Sauvegarde…':st==='error'?'⚠️ Erreur sync':'✓ Synchronisé';
+}
+
+
 document.querySelectorAll('.nav-btn').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.p)));
 function showPage(p){
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.p===p));
@@ -557,9 +610,9 @@ function handleFiles(files){
       r.readAsText(file,'windows-1252');
     }));
   });
-  Promise.all(tasks).then(()=>{
+  Promise.all(tasks).then(async()=>{
     fi.value='';
-    saveML();
+    await saveML();
     const tot=Object.keys(ML.animaux).length;
     document.getElementById('import-summary').textContent=`${tot} animaux consolidés`;
     document.getElementById('import-log').innerHTML=log.map(it=>`<div class="log-item"><span class="log-icon">${it.ok?'✅':'❌'}</span><div><strong>${it.name}</strong><span>${it.ok?(LABELS[it.type]||it.type)+' — '+it.count+' lignes '+(it.extra||''):it.msg}</span></div></div>`).join('');
@@ -812,9 +865,11 @@ function renderBridge(){
   el.innerHTML=h;
 }
 
-function saveML(){
+async function saveML(){
   if(!ML)return;
-  localStorage.setItem(ML_KEY,JSON.stringify(ML));
+  showSyncStatus('saving');
+  const ok=await ghSave(ML);
+  showSyncStatus(ok?'ok':'error');
   // ── Archivage historique leucos dans boviq (D.mlControles) ──────────────
   // Chaque contrôle est archivé par date — structure compacte : {date, vaches:[{trav,lc,l,tb,tp}]}
   try{
@@ -865,21 +920,36 @@ function exportMLCSV(){
 }
 
 
-function loadML(){
+async function loadML(){
+  showSyncStatus('loading');
   try{
-    const r=localStorage.getItem(ML_KEY);
-    if(r){ML=JSON.parse(r);}
-    else{
-      // Auto-charger INIT_ML_DATA si aucun import local
-      ML={...INIT_ML_DATA};
-      localStorage.setItem(ML_KEY,JSON.stringify(ML));
+    const ghData=await ghLoad();
+    if(ghData){
+      ML=ghData;
+    }else{
+      // Première utilisation : charger INIT_ML_DATA et le pousser sur GitHub
+      ML=JSON.parse(JSON.stringify(INIT_ML_DATA));
+      showSyncStatus('saving');
+      await ghSave(ML);
     }
-    updateSidebar();
   }catch(e){
-    ML={...INIT_ML_DATA};
+    console.warn('loadML:',e);
+    ML=JSON.parse(JSON.stringify(INIT_ML_DATA));
   }
+  updateSidebar();
+  showSyncStatus('ok');
 }
-function clearData(){if(!confirm('Effacer toutes les données MilKlic ?'))return;ML=null;localStorage.removeItem(ML_KEY);document.getElementById('import-log-card').style.display='none';document.getElementById('btn-clear').style.display='none';updateSidebar()}
+async function clearData(){
+  if(!confirm('Effacer toutes les données MilKlic et recharger les données initiales ?'))return;
+  ML=JSON.parse(JSON.stringify(INIT_ML_DATA));
+  GH.sha=null; // Forcer re-fetch du SHA
+  showSyncStatus('saving');
+  await ghSave(ML);
+  showSyncStatus('ok');
+  document.getElementById('import-log-card').style.display='none';
+  document.getElementById('btn-clear').style.display='none';
+  updateSidebar();
+}
 function updateSidebar(){
   const el=document.getElementById('sidebar-info');
   if(!ML){el.textContent='Aucun import';return}
@@ -893,8 +963,9 @@ function updateSidebar(){
   const nb=document.getElementById('nb-alert-cell');nb.textContent=crit||'—';nb.className='nav-badge'+(crit>0?' red':'');
 }
 
-loadML();
-if(ML){document.getElementById('btn-clear').style.display='inline-flex';showPage('dashboard')}
+loadML().then(()=>{
+  if(ML){document.getElementById('btn-clear').style.display='inline-flex';showPage('dashboard')}
+});
 </script>
 </body>
 </html>
