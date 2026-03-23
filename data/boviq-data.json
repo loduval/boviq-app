@@ -4622,7 +4622,7 @@
     },
     {
       "id": "fco",
-      "actif": true
+      "actif": false
     },
     {
       "id": "clostr",
@@ -4630,7 +4630,7 @@
     },
     {
       "id": "vermifuge",
-      "actif": true
+      "actif": false
     }
   ],
   "_mlControleDate": "04/03/26",
