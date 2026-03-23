@@ -262,6 +262,24 @@ tr:hover td{background:rgba(0,0,0,.01)}
 .withdraw-alert{background:var(--amber-l);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--amber);font-weight:500;display:flex;align-items:center;gap:8px;margin-top:8px}
 .withdraw-alert.danger{background:var(--red-l);color:var(--red)}
 
+/* === CONSEILS & LEVIERS === */
+.conseil-card{background:var(--card);border-radius:var(--r2);box-shadow:var(--sh);border:1px solid var(--line);margin-bottom:12px;overflow:hidden;position:relative}
+.conseil-card-head{padding:13px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:10px;transition:background .12s}
+.conseil-card-head:hover,.conseil-card-head.open{background:var(--bg2)}
+.conseil-card-title{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.conseil-card-title .cc-icon{font-size:20px;flex-shrink:0}
+.conseil-card-title h4{font-size:13px;font-weight:700;color:var(--ink);line-height:1.2}
+.conseil-card-title .cc-sub{font-size:12px;color:var(--ink3);margin-top:2px}
+.conseil-card-meta{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.conseil-card-body{display:none;padding:14px 18px;border-top:1px solid var(--line);font-size:13px;line-height:1.6;color:var(--ink2)}
+.conseil-card-body.open{display:block}
+.cc-urgent .conseil-card-head{border-left:3px solid var(--red)}
+.cc-attn .conseil-card-head{border-left:3px solid var(--amber)}
+.cc-ok .conseil-card-head{border-left:3px solid var(--brand)}
+.cc-detail{background:var(--bg2);border-radius:8px;padding:10px 14px;margin-top:10px}
+.cc-chev{color:var(--ink4);font-size:18px;transition:transform .15s}
+.cc-chev.open{transform:rotate(90deg)}
+
 /* === BILAN / FINANCE === */
 .bilan-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media(max-width:768px){.bilan-grid{grid-template-columns:1fr}}
@@ -720,6 +738,7 @@ tr:hover td{background:var(--brand-pale)}
     <button class="nav-btn" data-p="bilan"><span class="icon">📈</span>Analyse financière</button>
     <button class="nav-btn" data-p="milklic"><span class="icon">🥛</span>Contrôle laitier<span class="count" id="cnt-milklic" style="background:rgba(220,38,38,.3)">0</span></button>
     <button class="nav-btn" data-p="aides"><span class="icon">🏛️</span>Aides éleveur</button>
+    <button class="nav-btn" data-p="conseils"><span class="icon">💡</span>Conseils & leviers<span class="count" id="cnt-conseils" style="background:rgba(251,191,36,.4)">0</span></button>
   </nav>
   <div class="sidebar-footer">Boviq v1.2 — Données en local<br>© 2026</div>
 </aside>
@@ -746,6 +765,10 @@ tr:hover td{background:var(--brand-pale)}
     <div class="card"><div class="card-head"><h3>📋 Échéances à venir</h3><span id="ech-count" class="badge b-gray"></span></div><div class="card-body" id="dash-ech"></div></div>
     <div class="card"><div class="card-head"><h3>🔔 Alertes</h3></div><div class="card-body" id="dash-alerts"></div></div>
     <div class="card"><div class="card-head"><h3>📊 Répartition du troupeau</h3></div><div class="card-body" id="dash-stats"></div></div>
+  </div>
+  <div class="card" style="cursor:pointer" onclick="goTo('conseils')">
+    <div class="card-head"><h3>💡 Conseils & leviers</h3><span class="badge b-amber" id="dash-conseils-badge" style="display:none"></span></div>
+    <div class="card-body" id="dash-conseils-body"></div>
   </div>
 </div>
 
@@ -946,6 +969,21 @@ tr:hover td{background:var(--brand-pale)}
       </div>
     </div>
   </div>
+</div>
+
+<!-- ===== CONSEILS & LEVIERS ===== -->
+<div class="page" id="p-conseils">
+  <div class="page-head">
+    <h2>💡 Conseils & leviers de progrès</h2>
+  </div>
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-body" style="font-size:13px;line-height:1.7;color:var(--ink2);padding:14px 18px">
+      Ces analyses sont calculées à partir des données réelles du troupeau (contrôle laitier, reproduction, sanitaire).
+      Chaque levier est chiffré en gain potentiel annuel estimé selon les références IDELE/INOSYS 2023.
+      <strong>L'objectif n'est pas de pointer des problèmes, mais d'identifier les marges de progrès les plus accessibles.</strong>
+    </div>
+  </div>
+  <div id="conseils-list"></div>
 </div>
 
 <!-- ===== AIDES ELEVEUR ===== -->
@@ -3223,6 +3261,7 @@ function renderDashboard(){
   // Render calendar + échéances + stats (TOUJOURS)
   renderCalendar();
   renderStats();
+  renderDashConseils();
   setTimeout(initMeteo, 100);
 }
 
@@ -5800,8 +5839,217 @@ function getLeucosRecurrenceColor(trav){
   return null;
 }
 
+// ========================================
+// CONSEILS & LEVIERS
+// ========================================
+function calcConseils(){
+  const results=[];
+  const now=new Date();now.setHours(0,0,0,0);
+  const vaches=D.animaux.filter(a=>a._categ_ml==='VL');
+  const nbVL=vaches.length||1;
+  const PRIX_LAIT=0.42; // €/L estimé
+
+  // ── Analyse 1 : CCS > 400k ──────────────────────────────────────
+  const ccsHautes=vaches.filter(a=>(a._ml_leucos||0)>400);
+  if(ccsHautes.length>0){
+    const pctHautes=Math.round(ccsHautes.length/nbVL*100);
+    const perteLait=ccsHautes.length*0.5*305*PRIX_LAIT; // 0.5L/j par vache × 305j
+    const coutMammite=ccsHautes.length*180;
+    const gainAnnuel=Math.round(perteLait+coutMammite);
+    results.push({
+      id:'ccs',niveau:pctHautes>20?'urgent':'attn',
+      icon:'🔬',titre:'Cellules somatiques élevées',
+      resume:`${ccsHautes.length} VL > 400k (${pctHautes}% du troupeau)`,
+      gainAnnuel,
+      detail:`<strong>Impact estimé :</strong> -0,5 L/j par vache au-dessus de 400k + ~180€/vache/an en coût mammite chronique (antibios, tarissement précoce, réforme anticipée).<br><br>
+<strong>Vaches concernées :</strong> ${ccsHautes.map(a=>`<span class="badge b-red">${a.nom}</span>`).join(' ')}<br><br>
+<strong>Leviers :</strong> Plan de tarissement sélectif, bilan trayeurs, audit hygiène stalle.`,
+    });
+  }
+
+  // ── Analyse 2 : TB < 36g ─────────────────────────────────────────
+  const tbFaibles=vaches.filter(a=>a._ml_tb!=null&&a._ml_tb>0&&a._ml_tb<36);
+  if(tbFaibles.length>0){
+    const moyTB=tbFaibles.reduce((s,a)=>s+(a._ml_tb||0),0)/tbFaibles.length;
+    const ecart=36-moyTB;
+    const gainEstime=Math.round(tbFaibles.length*305*9*0.5*PRIX_LAIT/1000*ecart*2); // approx 0.5€/1000L/point
+    results.push({
+      id:'tb',niveau:'attn',
+      icon:'🧈',titre:'Taux butyreux insuffisant',
+      resume:`${tbFaibles.length} VL < 36 g/kg TB (moy. ${moyTB.toFixed(1)} g)`,
+      gainAnnuel:gainEstime,
+      detail:`<strong>Seuil laiterie :</strong> La prime TB se déclenche généralement à partir de 36 g/kg. Chaque point en dessous coûte environ 0,5€/1000L.<br><br>
+<strong>Vaches concernées :</strong> ${tbFaibles.map(a=>`<span class="badge b-amber">${a.nom} (${a._ml_tb}g)</span>`).join(' ')}<br><br>
+<strong>Leviers :</strong> Révision de la ration (énergie, équilibre glucido-lipidique), vérification du stade de lactation, génétique.`,
+    });
+  }
+
+  // ── Analyse 3 : IVV > 390j ───────────────────────────────────────
+  const ivvLongs=[];
+  D.repros.forEach(r=>{
+    if(!r.velageReel)return;
+    const vache=D.animaux.find(a=>a.id===r.vache);if(!vache)return;
+    // Chercher vêlage précédent
+    const autresVelages=D.repros.filter(x=>x.vache===r.vache&&x.velageReel&&x.id!==r.id&&x.velageReel<r.velageReel);
+    if(!autresVelages.length)return;
+    autresVelages.sort((a,b)=>b.velageReel.localeCompare(a.velageReel));
+    const prev=autresVelages[0];
+    const jIVV=Math.round((new Date(r.velageReel)-new Date(prev.velageReel))/864e5);
+    if(jIVV>390)ivvLongs.push({vache,jIVV});
+  });
+  if(ivvLongs.length>0){
+    const excedent=ivvLongs.reduce((s,x)=>s+(x.jIVV-365),0);
+    const gainAnnuel=Math.round(excedent/365*nbVL*9000*PRIX_LAIT/nbVL*ivvLongs.length);
+    results.push({
+      id:'ivv',niveau:ivvLongs.length>3?'urgent':'attn',
+      icon:'📅',titre:'Intervalles vêlage-vêlage trop longs',
+      resume:`${ivvLongs.length} VL avec IVV > 390j`,
+      gainAnnuel:Math.max(gainAnnuel,50*ivvLongs.length),
+      detail:`<strong>Objectif :</strong> IVV ≤ 365 jours (un veau par vache par an). Chaque jour en plus = production perdue sur la meilleure partie de la courbe de lactation.<br><br>
+<strong>Vaches concernées :</strong> ${ivvLongs.map(x=>`<span class="badge b-amber">${x.vache.nom} (${x.jIVV}j)</span>`).join(' ')}<br><br>
+<strong>Leviers :</strong> Détection des chaleurs, bilan de fécondité, réduction des anoestrus post-partum.`,
+    });
+  }
+
+  // ── Analyse 4 : Vaches sans reprise repro 60-180 j ───────────────
+  const anoestrus=[];
+  vaches.forEach(a=>{
+    // Trouver le dernier vêlage réel
+    const velages=D.repros.filter(r=>r.vache===a.id&&r.velageReel).sort((x,y)=>y.velageReel.localeCompare(x.velageReel));
+    if(!velages.length)return;
+    const lastVelage=velages[0].velageReel;
+    const joursDepuis=Math.round((now-new Date(lastVelage))/864e5);
+    if(joursDepuis<60||joursDepuis>180)return;
+    // Vérifier si une IA/saillie a eu lieu depuis
+    const hasRepro=D.repros.some(r=>r.vache===a.id&&r.dateSaillie&&r.dateSaillie>lastVelage);
+    if(!hasRepro)anoestrus.push({a,joursDepuis});
+  });
+  if(anoestrus.length>0){
+    const coutAnoestrus=anoestrus.length*80; // ~80€/vache anoestrus (IDELE)
+    results.push({
+      id:'anoestrus',niveau:'attn',
+      icon:'💚',titre:'Vaches sans reprise de reproduction',
+      resume:`${anoestrus.length} VL entre 60 et 180j post-vêlage non inséminées`,
+      gainAnnuel:coutAnoestrus,
+      detail:`<strong>Rappel :</strong> La saillie fécondante idéale est après 60 jours. Au-delà de 180j sans reprise, l'IVV se dégrade mécaniquement.<br><br>
+<strong>Vaches concernées :</strong> ${anoestrus.map(x=>`<span class="badge b-amber">${x.a.nom} (${x.joursDepuis}j)</span>`).join(' ')}<br><br>
+<strong>Leviers :</strong> Bilan métabolique, détection des chaleurs, consultation vétérinaire si anoestrus prolongé.`,
+    });
+  }
+
+  // ── Analyse 5 : Génisses > 28 mois non vêlées ────────────────────
+  const genissesTardives=D.animaux.filter(a=>{
+    if(a.type!=='Génisse'||!a.naissance)return false;
+    const ageMois=Math.round((now-new Date(a.naissance))/864e5/30.5);
+    if(ageMois<=28)return false;
+    // Pas encore de vêlage réel
+    return !D.repros.some(r=>r.vache===a.id&&r.velageReel);
+  });
+  if(genissesTardives.length>0){
+    const coutRetard=genissesTardives.reduce((s,a)=>{
+      const ageMois=Math.round((now-new Date(a.naissance))/864e5/30.5);
+      return s+(ageMois-28)*50;
+    },0);
+    results.push({
+      id:'genisses',niveau:'attn',
+      icon:'🐄',titre:'Génisses à mise à la reproduction tardive',
+      resume:`${genissesTardives.length} génisse(s) > 28 mois non vêlées`,
+      gainAnnuel:coutRetard,
+      detail:`<strong>Référence IDELE :</strong> Coût estimé à 50€/mois de retard au-delà de 28 mois (alimentation improductive, délai d'entrée en production).<br><br>
+<strong>Génisses concernées :</strong> ${genissesTardives.map(a=>{const m=Math.round((now-new Date(a.naissance))/864e5/30.5);return`<span class="badge b-amber">${a.nom} (${m}m)</span>`}).join(' ')}<br><br>
+<strong>Leviers :</strong> Suivi croissance, insémination précoce si >340kg, bilan alimentaire.`,
+    });
+  }
+
+  // ── Analyse 6 : Candidates à la réforme ─────────────────────────
+  const candidatesReforme=[];
+  vaches.forEach(a=>{
+    let score=0;
+    if(a.naissance){const age=Math.round((now-new Date(a.naissance))/365.25/864e5);if(age>9)score+=3;else if(age>7)score+=1;}
+    if((a._ml_leucos||0)>800)score+=2;
+    if((a._ml_lact||0)>=9)score+=2;
+    const lastRepro=D.repros.filter(r=>r.vache===a.id).sort((x,y)=>(y.dateSaillie||'').localeCompare(x.dateSaillie||''))[0];
+    if(lastRepro&&!lastRepro.velageReel&&lastRepro.dateSaillie){
+      const ivvEst=Math.round((now-new Date(lastRepro.dateSaillie))/864e5)+280;
+      if(ivvEst>450)score+=2;
+    }
+    if(a._ml_lait24!=null&&a._ml_lait24<4)score+=2;
+    if(score>=4)candidatesReforme.push({a,score});
+  });
+  candidatesReforme.sort((x,y)=>y.score-x.score);
+  if(candidatesReforme.length>0){
+    results.push({
+      id:'reforme',niveau:candidatesReforme.length>4?'attn':'ok',
+      icon:'📋',titre:'Candidates à la réforme',
+      resume:`${candidatesReforme.length} VL avec profil de réforme (score âge + cellules + lactation + IVV)`,
+      gainAnnuel:null,
+      detail:`<strong>Critères combinés :</strong> âge, CCS chroniques, lactation élevée, IVV estimé long, production faible.<br><br>
+<strong>Profils concernés :</strong> ${candidatesReforme.slice(0,6).map(x=>`<span class="badge b-purple">${x.a.nom} (score ${x.score})</span>`).join(' ')}<br><br>
+<strong>Décision :</strong> Ces vaches méritent une attention au moment du tarissement — réforme anticipée ou maintien selon l'état général et le génétique.`,
+    });
+  }
+
+  return results;
+}
+
+function renderConseils(){
+  const conseils=calcConseils();
+  const nbAct=conseils.filter(c=>c.niveau==='urgent'||c.niveau==='attn').length;
+  const cnt=document.getElementById('cnt-conseils');
+  if(cnt)cnt.textContent=nbAct||'';
+
+  const el=document.getElementById('conseils-list');if(!el)return;
+  if(!conseils.length){
+    el.innerHTML='<div class="empty"><div class="e-icon">✅</div><p>Aucun levier identifié — données insuffisantes ou troupeau à l\'objectif</p></div>';
+    return;
+  }
+  el.innerHTML=conseils.map(c=>{
+    const cls=c.niveau==='urgent'?'cc-urgent':c.niveau==='attn'?'cc-attn':'cc-ok';
+    const bCls=c.niveau==='urgent'?'b-red':c.niveau==='attn'?'b-amber':'b-green';
+    const gainStr=c.gainAnnuel?`<span class="badge ${bCls}" style="font-size:12px">~${c.gainAnnuel.toLocaleString('fr-FR')} €/an</span>`:'';
+    return`<div class="conseil-card ${cls}">
+      <div class="conseil-card-head" onclick="toggleConseil('${c.id}')">
+        <div class="conseil-card-title">
+          <span class="cc-icon">${c.icon}</span>
+          <div><h4>${c.titre}</h4><div class="cc-sub">${c.resume}</div></div>
+        </div>
+        <div class="conseil-card-meta">${gainStr}<span class="cc-chev" id="cc-chev-${c.id}">›</span></div>
+      </div>
+      <div class="conseil-card-body" id="cc-body-${c.id}">${c.detail}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleConseil(id){
+  const body=document.getElementById('cc-body-'+id);
+  const chev=document.getElementById('cc-chev-'+id);
+  const head=body?.previousElementSibling;
+  if(!body)return;
+  const open=body.classList.toggle('open');
+  if(chev)chev.classList.toggle('open',open);
+  if(head)head.classList.toggle('open',open);
+}
+
+function renderDashConseils(){
+  const conseils=calcConseils();
+  const nbAct=conseils.filter(c=>c.niveau==='urgent'||c.niveau==='attn').length;
+  const badge=document.getElementById('dash-conseils-badge');
+  if(badge){badge.textContent=nbAct+' levier'+(nbAct>1?'s':'');badge.style.display=nbAct?'':'none';}
+  const el=document.getElementById('dash-conseils-body');if(!el)return;
+  if(!conseils.length){el.innerHTML='<div class="empty" style="padding:16px"><p>Données insuffisantes</p></div>';return;}
+  const top3=conseils.slice(0,3);
+  let total=0;top3.forEach(c=>{if(c.gainAnnuel)total+=c.gainAnnuel;});
+  el.innerHTML=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+    ${top3.map(c=>{
+      const bCls=c.niveau==='urgent'?'b-red':c.niveau==='attn'?'b-amber':'b-green';
+      return`<span class="badge ${bCls}">${c.icon} ${c.titre}</span>`;
+    }).join('')}
+  </div>
+  <div style="font-size:12px;color:var(--ink3)">Gain annuel estimé (Top 3) : <strong style="color:var(--brand)">${total?'~'+total.toLocaleString('fr-FR')+' €':'-'}</strong> · Cliquer pour le détail →</div>`;
+}
+
 function renderAll(){
-  renderAnimaux();renderRepro();renderSante();renderTaureaux();renderDashboard();renderBilan();renderAides();renderPlanVaccinal();renderJournal();renderViande();renderBDNI();updateCounts();updateTitle();
+  renderAnimaux();renderRepro();renderSante();renderTaureaux();renderDashboard();renderBilan();renderAides();renderPlanVaccinal();renderJournal();renderViande();renderBDNI();renderConseils();updateCounts();updateTitle();
 }
 
 // ========================================
