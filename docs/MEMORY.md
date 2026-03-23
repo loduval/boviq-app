@@ -148,3 +148,5 @@ a007a06  feat: page Santé Mamelles - sparklines, code couleur, modal
 1e15c4c  fix: grid 2x2 direct dashboard
 71ceea1  fix: fi.value='' dans Promise.all (import Windows)
 ```
+
+- BOVIQ GITHUB STORAGE: Migration localStorage→GitHub centralisé (commit d6db446). data/boviq-data.json=source vérité (160 animaux, 134 sante, 28 repros). load()=async fetch raw.githubusercontent.com. save()=debounce 1.5s→GitHub API PUT. PAT stocké en localStorage[boviq_gh_pat] par appareil. Badge sync dans sidebar. Modal PAT id=m-pat. Fallback=INIT_DATA embarqué si offline. Keyword: BOVIQ GITHUB.
