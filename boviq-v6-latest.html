@@ -1827,7 +1827,7 @@ function saveAnimal(){
   }
   const i=D.animaux.findIndex(x=>x.id===o.id);
   i>=0?D.animaux[i]=o:D.animaux.push(o);
-  save();closeM('animal');load().then(()=>{popSelects();renderAll();if(!getPAT())setSyncBadge('nopat');});
+  save();closeM('animal');popSelects();renderAll();
 }
 function delAnimal(id){if(!confirm('Supprimer cet animal ?'))return;D.animaux=D.animaux.filter(x=>x.id!==id);save();popSelects();renderAll()}
 
@@ -5901,7 +5901,7 @@ function closePopupAlertes(){
   }
 }
 
-popSelects();renderAll();
+load().then(()=>{popSelects();renderAll();if(!getPAT())setSyncBadge('nopat');});
 // Scan depuis index.html : ?scan=BOUCLE → ouvre directement la fiche
 let _skipPopupAlertes=false;
 (function(){
