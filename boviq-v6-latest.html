@@ -5961,6 +5961,89 @@ function calcConseils(){
     });
   }
 
+  // ── Analyse 7 : TP < 30g ─────────────────────────────────────────
+  const tpBas=vaches.filter(a=>a._ml_tp!=null&&a._ml_tp>0&&a._ml_tp<30);
+  if(tpBas.length>0){
+    const moyTP=tpBas.reduce((s,a)=>s+a._ml_tp,0)/tpBas.length;
+    // ~0.5€/1000L/point TP × 305j × prod moy
+    const prodMoy=vaches.filter(a=>a._ml_lait24>0).reduce((s,a)=>s+a._ml_lait24,0)/Math.max(1,vaches.filter(a=>a._ml_lait24>0).length);
+    const gainEstTP=Math.round(tpBas.length*(30-moyTP)*0.5*prodMoy*305/1000);
+    results.push({
+      id:'tp',niveau:tpBas.length>10?'urgent':'attn',
+      icon:'🧪',titre:'Taux protéique insuffisant',
+      resume:`${tpBas.length} VL < 30 g/kg TP (moy. ${moyTP.toFixed(1)} g/kg)`,
+      gainAnnuel:gainEstTP,
+      detail:`<strong>Seuil laiterie :</strong> Le TP conditionne les primes qualité (généralement déclenchées > 30 g/kg). Signal direct d'un déficit énergétique ou protéique.<br><br>
+<strong>Vaches concernées :</strong> ${tpBas.map(a=>`<span class="badge b-red">${a.nom} (${a._ml_tp}g)</span>`).join(' ')}<br><br>
+<strong>Leviers :</strong> Équilibre PDI/énergie de la ration, apport PDIN/PDIE, vérification des matières premières (tourteau, maïs ensilage), suivi du stade de lactation.`,
+    });
+  }
+
+  // ── Analyse 8 : Ratio TB/TP < 1.2 (acidose ruminale) ─────────────
+  const acidose=vaches.filter(a=>a._ml_tb&&a._ml_tp&&a._ml_tp>0&&(a._ml_tb/a._ml_tp)<1.2);
+  if(acidose.length>0){
+    results.push({
+      id:'acidose',niveau:acidose.length>5?'urgent':'attn',
+      icon:'⚗️',titre:'Suspicion d\'acidose ruminale (ratio TB/TP)',
+      resume:`${acidose.length} VL avec ratio TB/TP < 1,2`,
+      gainAnnuel:null,
+      detail:`<strong>Indicateur :</strong> Un ratio TB/TP < 1,2 est un signal d'alerte d'acidose ruminale subaiguë (SARA), souvent liée à un excès de glucides fermentescibles ou un manque de fibres longues.<br><br>
+<strong>Vaches concernées :</strong> ${acidose.map(a=>`<span class="badge b-red">${a.nom} (${(a._ml_tb/a._ml_tp).toFixed(2)})</span>`).join(' ')}<br><br>
+<strong>Leviers :</strong> Audit de la ration (ratio fourrages/concentrés), fourrage long disponible en permanence, fractionnement des apports de concentré, bilan NDF/amidon.`,
+    });
+  }
+
+  // ── Analyse 9 : Urée lait hors normes ────────────────────────────
+  const ureeHaute=vaches.filter(a=>a._ml_uree!=null&&a._ml_uree>300);
+  const ureeBasse=vaches.filter(a=>a._ml_uree!=null&&a._ml_uree>0&&a._ml_uree<150);
+  const ureeKo=[...ureeHaute,...ureeBasse];
+  if(ureeKo.length>0){
+    results.push({
+      id:'uree',niveau:ureeKo.length>6?'attn':'ok',
+      icon:'🌿',titre:'Urée lait hors normes',
+      resume:`${ureeBasse.length} VL < 150 mg/L (déficit énergie) + ${ureeHaute.length} VL > 300 mg/L (excès azote)`,
+      gainAnnuel:null,
+      detail:`<strong>Références :</strong> Urée lait normale = 150–300 mg/L. En dessous : déficit énergétique (la vache catabolise ses protéines musculaires). Au-dessus : excès d'azote dégradable ou manque d'énergie de fermentation.<br><br>
+${ureeBasse.length?`<strong>Urée < 150 (${ureeBasse.length}) :</strong> ${ureeBasse.map(a=>`<span class="badge b-amber">${a.nom} (${a._ml_uree})</span>`).join(' ')}<br>`:''}\
+${ureeHaute.length?`<strong>Urée > 300 (${ureeHaute.length}) :</strong> ${ureeHaute.map(a=>`<span class="badge b-red">${a.nom} (${a._ml_uree})</span>`).join(' ')}<br>`:''}
+<br><strong>Leviers :</strong> Ajustement du ratio énergie/azote de la ration, bilan PDIN/PDIE, consultation nutritionniste.`,
+    });
+  }
+
+  // ── Analyse 10 : Production en forte baisse ───────────────────────
+  const forteBaisse=vaches.filter(a=>a._ml_var_lait!=null&&a._ml_var_lait<-15);
+  if(forteBaisse.length>0){
+    const gainProd=forteBaisse.reduce((s,a)=>{
+      const prod=a._ml_lait24||0;
+      const perteL=prod*Math.abs(a._ml_var_lait)/100;
+      return s+perteL*305*PRIX_LAIT;
+    },0);
+    results.push({
+      id:'baisse-prod',niveau:'attn',
+      icon:'📉',titre:'Chutes de production individuelles',
+      resume:`${forteBaisse.length} VL avec baisse > 15% vs dernier contrôle`,
+      gainAnnuel:Math.round(gainProd),
+      detail:`<strong>Seuil :</strong> Une baisse > 15% entre deux contrôles sans explication (tarissement prévu, stress thermique collectif) peut signaler une pathologie (mammite subclinique, trouble digestif, boiterie).<br><br>
+<strong>Vaches concernées :</strong> ${forteBaisse.map(a=>`<span class="badge b-amber">${a.nom} (${a._ml_var_lait}%)</span>`).join(' ')}<br><br>
+<strong>Leviers :</strong> Contrôle sanitaire individuel, détection mammite, vérification locomotion, bilan alimentation.`,
+    });
+  }
+
+  // ── Analyse 11 : CCS prévues élevées ─────────────────────────────
+  const leucoPrevEl=vaches.filter(a=>(a._ml_leuco_prev||0)>400);
+  if(leucoPrevEl.length>0){
+    const coutAntic=leucoPrevEl.length*180;
+    results.push({
+      id:'leuco-prev',niveau:'attn',
+      icon:'🔮',titre:'Cellules prévues élevées au prochain contrôle',
+      resume:`${leucoPrevEl.length} VL avec CCS prévisionnelles > 400k`,
+      gainAnnuel:coutAntic,
+      detail:`<strong>Prévision :</strong> Le modèle de contrôle laitier estime que ces vaches dépasseront 400k cellules au prochain contrôle. Agir maintenant coûte moins cher qu'un traitement curatif.<br><br>
+<strong>Vaches concernées :</strong> ${leucoPrevEl.map(a=>`<span class="badge b-amber">${a.nom} (prev. ${a._ml_leuco_prev}k)</span>`).join(' ')}<br><br>
+<strong>Leviers :</strong> Prévention prophylactique (nettoyage trayons, post-trempage), bilan trayeurs, décision de tarissement sélectif anticipé.`,
+    });
+  }
+
   // ── Analyse 6 : Candidates à la réforme ─────────────────────────
   const candidatesReforme=[];
   vaches.forEach(a=>{
