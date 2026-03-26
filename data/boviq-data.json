@@ -4605,6 +4605,25 @@
       ],
       "ordonnance": "",
       "notes": ""
+    },
+    {
+      "id": "mn75ww3gpg02",
+      "date": "2026-03-10",
+      "animaux": [
+        "mmtopm6eckrz"
+      ],
+      "lignes": [
+        {
+          "type": "Antibiotique",
+          "produit": "Orbenor",
+          "posologie": "",
+          "intervenant": "Éleveur",
+          "delaiLait": 46,
+          "delaiViande": 0
+        }
+      ],
+      "ordonnance": "",
+      "notes": ""
     }
   ],
   "taureaux": [
