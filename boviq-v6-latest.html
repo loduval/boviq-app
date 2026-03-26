@@ -1570,7 +1570,7 @@ async function _saveToGitHub(){
 function setSyncBadge(status){
   const el=document.getElementById('sync-badge');
   if(!el)return;
-  const cfg={idle:['',''],pending:['⏳',''],syncing:['↻ sync...','color:var(--amber)'],ok:['☁ synced','color:var(--teal)'],error:['⚠ erreur','color:#e53'],nopat:['🔑 token?','color:var(--amber)'],offline:['📴 local','color:var(--ink3)']};
+  const cfg={idle:['',''],pending:['⏳',''],syncing:['↻ sync...','color:var(--amber)'],ok:['☁ synced','color:var(--teal)'],error:['⚠ erreur sync','color:#e53'],nopat:['🔑 token GitHub requis','color:var(--amber)'],offline:['📴 local','color:var(--ink3)']};
   const[txt,sty]=cfg[status]||['',''];
   el.textContent=txt;el.style.cssText='font-size:10px;font-weight:600;padding:2px 8px;'+sty;
 }
@@ -1583,7 +1583,7 @@ function savePAT(){
   setSyncBadge('pending');
   _saveToGitHub();
 }
-function clearPAT(){if(confirm('Supprimer le token de cet appareil ?')){setPAT('');setSyncBadge('nopat');}}
+function clearPAT(){setPAT('');setSyncBadge('nopat');}
 function esc(s){if(!s)return'';const d=document.createElement('div');d.textContent=s;return d.innerHTML}
 
 // ========================================
@@ -7395,7 +7395,7 @@ function updateMilklicCount() {
     <p style="font-size:11px;color:var(--ink3);margin-top:8px">Créer sur github.com → Settings → Developer settings → Personal access tokens → Tokens (classic) → scope : <strong>repo</strong></p>
   </div>
   <div class="modal-f">
-    <button class="btn btn-o" onclick="clearPAT();closeM('pat')">Effacer token</button>
+    <button class="btn btn-o" onclick="if(confirm('Supprimer définitivement le token de cet appareil ?')){clearPAT();closeM('pat')}">Effacer token</button>
     <button class="btn btn-o" onclick="closeM('pat')">Annuler</button>
     <button class="btn btn-p" onclick="savePAT()">Enregistrer</button>
   </div>
