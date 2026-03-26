@@ -3641,6 +3641,24 @@
       "mere": "mm1zyz1s7622",
       "pere": "",
       "notes": "Né(e) le 23/03/2026 de Hyacinte"
+    },
+    {
+      "id": "mn76rjy91u9e",
+      "nom": "Paquerette",
+      "type": "Vache",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 9392",
+      "naissance": "2013-05-21",
+      "sexe": "Femelle",
+      "mere": "",
+      "pere": "",
+      "notes": "",
+      "statut": "",
+      "dateSortie": "",
+      "dateEntree": "",
+      "provenance": "",
+      "ancienneBoucle": "",
+      "dateRebouclage": ""
     }
   ],
   "repros": [
@@ -4547,82 +4565,6 @@
         }
       ],
       "ordonnance": "52215-52963",
-      "notes": ""
-    },
-    {
-      "id": "mn75qqky0qc6",
-      "date": "2025-09-09",
-      "animaux": [
-        "mmtn7ele8mid"
-      ],
-      "lignes": [
-        {
-          "type": "Antibiotique",
-          "produit": "Orbenor",
-          "posologie": "Dans la mamelle injection dans la mamelle",
-          "intervenant": "Éleveur",
-          "delaiLait": 46,
-          "delaiViande": 0
-        }
-      ],
-      "ordonnance": "",
-      "notes": ""
-    },
-    {
-      "id": "mn75rxtxjvsx",
-      "date": "2025-10-07",
-      "animaux": [
-        "mmtooiplb0ns"
-      ],
-      "lignes": [
-        {
-          "type": "Antibiotique",
-          "produit": "Orbenor",
-          "posologie": "Injection dans la mamelle",
-          "intervenant": "Éleveur",
-          "delaiLait": 46,
-          "delaiViande": 0
-        }
-      ],
-      "ordonnance": "",
-      "notes": ""
-    },
-    {
-      "id": "mn75sz1ax3k3",
-      "date": "2026-01-14",
-      "animaux": [
-        "mm1zyz1s7622"
-      ],
-      "lignes": [
-        {
-          "type": "Antibiotique",
-          "produit": "Orbenor",
-          "posologie": "",
-          "intervenant": "Éleveur",
-          "delaiLait": 46,
-          "delaiViande": 0
-        }
-      ],
-      "ordonnance": "",
-      "notes": ""
-    },
-    {
-      "id": "mn75ww3gpg02",
-      "date": "2026-03-01",
-      "animaux": [
-        "mmtopm6eckrz"
-      ],
-      "lignes": [
-        {
-          "type": "Antibiotique",
-          "produit": "Orbenor",
-          "posologie": "",
-          "intervenant": "Éleveur",
-          "delaiLait": 46,
-          "delaiViande": 0
-        }
-      ],
-      "ordonnance": "",
       "notes": ""
     }
   ],
