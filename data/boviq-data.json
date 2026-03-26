@@ -4567,6 +4567,25 @@
       ],
       "ordonnance": "",
       "notes": ""
+    },
+    {
+      "id": "mn75rxtxjvsx",
+      "date": "2025-10-07",
+      "animaux": [
+        "mmtooiplb0ns"
+      ],
+      "lignes": [
+        {
+          "type": "Antibiotique",
+          "produit": "",
+          "posologie": "Injection dans la mamelle",
+          "intervenant": "Éleveur",
+          "delaiLait": 46,
+          "delaiViande": 0
+        }
+      ],
+      "ordonnance": "",
+      "notes": ""
     }
   ],
   "taureaux": [
