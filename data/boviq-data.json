@@ -4548,6 +4548,25 @@
       ],
       "ordonnance": "52215-52963",
       "notes": ""
+    },
+    {
+      "id": "mn75qqky0qc6",
+      "date": "2025-09-09",
+      "animaux": [
+        "mmtn7ele8mid"
+      ],
+      "lignes": [
+        {
+          "type": "Antibiotique",
+          "produit": "Orbenor",
+          "posologie": "Dans la mamelle injection dans la mamelle",
+          "intervenant": "Éleveur",
+          "delaiLait": 46,
+          "delaiViande": 0
+        }
+      ],
+      "ordonnance": "",
+      "notes": ""
     }
   ],
   "taureaux": [
