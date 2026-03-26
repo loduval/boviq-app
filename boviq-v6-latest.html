@@ -7543,7 +7543,9 @@ function renderStats() {
   }
 
   // ── MilkLic ─────────────────────────────────────────────────
-  const ml = D.mlControles && D.mlControles.length ? D.mlControles[D.mlControles.length-1] : null;
+  const ml = (D.mlControles && D.mlControles.length ? D.mlControles : (() => {
+    try { const loc = JSON.parse(localStorage.getItem('boviq')||'{}'); return loc.mlControles||[]; } catch(e){ return []; }
+  })()).slice(-1)[0] || null;
   document.getElementById('stats-milklic-section').style.display = ml ? '' : 'none';
   if (!ml) return;
   document.getElementById('stats-ml-date').textContent = 'Contrôle du ' + new Date(ml.date).toLocaleDateString('fr-FR');
