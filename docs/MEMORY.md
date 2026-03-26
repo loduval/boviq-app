@@ -1,14 +1,14 @@
 # BOVIQ — MEMORY SESSION
 
-Dernière mise à jour : **23/03/2026 — 12h15** — Session features + fixes dashboard
+Dernière mise à jour : **26/03/2026 — 17h30** — Session Stats + fix PAT token + module Lait
 
 ---
 
-## État du projet — 23/03/2026 12h15
+## État du projet — 26/03/2026 17h30
 
 | Fichier | Lignes | Dernier commit |
 |---------|--------|----------------|
-| `boviq-v6-latest.html` | 7 404 | `6ae0783` |
+| `boviq-v6-latest.html` | ~7 750 | `4858d7e` |
 | `boviq-milklic.html` | 973 | `b48dbee` |
 | `boviq-cours-marche.html` | ~1 139 | — |
 | `index.html` | 370 | `4cae003` (NE JAMAIS ÉCRASER) |
@@ -44,7 +44,45 @@ Dernière mise à jour : **23/03/2026 — 12h15** — Session features + fixes d
 
 ---
 
-## ✅ FEATURES LIVRÉES cette session (23/03/2026)
+## ✅ FEATURES LIVRÉES session 26/03/2026
+
+### Page Statistiques (`id="p-stats"`) — 9 graphiques Chart.js
+| Graphique | Source | Contenu |
+|---|---|---|
+| Camembert revenus | Bilan 2024 | Lait 59% / Aides 20% / Viande 19% / Divers 2% |
+| Camembert troupeau | STATE.animaux | VL / Génisses / Mâles / Veaux |
+| Histogramme charges | Bilan 2024 | Alim / Véto / Élevage / SF / Structure |
+| Histogramme ventes | Bilan 2024 | Vaches / Veaux / Génisses / Taureaux en € |
+| Pyramide naissances | STATE.animaux | 2010→2026 par année |
+| Distribution production | mlControles | Tranches L/j — 82 vaches |
+| Cellules somatiques | mlControles | Camembert <200k / 200-400k / >400k |
+| TB individuel | mlControles | Barres triées, seuil 38 g/kg |
+| TP individuel | mlControles | Barres triées, seuil 32 g/kg |
+
+**Architecture** : `renderStats()` → Chart.js chargé async si absent → bouton ↺ Actualiser
+**MilkLic fallback** : lit `localStorage['boviq'].mlControles` si `D.mlControles` vide (GitHub Pages)
+
+### Fix PAT token GitHub
+- Bouton "Effacer token" → confirm obligatoire avant suppression
+- Badge `nopat` → message explicite `🔑 token GitHub requis`
+- Token ne saute plus sur erreur 401 (pas de `clearPAT()` automatique)
+
+### Module BOVIQ Lait (fichier standalone `boviq-module-lait.html`)
+- Suivi quotas printemps Montsûrs (mars-juillet)
+- Alertes contractuelles (seuil bas 4%, dépassement quota)
+- CA estimé mensuel + indemnité tank
+- Simulateur décalage juillet→août
+
+### Diagnostics EARL La Rousselière (documents analysés)
+- 160 animaux Simmental | production 2025 : ~235 000 L
+- Prix lait 2025 : moy 496€/kL | 2026 : moy 508€/kL (grille Montsûrs)
+- TB moy 36.3g (sous seuil 38) | TP moy 28.4g (sous 32 → pénalité probable)
+- 11 vaches >400k cellules (mammites) | CA lait ~117k€/an
+- Bilan 2024 : EBE 56 912€ | Résultat net -13 429€ | Charges structure 74 140€
+
+---
+
+## ✅ FEATURES LIVRÉES session 23/03/2026
 
 ### 8 features implémentées
 | # | Feature | Détail |
@@ -136,3 +174,5 @@ Dernière mise à jour : **23/03/2026 — 12h15** — Session features + fixes d
 | `BOVIQ GITHUB` | storage centralisé GitHub |
 | `BOVIQ CONSEILS` | module 23 analyses zootechniques/économiques |
 | `BOVIQ AIDES` | page aides éleveur + dossier LBC/MAEC |
+| `BOVIQ STATS` | page Statistiques — 9 graphiques Chart.js |
+| `BOVIQ LAIT` | module quotas Montsûrs + optimisation lactation |

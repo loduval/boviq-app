@@ -1,6 +1,6 @@
 # BOVIQ — INDEX DES FICHIERS
 
-Dernière mise à jour : **23/03/2026 12h15**
+Dernière mise à jour : **26/03/2026 17h30**
 
 ---
 
@@ -9,9 +9,10 @@ Dernière mise à jour : **23/03/2026 12h15**
 | Fichier | Rôle | Lignes |
 |---------|------|--------|
 | `index.html` | **HUB** — page d'accueil GitHub Pages (**NE JAMAIS ÉCRASER**) | 370 |
-| `boviq-v6-latest.html` | App principale troupeau V6 | 7 404 |
+| `boviq-v6-latest.html` | App principale troupeau V6 — 9 charts Stats | ~7 750 |
 | `boviq-milklic.html` | Module contrôle laitier MilKlic | 973 |
 | `boviq-cours-marche.html` | Module cours marché DG AGRI | ~1 139 |
+| `boviq-module-lait.html` | Module quotas Montsûrs + lactation (standalone) | ~500 |
 | `lbc-maec-rousseliere.html` | Dossier HTML imprimable LBC/MAEC | — |
 
 ---
