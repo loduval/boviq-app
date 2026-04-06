@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated": "2026-03-30T08:22:35.474105+00:00",
+    "generated": "2026-04-06T08:23:03.599999+00:00",
     "source": "DG AGRI — Commission Européenne",
     "country": "France",
     "milk_unit": "EUR/100kg",
@@ -8,14 +8,10 @@
   },
   "milk": {
     "latest": {
-      "period": "2026m02",
-      "price": 44.93
+      "period": "2026m03",
+      "price": 43.53
     },
     "prices": [
-      {
-        "period": "2023m03",
-        "price": 48.51
-      },
       {
         "period": "2023m04",
         "price": 46.93
@@ -154,7 +150,11 @@
       },
       {
         "period": "2026m02",
-        "price": 44.93
+        "price": 46.89
+      },
+      {
+        "period": "2026m03",
+        "price": 43.53
       }
     ]
   },
