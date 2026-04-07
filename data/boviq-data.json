@@ -3659,6 +3659,18 @@
       "provenance": "",
       "ancienneBoucle": "",
       "dateRebouclage": ""
+    },
+    {
+      "id": "mnofahtv9wna",
+      "nom": "Batavia",
+      "type": "Génisse",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 9986",
+      "naissance": "2026-04-06",
+      "sexe": "Femelle",
+      "mere": "mmto7zp3i1ht",
+      "pere": "",
+      "notes": "Né(e) le 06/04/2026 de Roquette"
     }
   ],
   "repros": [
@@ -4176,6 +4188,18 @@
       "sexeVeau": "Mâle",
       "poids": "",
       "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mnofahtvqhtk",
+      "vache": "mmto7zp3i1ht",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-04-06",
+      "sexeVeau": "Femelle",
+      "poids": "",
+      "facilite": "1 — Seule",
       "notes": "Déni de grossesse — "
     }
   ],
