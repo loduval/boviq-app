@@ -4590,6 +4590,26 @@
       ],
       "ordonnance": "52215-52963",
       "notes": ""
+    },
+    {
+      "id": "mnsmy5a1x23l",
+      "date": "2026-04-10",
+      "animaux": [
+        "mm1zyz1s7622",
+        "mm203wz4ph6k"
+      ],
+      "lignes": [
+        {
+          "type": "Vermifuge",
+          "produit": "Eprinex",
+          "posologie": "",
+          "intervenant": "Éleveur",
+          "delaiLait": 0,
+          "delaiViande": 15
+        }
+      ],
+      "ordonnance": "",
+      "notes": ""
     }
   ],
   "taureaux": [
