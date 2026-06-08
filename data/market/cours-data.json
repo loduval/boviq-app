@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated": "2026-06-01T12:40:12.753510+00:00",
+    "generated": "2026-06-08T11:59:54.280102+00:00",
     "source": "DG AGRI — Commission Européenne",
     "country": "France",
     "milk_unit": "EUR/100kg",
@@ -8,14 +8,10 @@
   },
   "milk": {
     "latest": {
-      "period": "2026m04",
-      "price": 43.21
+      "period": "2026m05",
+      "price": 43.02
     },
     "prices": [
-      {
-        "period": "2023m05",
-        "price": 45.37
-      },
       {
         "period": "2023m06",
         "price": 45.63
@@ -146,41 +142,45 @@
       },
       {
         "period": "2026m02",
-        "price": 46.89
+        "price": 46.74
       },
       {
         "period": "2026m03",
-        "price": 45.38
+        "price": 45.4
       },
       {
         "period": "2026m04",
-        "price": 43.21
+        "price": 45.25
+      },
+      {
+        "period": "2026m05",
+        "price": 43.02
       }
     ]
   },
   "beef": {
-    "week_date": "28.05.2026",
+    "week_date": "04.06.2026",
     "prices": {
-      "jb_u2": 718.0,
-      "jb_u3": 694.0,
+      "jb_u2": 714.0,
+      "jb_u3": 690.0,
       "jb_r2": 688.0,
-      "jb_r3": 676.0,
-      "jb_o2": 642.0,
-      "jb_o3": 634.0,
-      "boeuf_r3": 706.0,
-      "boeuf_o3": 636.0,
-      "vache_r3": 724.0,
-      "vache_r4": 710.0,
-      "vache_o2": 663.0,
-      "vache_o3": 626.0,
-      "vache_o4": 605.0,
-      "vache_p2": 573.0,
-      "vache_p3": 591.0,
-      "genisse_u3": 791.0,
-      "genisse_r2": 729.0,
-      "genisse_r3": 733.0,
-      "genisse_r4": 714.0,
-      "genisse_o3": 652.0
+      "jb_r3": 672.0,
+      "jb_o2": 638.0,
+      "jb_o3": 629.0,
+      "boeuf_r3": 707.0,
+      "boeuf_o3": 642.0,
+      "vache_r3": 725.0,
+      "vache_r4": 713.0,
+      "vache_o2": 664.0,
+      "vache_o3": 629.0,
+      "vache_o4": 606.0,
+      "vache_p2": 572.0,
+      "vache_p3": 590.0,
+      "genisse_u3": 790.0,
+      "genisse_r2": 728.0,
+      "genisse_r3": 731.0,
+      "genisse_r4": 712.0,
+      "genisse_o3": 664.0
     }
   }
 }
