@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated": "2026-07-20T10:14:23.158373+00:00",
+    "generated": "2026-07-27T10:44:17.189736+00:00",
     "source": "DG AGRI — Commission Européenne",
     "country": "France",
     "milk_unit": "EUR/100kg",
@@ -159,28 +159,28 @@
     ]
   },
   "beef": {
-    "week_date": "16.07.2026",
+    "week_date": "23.07.2026",
     "prices": {
-      "jb_u2": 693.0,
-      "jb_u3": 671.0,
-      "jb_r2": 666.0,
-      "jb_r3": 658.0,
-      "jb_o2": 627.0,
-      "jb_o3": 618.0,
-      "boeuf_r3": 689.0,
-      "boeuf_o3": 639.0,
-      "vache_r3": 722.0,
-      "vache_r4": 713.0,
-      "vache_o2": 670.0,
-      "vache_o3": 625.0,
-      "vache_o4": 605.0,
-      "vache_p2": 568.0,
-      "vache_p3": 586.0,
-      "genisse_u3": 790.0,
-      "genisse_r2": 735.0,
-      "genisse_r3": 729.0,
-      "genisse_r4": 709.0,
-      "genisse_o3": 661.0
+      "jb_u2": 689.0,
+      "jb_u3": 665.0,
+      "jb_r2": 662.0,
+      "jb_r3": 650.0,
+      "jb_o2": 618.0,
+      "jb_o3": 611.0,
+      "boeuf_r3": 686.0,
+      "boeuf_o3": 631.0,
+      "vache_r3": 719.0,
+      "vache_r4": 711.0,
+      "vache_o2": 662.0,
+      "vache_o3": 619.0,
+      "vache_o4": 624.0,
+      "vache_p2": 559.0,
+      "vache_p3": 578.0,
+      "genisse_u3": 787.0,
+      "genisse_r2": 725.0,
+      "genisse_r3": 723.0,
+      "genisse_r4": 713.0,
+      "genisse_o3": 654.0
     }
   }
 }
