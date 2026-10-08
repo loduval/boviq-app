@@ -4089,6 +4089,41 @@
       ],
       "ordonnance": "54238",
       "notes": ""
+    },
+    {
+      "id": "muzdv0ypksmj",
+      "date": "2026-10-06",
+      "animaux": [
+        "mmtnesr6zh71"
+      ],
+      "lignes": [
+        {
+          "type": "Autre",
+          "produit": "NaCl",
+          "posologie": "3 cl",
+          "intervenant": "Vétérinaire",
+          "delaiLait": 0,
+          "delaiViande": 0
+        },
+        {
+          "type": "Autre",
+          "produit": "Biovedine",
+          "posologie": "500 ml",
+          "intervenant": "Vétérinaire",
+          "delaiLait": 0,
+          "delaiViande": 0
+        },
+        {
+          "type": "Autre",
+          "produit": "Carbonate de calcium",
+          "posologie": "13 g dans 500 ml",
+          "intervenant": "Vétérinaire",
+          "delaiLait": 0,
+          "delaiViande": 0
+        }
+      ],
+      "ordonnance": "53069",
+      "notes": ""
     }
   ],
   "taureaux": [
