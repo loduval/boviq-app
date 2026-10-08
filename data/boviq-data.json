@@ -4162,6 +4162,25 @@
       ],
       "ordonnance": "55630",
       "notes": ""
+    },
+    {
+      "id": "muze3b4tkc02",
+      "date": "2026-08-21",
+      "animaux": [
+        "mmto6xifptkw"
+      ],
+      "lignes": [
+        {
+          "type": "Traitement curatif",
+          "produit": "enzaprost",
+          "posologie": "5ml",
+          "intervenant": "Vétérinaire",
+          "delaiLait": 0,
+          "delaiViande": 0
+        }
+      ],
+      "ordonnance": "55673",
+      "notes": ""
     }
   ],
   "taureaux": [
