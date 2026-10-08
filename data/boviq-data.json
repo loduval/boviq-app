@@ -3185,6 +3185,24 @@
       "provenance": "",
       "ancienneBoucle": "",
       "dateRebouclage": ""
+    },
+    {
+      "id": "muzf9l9uuind",
+      "nom": "Mognolia",
+      "type": "Vache",
+      "race": "Simmental",
+      "boucle": "FR 538124 9140",
+      "naissance": "2016-03-02",
+      "sexe": "Femelle",
+      "mere": "",
+      "pere": "",
+      "notes": "",
+      "statut": "",
+      "dateSortie": "",
+      "dateEntree": "",
+      "provenance": "",
+      "ancienneBoucle": "",
+      "dateRebouclage": ""
     }
   ],
   "repros": [
