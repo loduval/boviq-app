@@ -4054,6 +4054,41 @@
       ],
       "ordonnance": "",
       "notes": ""
+    },
+    {
+      "id": "muzdozcajriy",
+      "date": "2026-10-07",
+      "animaux": [
+        "mmtnesr6zh71"
+      ],
+      "lignes": [
+        {
+          "type": "Anti-inflammatoire",
+          "produit": "metacam",
+          "posologie": "15 ml",
+          "intervenant": "Vétérinaire",
+          "delaiLait": 5,
+          "delaiViande": 15
+        },
+        {
+          "type": "Autre",
+          "produit": "biosorbidex",
+          "posologie": "500 ml",
+          "intervenant": "Vétérinaire",
+          "delaiLait": 0,
+          "delaiViande": 0
+        },
+        {
+          "type": "Autre",
+          "produit": "carbosol",
+          "posologie": "100 ml",
+          "intervenant": "Vétérinaire",
+          "delaiLait": 0,
+          "delaiViande": 0
+        }
+      ],
+      "ordonnance": "54238",
+      "notes": ""
     }
   ],
   "taureaux": [
