@@ -3296,6 +3296,24 @@
       "provenance": "",
       "ancienneBoucle": "",
       "dateRebouclage": ""
+    },
+    {
+      "id": "muzge6nflwi9",
+      "nom": "Titane",
+      "type": "Vache",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 9613",
+      "naissance": "2022-04-03",
+      "sexe": "Femelle",
+      "mere": "",
+      "pere": "",
+      "notes": "",
+      "statut": "",
+      "dateSortie": "",
+      "dateEntree": "",
+      "provenance": "",
+      "ancienneBoucle": "",
+      "dateRebouclage": ""
     }
   ],
   "repros": [
