@@ -4124,6 +4124,25 @@
       ],
       "ordonnance": "53069",
       "notes": ""
+    },
+    {
+      "id": "muzdz4n65muc",
+      "date": "2026-10-08",
+      "animaux": [
+        "mm1zyz1s7622"
+      ],
+      "lignes": [
+        {
+          "type": "Autre",
+          "produit": "brorumen",
+          "posologie": "1 sachet",
+          "intervenant": "Vétérinaire",
+          "delaiLait": 0,
+          "delaiViande": 0
+        }
+      ],
+      "ordonnance": "54110",
+      "notes": "acidose"
     }
   ],
   "taureaux": [
