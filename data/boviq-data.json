@@ -4143,6 +4143,25 @@
       ],
       "ordonnance": "54110",
       "notes": "acidose"
+    },
+    {
+      "id": "muze1dt85hge",
+      "date": "2026-08-24",
+      "animaux": [
+        "mmto6xifptkw"
+      ],
+      "lignes": [
+        {
+          "type": "Traitement curatif",
+          "produit": "bimacure",
+          "posologie": "1 seringue",
+          "intervenant": "Vétérinaire",
+          "delaiLait": 0,
+          "delaiViande": 5
+        }
+      ],
+      "ordonnance": "55630",
+      "notes": ""
     }
   ],
   "taureaux": [
