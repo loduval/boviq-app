@@ -3113,6 +3113,24 @@
       "provenance": "",
       "ancienneBoucle": "",
       "dateRebouclage": ""
+    },
+    {
+      "id": "muzf42et8t4j",
+      "nom": "Lafontaine",
+      "type": "Vache",
+      "race": "Simmental",
+      "boucle": "fr 53 8124 9064",
+      "naissance": "2015-04-01",
+      "sexe": "Femelle",
+      "mere": "",
+      "pere": "",
+      "notes": "",
+      "statut": "",
+      "dateSortie": "",
+      "dateEntree": "",
+      "provenance": "",
+      "ancienneBoucle": "",
+      "dateRebouclage": ""
     }
   ],
   "repros": [
