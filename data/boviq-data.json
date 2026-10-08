@@ -4209,6 +4209,34 @@
       ],
       "ordonnance": "52266",
       "notes": ""
+    },
+    {
+      "id": "muzedrrtzyjg",
+      "date": "2026-04-14",
+      "animaux": [
+        "mmv50iimvh8z",
+        "mnofahtv9wna"
+      ],
+      "lignes": [
+        {
+          "type": "Vaccination",
+          "produit": "BULTAVO 3",
+          "posologie": "1 ml",
+          "intervenant": "Vétérinaire",
+          "delaiLait": 0,
+          "delaiViande": 0
+        },
+        {
+          "type": "Vaccination",
+          "produit": "btv pur",
+          "posologie": "1 ml",
+          "intervenant": "Vétérinaire",
+          "delaiLait": 0,
+          "delaiViande": 0
+        }
+      ],
+      "ordonnance": "52361",
+      "notes": ""
     }
   ],
   "taureaux": [
