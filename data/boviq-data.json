@@ -3203,6 +3203,24 @@
       "provenance": "",
       "ancienneBoucle": "",
       "dateRebouclage": ""
+    },
+    {
+      "id": "muzfcrwitl7h",
+      "nom": "Mamba",
+      "type": "Vache",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 9175",
+      "naissance": "2016-05-05",
+      "sexe": "Femelle",
+      "mere": "",
+      "pere": "",
+      "notes": "",
+      "statut": "",
+      "dateSortie": "",
+      "dateEntree": "",
+      "provenance": "",
+      "ancienneBoucle": "",
+      "dateRebouclage": ""
     }
   ],
   "repros": [
