@@ -3253,6 +3253,24 @@
       "provenance": "",
       "ancienneBoucle": "",
       "dateRebouclage": ""
+    },
+    {
+      "id": "muzg4vpdeuok",
+      "nom": "Paisible",
+      "type": "Vache",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 9387",
+      "naissance": "2019-05-15",
+      "sexe": "Femelle",
+      "mere": "",
+      "pere": "",
+      "notes": "",
+      "statut": "",
+      "dateSortie": "",
+      "dateEntree": "",
+      "provenance": "",
+      "ancienneBoucle": "",
+      "dateRebouclage": ""
     }
   ],
   "repros": [
