@@ -3239,6 +3239,24 @@
       "provenance": "",
       "ancienneBoucle": "",
       "dateRebouclage": ""
+    },
+    {
+      "id": "muzfg9mtldhq",
+      "nom": "Marguerite",
+      "type": "Vache",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 9222",
+      "naissance": "2016-12-04",
+      "sexe": "Femelle",
+      "mere": "",
+      "pere": "",
+      "notes": "",
+      "statut": "",
+      "dateSortie": "",
+      "dateEntree": "",
+      "provenance": "",
+      "ancienneBoucle": "",
+      "dateRebouclage": ""
     }
   ],
   "repros": [
