@@ -3065,6 +3065,18 @@
       "mere": "mmto7zp3i1ht",
       "pere": "",
       "notes": "Né(e) le 06/04/2026 de Roquette"
+    },
+    {
+      "id": "muzew478t7q7",
+      "nom": "Veau de Métis",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0046",
+      "naissance": "2026-10-08",
+      "sexe": "Mâle",
+      "mere": "mmtmp4vuai2q",
+      "pere": "mm20npn388sp",
+      "notes": "Né(e) le 08/10/2026 de Métis"
     }
   ],
   "repros": [
@@ -3074,8 +3086,8 @@
       "taureau": "mm20npn388sp",
       "dateSaillie": "2025-12-27",
       "primo": "Non",
-      "velageReel": "",
-      "sexeVeau": "",
+      "velageReel": "2026-10-08",
+      "sexeVeau": "Mâle",
       "poids": "",
       "facilite": "",
       "notes": ""
