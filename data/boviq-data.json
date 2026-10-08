@@ -3289,6 +3289,42 @@
       "provenance": "",
       "ancienneBoucle": "",
       "dateRebouclage": ""
+    },
+    {
+      "id": "muzg9stpucey",
+      "nom": "Robusta",
+      "type": "Vache",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 9427",
+      "naissance": "2020-02-09",
+      "sexe": "Femelle",
+      "mere": "",
+      "pere": "",
+      "notes": "",
+      "statut": "",
+      "dateSortie": "",
+      "dateEntree": "",
+      "provenance": "",
+      "ancienneBoucle": "",
+      "dateRebouclage": ""
+    },
+    {
+      "id": "muzgbrv1znmx",
+      "nom": "Sidoine",
+      "type": "Vache",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 9504",
+      "naissance": "2021-01-18",
+      "sexe": "Femelle",
+      "mere": "",
+      "pere": "",
+      "notes": "",
+      "statut": "",
+      "dateSortie": "",
+      "dateEntree": "",
+      "provenance": "",
+      "ancienneBoucle": "",
+      "dateRebouclage": ""
     }
   ],
   "repros": [
