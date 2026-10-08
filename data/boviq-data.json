@@ -4425,6 +4425,26 @@
       ],
       "ordonnance": "52361",
       "notes": ""
+    },
+    {
+      "id": "mv01puseb4a3",
+      "date": "2026-10-08",
+      "animaux": [
+        "mm203wz4ph6k",
+        "mmtn50n9dcmr"
+      ],
+      "lignes": [
+        {
+          "type": "Vermifuge",
+          "produit": "Eprivalan",
+          "posologie": "50ml",
+          "intervenant": "Éleveur",
+          "delaiLait": 0,
+          "delaiViande": 0
+        }
+      ],
+      "ordonnance": "",
+      "notes": ""
     }
   ],
   "taureaux": [
