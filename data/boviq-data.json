@@ -3095,6 +3095,24 @@
       "provenance": "",
       "ancienneBoucle": "",
       "dateRebouclage": ""
+    },
+    {
+      "id": "muzf1bbuvmgh",
+      "nom": "Lutece",
+      "type": "Vache",
+      "race": "Simmental",
+      "boucle": "fr5381249048",
+      "naissance": "2015-01-26",
+      "sexe": "Femelle",
+      "mere": "",
+      "pere": "",
+      "notes": "",
+      "statut": "",
+      "dateSortie": "",
+      "dateEntree": "",
+      "provenance": "",
+      "ancienneBoucle": "",
+      "dateRebouclage": ""
     }
   ],
   "repros": [
