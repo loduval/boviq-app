@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>BOVIQ — Mise à jour en cours</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --vert-profond:#14331f; --vert:#2d6a4f; --vert-clair:#52b788;
+    --creme:#f7f4ec; --creme-2:#efe9db; --encre:#1b2a21; --encre-2:#5a6b60;
+    --ambre:#c9992e; --rayon:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    padding:32px 16px; background:var(--vert-profond); color:var(--creme);
+    font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+    background-image:radial-gradient(ellipse at 50% -20%,rgba(82,183,136,.22),transparent 60%);
+  }
+  .carte{
+    width:100%; max-width:620px; background:var(--creme); color:var(--encre);
+    border-radius:var(--rayon); overflow:hidden;
+    box-shadow:0 24px 60px rgba(0,0,0,.35);
+  }
+  .bandeau{
+    background:var(--vert); padding:34px 36px 30px; color:var(--creme);
+    border-bottom:3px solid var(--ambre);
+  }
+  .marque{
+    font-family:'Cormorant Garamond',Georgia,serif; font-size:40px; font-weight:600;
+    letter-spacing:.12em; line-height:1;
+  }
+  .sous-marque{
+    margin-top:10px; font-size:13px; letter-spacing:.18em; text-transform:uppercase;
+    color:rgba(247,244,236,.72); font-weight:500;
+  }
+  .corps{padding:34px 36px 38px}
+  h1{
+    font-family:'Cormorant Garamond',Georgia,serif; font-weight:600;
+    font-size:30px; line-height:1.25; margin-bottom:18px; color:var(--vert-profond);
+  }
+  p{font-size:15.5px; line-height:1.65; color:var(--encre-2); margin-bottom:16px}
+  p strong{color:var(--encre); font-weight:500}
+  .encadre{
+    margin:26px 0 24px; padding:20px 22px; background:var(--creme-2);
+    border-left:3px solid var(--vert-clair); border-radius:0 10px 10px 0;
+  }
+  .encadre p:last-child{margin-bottom:0}
+  .liste{list-style:none; margin:18px 0 0}
+  .liste li{
+    position:relative; padding-left:26px; margin-bottom:12px;
+    font-size:15px; line-height:1.6; color:var(--encre-2);
+  }
+  .liste li::before{
+    content:''; position:absolute; left:4px; top:9px;
+    width:7px; height:7px; border-radius:50%; background:var(--vert-clair);
+  }
+  .pied{
+    padding:20px 36px 24px; border-top:1px solid var(--creme-2);
+    font-size:13px; color:var(--encre-2); display:flex; flex-wrap:wrap;
+    gap:8px 18px; align-items:center; justify-content:space-between;
+  }
+  .etat{display:inline-flex; align-items:center; gap:9px; font-weight:500; color:var(--vert)}
+  .pastille{
+    width:9px; height:9px; border-radius:50%; background:var(--ambre);
+    box-shadow:0 0 0 0 rgba(201,153,46,.6); animation:pulse 2.2s infinite;
+  }
+  @keyframes pulse{
+    70%{box-shadow:0 0 0 11px rgba(201,153,46,0)}
+    100%{box-shadow:0 0 0 0 rgba(201,153,46,0)}
+  }
+  @media(max-width:520px){
+    .bandeau,.corps{padding-left:24px; padding-right:24px}
+    .pied{padding-left:24px; padding-right:24px}
+    .marque{font-size:34px} h1{font-size:25px}
+  }
+</style>
+</head>
+<body>
+  <main class="carte">
+    <header class="bandeau">
+      <div class="marque">BOVIQ</div>
+      <div class="sous-marque">Gestion de troupeau</div>
+    </header>
+
+    <section class="corps">
+      <h1>L'application est en cours de mise à jour</h1>
+
+      <p>
+        Après plusieurs mois de service, BOVIQ passe par un chantier de fond :
+        correction de l'import Mil'Klic, sécurisation des données et refonte
+        de l'hébergement.
+      </p>
+
+      <div class="encadre">
+        <p>
+          <strong>Vos données sont intactes et sauvegardées.</strong>
+          Rien n'a été perdu : le troupeau, les reproductions, le sanitaire et
+          le bilan sont conservés et seront restitués tels quels à la réouverture.
+        </p>
+      </div>
+
+      <p><strong>Ce qui est en cours :</strong></p>
+      <ul class="liste">
+        <li>L'import des points de contrôle Mil'Klic accepte enfin les fichiers téléchargés à la main</li>
+        <li>Un import raté ne peut plus effacer l'historique</li>
+        <li>Sauvegarde automatique fiabilisée, avec protection contre l'écrasement</li>
+        <li>Application allégée et nettement plus rapide à l'ouverture</li>
+      </ul>
+
+      <p style="margin-top:24px">
+        Merci de votre patience — l'accès rouvrira dès la fin des travaux.
+      </p>
+    </section>
+
+    <footer class="pied">
+      <span class="etat"><span class="pastille"></span>Maintenance en cours</span>
+      <span>Une question ? Contactez Laurent directement.</span>
+    </footer>
+  </main>
+</body>
+</html>
