@@ -16,6 +16,17 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
+  /* Barre laterale : echelle propre, independante du vert de marque */
+  --sidebar:#10271B;
+  --sidebar-haut:#0A1B12;
+  --sidebar-ligne:rgba(255,255,255,.09);
+  --accent:#95D5B2;
+  --accent-sourd:rgba(149,213,178,.16);
+  /* Teintes lisibles sur fond sombre */
+  --sur-sombre-ambre:#FCD34D;
+  --sur-sombre-vert:#6EE7B7;
+  --sur-sombre-rouge:#FCA5A5;
+
   /* Socle commun BOVIQ */
   --bg:#F4F1EB;
   --bg2:#EDE8DF;
@@ -69,18 +80,18 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 
 /* === SIDEBAR + LAYOUT === */
 .app{display:flex;min-height:100dvh}
-.sidebar{width:220px;background:var(--brand3);color:white;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50;transition:transform .25s;border-right:1px solid rgba(255,255,255,.05)}
-.sidebar-brand{padding:20px;display:flex;align-items:center;gap:10px}
+.sidebar{width:220px;background:var(--sidebar);color:white;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50;transition:transform .25s;border-right:1px solid rgba(255,255,255,.05)}
+.sidebar-brand{padding:20px;display:flex;align-items:center;gap:10px;background:var(--sidebar-haut);border-bottom:1px solid var(--sidebar-ligne)}
 .sidebar-brand .cow-icon{font-size:32px;line-height:1;flex-shrink:0}
 .sidebar-brand h1{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;letter-spacing:-.3px;color:#ffffff}
-.sidebar-brand span{font-size:11px;opacity:.55;font-weight:400;display:block;margin-top:2px;color:rgba(255,255,255,.8)}
+.sidebar-brand span{font-size:11px;opacity:.75;font-weight:400;display:block;margin-top:2px;color:rgba(255,255,255,.8)}
 .sidebar-nav{flex:1;padding:8px 10px;display:flex;flex-direction:column;gap:2px}
-.nav-btn{display:flex;align-items:center;gap:10px;padding:10px 14px;border:none;background:transparent;color:rgba(255,255,255,.65);font:500 13px/1 'DM Sans',sans-serif;border-radius:8px;cursor:pointer;transition:all .15s;text-align:left;width:100%}
-.nav-btn:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.9)}
-.nav-btn.active{background:rgba(255,255,255,.13);color:white;font-weight:600}
+.nav-btn{display:flex;align-items:center;gap:10px;padding:10px 14px;border:none;background:transparent;color:rgba(255,255,255,.84);font:500 13px/1 'DM Sans',sans-serif;border-radius:8px;cursor:pointer;transition:all .15s;text-align:left;width:100%}
+.nav-btn:hover{background:rgba(255,255,255,.10);color:#fff}
+.nav-btn.active{background:var(--accent-sourd);color:#fff;font-weight:600;box-shadow:inset 3px 0 0 var(--accent)}
 .nav-btn .icon{font-size:17px;width:22px;text-align:center;flex-shrink:0}
-.nav-btn .count{margin-left:auto;background:rgba(255,255,255,.15);font-size:11px;padding:2px 7px;border-radius:10px;font-weight:600}
-.sidebar-footer{padding:14px 16px;border-top:1px solid rgba(255,255,255,.08);font-size:11px;color:rgba(255,255,255,.3)}
+.nav-btn .count{margin-left:auto;background:rgba(255,255,255,.16);color:#fff;font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600;letter-spacing:.2px}
+.sidebar-footer{padding:14px 16px;background:var(--sidebar-haut);border-top:1px solid var(--sidebar-ligne);font-size:11px;color:rgba(255,255,255,.52)}
 .content{flex:1;margin-left:220px;min-height:100dvh;overflow-y:auto;display:flex;flex-direction:column}
 .topbar{display:none}
 
@@ -1694,7 +1705,7 @@ async function _saveToGitHub(){
 function setSyncBadge(status){
   const el=document.getElementById('sync-badge');
   if(!el)return;
-  const cfg={idle:['',''],pending:['⏳',''],syncing:['↻ sync...','color:var(--amber)'],ok:['☁ synced','color:var(--teal)'],error:['⚠ erreur sync','color:#e53'],nopat:['🔑 token GitHub requis','color:var(--amber)'],offline:['📴 local','color:var(--ink3)']};
+  const cfg={idle:['',''],pending:['⏳',''],syncing:['↻ sync…','color:var(--sur-sombre-ambre)'],ok:['☁ synchronisé','color:var(--sur-sombre-vert)'],error:['⚠ erreur de sync','color:var(--sur-sombre-rouge)'],nopat:['🔑 jeton GitHub requis','color:var(--sur-sombre-ambre)'],offline:['📴 hors ligne','color:rgba(255,255,255,.55)']};
   const[txt,sty]=cfg[status]||['',''];
   el.textContent=txt;el.style.cssText='font-size:10px;font-weight:600;padding:2px 8px;'+sty;
 }
