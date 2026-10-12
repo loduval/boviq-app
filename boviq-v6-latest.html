@@ -91,6 +91,23 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .nav-btn.active{background:var(--accent-sourd);color:#fff;font-weight:600;box-shadow:inset 3px 0 0 var(--accent)}
 .nav-btn .icon{font-size:17px;width:22px;text-align:center;flex-shrink:0}
 .nav-btn .count{margin-left:auto;background:rgba(255,255,255,.16);color:#fff;font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600;letter-spacing:.2px}
+.sidebar-ecoute{padding:12px 16px 0;background:var(--sidebar-haut);font-size:11px;line-height:1.5;color:rgba(255,255,255,.5)}
+.sidebar-ecoute a{color:rgba(255,255,255,.72);text-decoration:none;font-weight:600;letter-spacing:.3px}
+.sidebar-ecoute a:hover{color:#fff;text-decoration:underline}
+#btn-traite{background:var(--brand);color:#fff;border:none;border-radius:9px;padding:8px 14px;font:600 13px/1 'DM Sans',sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin-left:8px}
+#btn-traite:hover{background:var(--brand2)}
+.traite-overlay{position:fixed;inset:0;background:var(--sidebar);z-index:400;display:none;flex-direction:column;padding:20px;overflow-y:auto}
+.traite-overlay.open{display:flex}
+.traite-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;color:#fff}
+.traite-head h2{font-family:'Cormorant Garamond',serif;font-size:27px;font-weight:600}
+.traite-grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:24px}
+.traite-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;border-radius:14px;padding:26px 16px;font:600 16px/1.3 'DM Sans',sans-serif;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:10px;min-height:118px;justify-content:center;transition:background .15s}
+.traite-btn:hover{background:var(--accent-sourd)}
+.traite-btn .em{font-size:30px}
+.traite-bloc{background:rgba(255,255,255,.05);border-radius:14px;padding:18px 20px;color:#fff;margin-bottom:14px}
+.traite-bloc h3{font-size:14px;letter-spacing:.4px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.traite-ligne{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.09);font-size:15px}
+.traite-ligne:last-child{border-bottom:none}
 .sidebar-footer{padding:14px 16px;background:var(--sidebar-haut);border-top:1px solid var(--sidebar-ligne);font-size:11px;color:rgba(255,255,255,.52)}
 .content{flex:1;margin-left:220px;min-height:100dvh;overflow-y:auto;display:flex;flex-direction:column}
 .topbar{display:none}
@@ -789,6 +806,7 @@ body.dark-mode{
 <body>
 
 <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+<button id="btn-traite" onclick="ouvrirModeTraite()" title="Mode salle de traite — saisie rapide">🥛 Traite</button>
 <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
 <div class="app">
@@ -814,8 +832,18 @@ body.dark-mode{
     <button class="nav-btn" data-p="milklic"><span class="icon">🥛</span>Contrôle laitier<span class="count" id="cnt-milklic" style="background:rgba(220,38,38,.3)">0</span></button>
     <button class="nav-btn" data-p="aides"><span class="icon">🏛️</span>Aides éleveur</button>
     <button class="nav-btn" data-p="conseils"><span class="icon">💡</span>Conseils & leviers<span class="count" id="cnt-conseils" style="background:rgba(251,191,36,.4)">0</span></button>
+    <button class="nav-btn" data-p="pilotage"><span class="icon">⚖️</span>Prix de revient</button>
+    <button class="nav-btn" data-p="fourrage"><span class="icon">🌾</span>Fourrage<span class="count" id="cnt-fourrage">—</span></button>
+    <button class="nav-btn" data-p="delais"><span class="icon">🚫</span>Délais d'attente<span class="count" id="cnt-delais">0</span></button>
+    <button class="nav-btn" data-p="echeances"><span class="icon">📋</span>Échéancier<span class="count" id="cnt-echeances">0</span></button>
+    <button class="nav-btn" data-p="reforme"><span class="icon">⚖️</span>Réforme</button>
     <button class="nav-btn" data-p="stats"><span class="icon">📊</span>Statistiques</button>
   </nav>
+  <div class="sidebar-ecoute">
+    Un coup dur, une baisse de moral ?<br>
+    <a href="tel:0969392919">Agri'écoute · 09 69 39 29 19</a><br>
+    Gratuit, anonyme, 24h/24.
+  </div>
   <div class="sidebar-footer" style="display:flex;align-items:center;justify-content:space-between;gap:8px">
     <span>Boviq v1.3 — GitHub<br>© 2026</span>
     <div style="display:flex;gap:6px">
@@ -837,6 +865,9 @@ body.dark-mode{
       <button class="btn btn-p btn-s btn-scan-cam" onclick="scanBoucle('search-animaux')" title="Scanner une boucle pour rechercher l'animal" style="background:var(--brand2)">📷 Scanner boucle</button>
       <button class="btn btn-o btn-s" onclick="exportReproCSV()">📥 Export Repro CSV</button>
       <button class="btn btn-o btn-s" onclick="exportJSON()">💾 Sauvegarde JSON</button>
+      <button class="btn btn-o btn-s" onclick="exportCSVAnimaux()">📄 Animaux (CSV)</button>
+      <button class="btn btn-o btn-s" onclick="exportCSVRepros()">📄 Repro (CSV)</button>
+      <button class="btn btn-o btn-s" onclick="exportCSVSante()">📄 Sanitaire (CSV)</button>
       <button class="btn btn-o btn-s" onclick="document.getElementById('json-import').click()">📂 Importer JSON</button>
       <input type="file" id="json-import" accept=".json" style="display:none" onchange="importJSON(this)">
     </div>
@@ -1112,6 +1143,115 @@ body.dark-mode{
   <div class="card"><div class="tw"><table><thead><tr>
     <th>Date</th><th>Animal</th><th>Acheteur</th><th>Poids vif (kg)</th><th>Prix/kg (€)</th><th>Total (€)</th><th>Classe</th><th>Notes</th><th></th>
   </tr></thead><tbody id="tb-viande"></tbody></table></div></div>
+</div>
+
+
+<!-- ===== PRIX DE REVIENT ===== -->
+<div class="page" id="p-pilotage">
+  <div class="page-head"><h2>⚖️ Prix de revient du litre</h2>
+    <button class="btn btn-o btn-s" onclick="goTo('bilan')">Modifier le bilan</button>
+  </div>
+  <div id="pilotage-corps"></div>
+</div>
+
+<!-- ===== FOURRAGE ===== -->
+<div class="page" id="p-fourrage">
+  <div class="page-head"><h2>🌾 Stock fourrager et autonomie</h2>
+    <button class="btn btn-p" onclick="ouvrirFourrageModal()">+ Stock</button>
+  </div>
+  <div id="fourrage-corps"></div>
+</div>
+
+<!-- ===== DELAIS D'ATTENTE ===== -->
+<div class="page" id="p-delais">
+  <div class="page-head"><h2>🚫 Lait et viande à ne pas livrer</h2>
+    <button class="btn btn-o btn-s" onclick="goTo('sante')">Saisir un traitement</button>
+  </div>
+  <div id="delais-corps"></div>
+</div>
+
+<!-- ===== ECHEANCIER ===== -->
+<div class="page" id="p-echeances">
+  <div class="page-head"><h2>📋 Échéancier réglementaire</h2>
+    <button class="btn btn-o btn-s" onclick="ouvrirJalonsModal()">Mes jalons</button>
+  </div>
+  <div id="echeances-corps"></div>
+</div>
+
+<!-- ===== REFORME ===== -->
+<div class="page" id="p-reforme">
+  <div class="page-head"><h2>⚖️ Aide à la décision de réforme</h2></div>
+  <div id="reforme-corps"></div>
+</div>
+
+<!-- ===== MODE SALLE DE TRAITE ===== -->
+<div class="traite-overlay" id="traite-overlay">
+  <div class="traite-head">
+    <h2>🥛 Salle de traite</h2>
+    <button class="btn btn-o btn-s" style="color:#fff;border-color:rgba(255,255,255,.3)" onclick="fermerModeTraite()">Fermer</button>
+  </div>
+  <div class="traite-grille">
+    <button class="traite-btn" onclick="fermerModeTraite();openVelageModal()"><span class="em">🐄</span>Déclarer<br>un vêlage</button>
+    <button class="traite-btn" onclick="fermerModeTraite();openSanteModal()"><span class="em">💉</span>Noter<br>un traitement</button>
+    <button class="traite-btn" onclick="fermerModeTraite();openReproModal()"><span class="em">💚</span>Saillie<br>ou chaleur</button>
+    <button class="traite-btn" onclick="fermerModeTraite();openJournalModal()"><span class="em">📓</span>Note<br>au journal</button>
+  </div>
+  <div id="traite-delais"></div>
+</div>
+
+<!-- ===== MODALE STOCK FOURRAGER ===== -->
+<div class="modal-bg" id="m-fourrage">
+  <div class="modal">
+    <div class="modal-h"><h3 id="fourrage-titre">Ajouter un stock</h3><button class="modal-x" onclick="closeM('fourrage')">&times;</button></div>
+    <div class="modal-b">
+      <input type="hidden" id="fo-id">
+      <div class="fg">
+        <div class="fi"><label>Type de fourrage</label>
+          <select id="fo-type">
+            <option>Ensilage de maïs</option><option>Ensilage d'herbe</option>
+            <option>Foin</option><option>Enrubannage</option>
+            <option>Paille</option><option>Betteraves</option>
+            <option>Concentré / correcteur</option><option>Autre</option>
+          </select></div>
+        <div class="fi"><label>Quantité (tonnes de matière sèche)</label>
+          <input type="number" step="0.1" id="fo-qte" placeholder="Ex : 180"></div>
+      </div>
+      <div class="fi-sub">La matière sèche est la base de comparaison entre fourrages. Pour un ensilage de maïs à 32 % de MS, 100 t brutes valent 32 t MS.</div>
+      <div class="fg">
+        <div class="fi"><label>Date de l'inventaire</label><input type="date" id="fo-date"></div>
+        <div class="fi"><label>Notes</label><input type="text" id="fo-notes" placeholder="Silo, parcelle, qualité…"></div>
+      </div>
+    </div>
+    <div class="modal-f">
+      <button class="btn btn-o" onclick="closeM('fourrage')">Annuler</button>
+      <button class="btn btn-p" onclick="saveFourrage()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODALE JALONS REGLEMENTAIRES ===== -->
+<div class="modal-bg" id="m-jalons">
+  <div class="modal">
+    <div class="modal-h"><h3>Mes jalons réglementaires</h3><button class="modal-x" onclick="closeM('jalons')">&times;</button></div>
+    <div class="modal-b">
+      <div class="fi-sub">Ces dates ne sont connues que de vous : BOVIQ ne peut pas les deviner. Renseignez-les pour que l'échéancier soit juste.</div>
+      <div class="fg">
+        <div class="fi"><label>Dernier bilan sanitaire d'élevage</label><input type="date" id="jl-bse"></div>
+        <div class="fi"><label>Prophylaxie IBR — 1<sup>re</sup> analyse de l'année</label><input type="date" id="jl-ibr1"></div>
+      </div>
+      <div class="fg">
+        <div class="fi"><label>Prophylaxie IBR — 2<sup>e</sup> analyse</label><input type="date" id="jl-ibr2"></div>
+        <div class="fi"><label>Dernière déclaration PAC déposée</label><input type="date" id="jl-pac"></div>
+      </div>
+      <div class="fi"><label>Référent bien-être animal désigné</label>
+        <select id="jl-bea"><option value="">— à préciser —</option><option value="oui">Oui</option><option value="non">Non</option></select></div>
+      <div class="fi-sub">Obligation depuis le 1<sup>er</sup> janvier 2022 : chaque exploitation doit désigner un référent bien-être animal.</div>
+    </div>
+    <div class="modal-f">
+      <button class="btn btn-o" onclick="closeM('jalons')">Annuler</button>
+      <button class="btn btn-p" onclick="saveJalons()">Enregistrer</button>
+    </div>
+  </div>
 </div>
 
 <!-- ===== BDNI ===== -->
@@ -1581,6 +1721,11 @@ function _migrate(){
   if(!D.journal)D.journal=[];
   if(!D.ventesViande)D.ventesViande=[];
   if(!D.bdniDeclares)D.bdniDeclares={};
+  // Modules ajoutes le 12/10/2026
+  if(!D.fourrages)D.fourrages=[];            // {id,type,qte(t MS),date,notes}
+  if(!D.besoinsMS)D.besoinsMS={vl:14,genisse:8,veau:3,taureau:10}; // kg MS/jour
+  if(!D.reglementaire)D.reglementaire={};    // jalons saisis par l'eleveur
+  if(!D.mlControles)D.mlControles=[];
   const BILAN_2024={id:'bilan2024-rousseliere',annee:2024,vaches:96,ugb:127,sau:127.75,uth:2.66,laitProd:259659,laitVendu:259451,prixLait:0.494,prodLait:128295,prodViande:40741,prodAides:44435,prodDivers:4167,chAlim:5191,chPaille:9020,chVeto:3302,chElevage:9577,chSf:23931,chStructure:74140,ebe:56912,annuites:20197,prelevements:50400,fraisFin:4952,resCourant:38730,resNet:-13429,forme:'earl',ventesVachesQte:9.1,ventesVachesPrix:1360,ventesVeauxQte:76.72,ventesVeauxPrix:169,ventesGenissesQte:2,ventesGenissesPrix:422,ventesTaureauxQte:1.73,ventesTaureauxPrix:3195,achatsQte:1,achatsTotal:2180,stockVLd:93,stockVLf:99,stockG2d:11,stockG2f:10,stockG12d:16,stockG12f:24,stockG1d:29,stockG1f:18,stockVxd:6,stockVxf:3,stockTd:2,stockTf:1};
   if(!D.bilans.find(b=>b.id==='bilan2024-rousseliere'))D.bilans.push(BILAN_2024);
   D.sante.forEach(s=>{if(s.lignes&&s.lignes.length){['type','produit','posologie','intervenant','delaiLait','delaiViande'].forEach(k=>delete s[k]);}});
@@ -1880,6 +2025,11 @@ function goTo(p){
   if(p==='milklic')renderMilklic();
   if(p==='dashboard')initMeteo();
   if(p==='stats')renderStats();
+  if(p==='pilotage')renderPilotage();
+  if(p==='fourrage')renderFourrage();
+  if(p==='delais')renderDelais();
+  if(p==='echeances')renderEcheances();
+  if(p==='reforme')renderReforme();
   if(window.innerWidth<768){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('open')}
 }
 navBtns.forEach(b=>b.addEventListener('click',()=>goTo(b.dataset.p)));
@@ -6894,7 +7044,8 @@ function renderDashConseils(){
 }
 
 function renderAll(){
-  renderAnimaux();renderRepro();renderSante();renderTaureaux();renderDashboard();renderBilan();renderAides();renderPlanVaccinal();renderJournal();renderViande();renderBDNI();renderConseils();updateCounts();updateTitle();
+  renderAnimaux();renderRepro();renderSante();renderTaureaux();renderDashboard();renderBilan();renderAides();renderPlanVaccinal();renderJournal();renderViande();
+  majCompteursModules();renderBDNI();renderConseils();updateCounts();updateTitle();
 }
 
 // ========================================
@@ -7807,6 +7958,533 @@ function renderStats() {
         scales: { x: { display: false }, y: { title: { display: true, text: 'g/kg', color:'var(--ink3)', font:{size:11} }, min: 20 }}}
     });
   }
+}
+
+
+// =====================================================================
+// MODULES D'ACCOMPAGNEMENT — ajoutes le 12/10/2026
+// =====================================================================
+
+const REPERE_NATIONAL={valeur:430.9,source:"prix moyen national conventionnel, juillet 2026 (Agreste)"};
+const nbv=v=>{const n=parseFloat(v);return isFinite(n)?n:0};
+const e0=v=>(isFinite(v)?v:0).toLocaleString('fr-FR',{maximumFractionDigits:0});
+const e1=v=>(isFinite(v)?v:0).toLocaleString('fr-FR',{minimumFractionDigits:1,maximumFractionDigits:1});
+
+function bilanCourant(){
+  if(!D.bilans||!D.bilans.length)return null;
+  return D.bilans.slice().sort((a,b)=>nbv(b.annee)-nbv(a.annee))[0];
+}
+
+// Deux niveaux, parce que ce sont les deux questions que l'eleveur se pose.
+//  - Prix d'equilibre courant : le lait couvre-t-il les charges de l'annee ?
+//  - Prix de revient complet  : couvre-t-il AUSSI les annuites et de quoi vivre ?
+// Les charges sont deduites de l'EBE declare (produits - EBE) plutot que de la
+// somme des postes saisis : sur un bilan reel, cette somme ne boucle pas, tous
+// les postes n'etant pas detailles dans le formulaire.
+function calculPrixRevient(){
+  const b=bilanCourant(); if(!b)return null;
+  const litres=nbv(b.laitVendu)||nbv(b.laitProd); if(litres<=0)return null;
+  const produits=nbv(b.prodLait)+nbv(b.prodViande)+nbv(b.prodAides)+nbv(b.prodDivers);
+  const autres=nbv(b.prodViande)+nbv(b.prodAides)+nbv(b.prodDivers);
+  const postes=nbv(b.chAlim)+nbv(b.chPaille)+nbv(b.chVeto)+nbv(b.chElevage)+nbv(b.chSf)+nbv(b.chStructure);
+  const ebe=nbv(b.ebe);
+  const chargesEBE=(ebe>0&&produits>ebe);
+  const charges=chargesEBE?(produits-ebe):postes;
+  const nonDetaille=chargesEBE?Math.max(0,charges-postes):0;
+  const annuites=nbv(b.annuites), prelevements=nbv(b.prelevements);
+  const paye=nbv(b.prixLait)>5?nbv(b.prixLait):nbv(b.prixLait)*1000;
+  const alim=nbv(b.chAlim)+nbv(b.chSf); // aliments achetes + surfaces fourrageres
+  return{b,litres,produits,charges,autres,postes,nonDetaille,chargesEBE,annuites,prelevements,ebe,
+    equilibre:(charges-autres)/litres*1000,
+    revientComplet:(charges+annuites+prelevements-autres)/litres*1000,
+    paye, coutAlim:alim/litres*1000,
+    margeAlim:(nbv(b.prodLait)-alim)/litres*1000,
+    vaches:nbv(b.vaches)};
+}
+
+function renderPilotage(){
+  const el=document.getElementById('pilotage-corps'); if(!el)return;
+  const c=calculPrixRevient();
+  if(!c){el.innerHTML='<div class="empty"><div class="e-icon">⚖️</div><p>Renseignez un bilan dans « Analyse financière » pour calculer votre prix de revient.</p></div>';return}
+  const parMille=c.litres/1000;
+  const ecartEq=c.paye-c.equilibre, ecartTot=c.paye-c.revientComplet;
+  const colEq=ecartEq>=0?'var(--brand)':'var(--red)';
+  const colTot=ecartTot>=0?'var(--brand)':'var(--red)';
+  const parVache=c.vaches>0?c.litres/c.vaches:0;
+  let verdict;
+  if(ecartEq<0) verdict="Le prix payé ne couvre même pas les charges courantes de l'exercice.";
+  else if(ecartTot<0) verdict="Les charges courantes sont couvertes, mais il manque "+e0(Math.abs(ecartTot))+" €/1 000 L pour rembourser les annuités et se rémunérer au niveau prélevé — soit "+e0(Math.abs(ecartTot)*parMille)+" € sur l'année.";
+  else verdict="Le prix payé couvre les charges, les annuités et les prélèvements.";
+  el.innerHTML=`
+  <div class="card" style="margin-bottom:16px;border-left:4px solid ${colTot}">
+    <div class="card-body">
+      <div style="display:flex;flex-wrap:wrap;gap:30px;align-items:flex-end;margin-bottom:16px">
+        <div>
+          <div style="font-size:12px;color:var(--ink3);letter-spacing:.4px;text-transform:uppercase">Prix d'équilibre courant</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:600;line-height:1.1;color:${colEq}">${e0(c.equilibre)} <span style="font-size:16px;color:var(--ink3)">€/1 000 L</span></div>
+          <div style="font-size:12.5px;color:var(--ink3);margin-top:3px">charges de l'exercice seules</div>
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--ink3);letter-spacing:.4px;text-transform:uppercase">Prix de revient complet</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:600;line-height:1.1;color:${colTot}">${e0(c.revientComplet)} <span style="font-size:16px;color:var(--ink3)">€/1 000 L</span></div>
+          <div style="font-size:12.5px;color:var(--ink3);margin-top:3px">+ annuités et prélèvements privés</div>
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--ink3);letter-spacing:.4px;text-transform:uppercase">Prix payé ${c.b.annee}</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:600;line-height:1.1">${e0(c.paye)} <span style="font-size:16px;color:var(--ink3)">€/1 000 L</span></div>
+          <div style="font-size:12.5px;color:var(--ink3);margin-top:3px">repère national ${e1(REPERE_NATIONAL.valeur)}</div>
+        </div>
+      </div>
+      <p style="font-size:14px;line-height:1.65;color:var(--ink);border-top:1px solid var(--line);padding-top:14px;margin:0">${verdict}</p>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-head"><h3>Le chemin du calcul</h3></div>
+    <div class="card-body">
+      <div class="bilan-metric"><span>Produits totaux de l'exercice</span><strong>${e0(c.produits)} €</strong></div>
+      <div class="bilan-metric"><span>Moins l'excédent brut d'exploitation déclaré</span><strong>− ${e0(c.ebe)} €</strong></div>
+      <div class="bilan-metric"><span><strong>= Charges courantes</strong></span><strong>${e0(c.charges)} €</strong></div>
+      <div class="bilan-metric"><span>Moins les produits non laitiers (viande, aides, divers)</span><strong>− ${e0(c.autres)} €</strong></div>
+      <div class="bilan-metric"><span>Rapporté aux litres vendus</span><strong>${e0(c.litres)} L</strong></div>
+      <div class="bilan-metric"><span><strong>= Prix d'équilibre courant</strong></span><strong style="color:${colEq}">${e0(c.equilibre)} €/1 000 L</strong></div>
+      <div class="bilan-metric"><span>Annuités</span><strong>+ ${e0(c.annuites)} €</strong></div>
+      <div class="bilan-metric"><span>Prélèvements privés</span><strong>+ ${e0(c.prelevements)} €</strong></div>
+      <div class="bilan-metric" style="border-bottom:none"><span><strong>= Prix de revient complet</strong></span><strong style="color:${colTot}">${e0(c.revientComplet)} €/1 000 L</strong></div>
+      ${c.chargesEBE&&c.nonDetaille>0?`<p style="font-size:12.5px;color:var(--ink3);margin-top:12px;line-height:1.6">Les postes de charges saisis dans le bilan totalisent ${e0(c.postes)} € : <strong>${e0(c.nonDetaille)} €</strong> de charges ne sont pas détaillés dans le formulaire mais sont bien pris en compte ici, puisque le calcul part de l'EBE.</p>`:''}
+      ${!c.chargesEBE?`<p style="font-size:12.5px;color:var(--amber);margin-top:12px">Aucun EBE exploitable dans le bilan : le calcul repose sur la somme des postes saisis, qui peut être incomplète.</p>`:''}
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-head"><h3>Repères</h3></div>
+    <div class="card-body">
+      <div class="bilan-metric"><span>Coût alimentaire du lait <span style="color:var(--ink3);font-size:12px">(aliments achetés + surfaces fourragères)</span></span><strong>${e0(c.coutAlim)} €/1 000 L</strong></div>
+      <div class="bilan-metric"><span>Marge sur coût alimentaire</span><strong>${e0(c.margeAlim)} €/1 000 L</strong></div>
+      <div class="bilan-metric"><span>Lait vendu par vache</span><strong>${e0(parVache)} L</strong></div>
+      <div class="bilan-metric" style="border-bottom:none"><span>Un euro de prix sur 1 000 L représente</span><strong>${e0(parMille)} € / an</strong></div>
+      <p style="font-size:12px;color:var(--ink3);margin-top:10px">Repère national : ${REPERE_NATIONAL.source}. Valeur figée dans l'application, à vérifier avant tout usage engageant.</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h3>Et si le prix bougeait ?</h3></div>
+    <div class="card-body">
+      <div class="fi" style="max-width:320px"><label>Prix du lait simulé (€/1 000 L)</label>
+        <input type="number" id="sim-prix" value="${Math.round(c.paye)}" step="5" oninput="simulerPrix()"></div>
+      <div id="sim-sortie" style="margin-top:14px"></div>
+    </div>
+  </div>`;
+  simulerPrix();
+}
+
+function simulerPrix(){
+  const c=calculPrixRevient(); const s=document.getElementById('sim-sortie'); if(!c||!s)return;
+  const p=nbv(document.getElementById('sim-prix').value);
+  const delta=(p-c.paye)/1000*c.litres;
+  const resteCourant=(p-c.equilibre)/1000*c.litres;
+  const resteTotal=(p-c.revientComplet)/1000*c.litres;
+  const col=v=>v>=0?'var(--brand)':'var(--red)';
+  s.innerHTML=`
+    <div class="bilan-metric"><span>Variation du produit lait par rapport à ${c.b.annee}</span><strong style="color:${col(delta)}">${delta>=0?'+':''}${e0(delta)} €</strong></div>
+    <div class="bilan-metric"><span>Reste une fois les charges courantes couvertes</span><strong style="color:${col(resteCourant)}">${resteCourant>=0?'+':''}${e0(resteCourant)} €</strong></div>
+    <div class="bilan-metric" style="border-bottom:none"><span>Reste une fois annuités et prélèvements couverts</span><strong style="color:${col(resteTotal)}">${resteTotal>=0?'+':''}${e0(resteTotal)} €</strong></div>`;
+}
+
+// ── Autonomie fourragere ──────────────────────────────────────────────
+function effectifsTroupeau(){
+  const r={vl:0,genisse:0,veau:0,taureau:0};
+  (D.animaux||[]).forEach(a=>{
+    const ty=(a.type||'').toLowerCase(), cat=(a._categ_ml||'').toUpperCase();
+    if(cat==='VL'||ty==='vache')r.vl++;
+    else if(ty.indexOf('taureau')>=0)r.taureau++;
+    else if(ty.indexOf('veau')>=0)r.veau++;
+    else r.genisse++;
+  });
+  return r;
+}
+function besoinsJourMS(){
+  const e=effectifsTroupeau(), b=D.besoinsMS||{vl:14,genisse:8,veau:3,taureau:10};
+  return (e.vl*nbv(b.vl)+e.genisse*nbv(b.genisse)+e.veau*nbv(b.veau)+e.taureau*nbv(b.taureau))/1000;
+}
+function stockTotalMS(){return (D.fourrages||[]).reduce((s,f)=>s+nbv(f.qte),0)}
+
+function renderFourrage(){
+  const el=document.getElementById('fourrage-corps'); if(!el)return;
+  const e=effectifsTroupeau(), besoin=besoinsJourMS(), stock=stockTotalMS(), b=D.besoinsMS;
+  const jours=besoin>0?Math.floor(stock/besoin):null;
+  const rupture=jours!==null?addD(today(),jours):null;
+  const an=new Date().getMonth()>=3?new Date().getFullYear()+1:new Date().getFullYear();
+  const herbe=an+'-04-01';
+  const marge=rupture?diffD(rupture)-diffD(herbe):null;
+  let etat,couleur,phrase;
+  if(!stock){etat='Aucun stock saisi';couleur='var(--ink3)';phrase='Ajoutez vos silos et vos stocks pour obtenir une date de rupture.'}
+  else if(marge===null){etat='Calcul impossible';couleur='var(--ink3)';phrase='Renseignez les besoins journaliers.'}
+  else if(marge>=30){etat='Confortable';couleur='var(--brand)';phrase='Le stock dépasse la mise à l\'herbe de '+marge+' jours.'}
+  else if(marge>=0){etat='Juste';couleur='var(--amber)';phrase='Le stock tient jusqu\'à la mise à l\'herbe, avec '+marge+' jours de marge seulement.'}
+  else {etat='Insuffisant';couleur='var(--red)';phrase='Il manque '+Math.abs(marge)+' jours de stock avant la mise à l\'herbe.'}
+  const lignes=(D.fourrages||[]).slice().sort((x,y)=>(y.date||'').localeCompare(x.date||''));
+  el.innerHTML=`
+  <div class="card" style="margin-bottom:16px;border-left:4px solid ${couleur}">
+    <div class="card-body" style="display:flex;flex-wrap:wrap;gap:28px;align-items:flex-end">
+      <div>
+        <div style="font-size:12px;color:var(--ink3);letter-spacing:.4px;text-transform:uppercase">Autonomie</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:600;line-height:1.1;color:${couleur}">${jours!==null?jours:'—'} <span style="font-size:17px;color:var(--ink3)">jours</span></div>
+      </div>
+      <div>
+        <div style="font-size:12px;color:var(--ink3);letter-spacing:.4px;text-transform:uppercase">Date de rupture estimée</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:600;line-height:1.1">${rupture?fmt(rupture):'—'}</div>
+      </div>
+      <div style="flex:1;min-width:230px">
+        <span class="badge" style="background:${couleur};color:#fff">${etat}</span>
+        <p style="font-size:13.5px;color:var(--ink2);margin-top:8px;line-height:1.6">${phrase}</p>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-head"><h3>Hypothèses de consommation</h3></div>
+    <div class="card-body">
+      <p style="font-size:12.5px;color:var(--ink3);margin-bottom:14px;line-height:1.6">Ordres de grandeur en kilos de matière sèche par animal et par jour. Ajustez-les à votre ration : le calcul en dépend entièrement.</p>
+      <div class="fg">
+        <div class="fi"><label>Vaches laitières (${e.vl})</label><input type="number" step="0.5" id="bm-vl" value="${nbv(b.vl)}" oninput="majBesoins()"></div>
+        <div class="fi"><label>Génisses (${e.genisse})</label><input type="number" step="0.5" id="bm-genisse" value="${nbv(b.genisse)}" oninput="majBesoins()"></div>
+      </div>
+      <div class="fg">
+        <div class="fi"><label>Veaux (${e.veau})</label><input type="number" step="0.5" id="bm-veau" value="${nbv(b.veau)}" oninput="majBesoins()"></div>
+        <div class="fi"><label>Taureaux (${e.taureau})</label><input type="number" step="0.5" id="bm-taureau" value="${nbv(b.taureau)}" oninput="majBesoins()"></div>
+      </div>
+      <div class="bilan-metric" style="margin-top:10px;border-bottom:none"><span>Consommation totale estimée</span><strong>${e1(besoin)} t MS / jour</strong></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h3>Stocks déclarés — ${e1(stock)} t MS</h3></div>
+    ${lignes.length?`<div class="tw"><table><thead><tr><th>Type</th><th>Quantité (t MS)</th><th>Part</th><th>Inventaire</th><th>Notes</th><th></th></tr></thead><tbody>
+      ${lignes.map(f=>`<tr>
+        <td><strong>${esc(f.type||'')}</strong></td>
+        <td>${e1(nbv(f.qte))}</td>
+        <td>${stock>0?Math.round(nbv(f.qte)/stock*100):0} %</td>
+        <td>${f.date?fmt(f.date):'—'}</td>
+        <td style="color:var(--ink3)">${esc(f.notes||'')}</td>
+        <td style="text-align:right;white-space:nowrap">
+          <button class="btn btn-o btn-s" onclick="ouvrirFourrageModal('${f.id}')">Modifier</button>
+          <button class="btn btn-d btn-s" onclick="supprFourrage('${f.id}')">Supprimer</button></td>
+      </tr>`).join('')}
+    </tbody></table></div>`:'<div class="card-body"><div class="empty"><div class="e-icon">🌾</div><p>Aucun stock saisi.</p></div></div>'}
+  </div>`;
+}
+
+function majBesoins(){
+  D.besoinsMS={vl:nbv(document.getElementById('bm-vl').value),
+               genisse:nbv(document.getElementById('bm-genisse').value),
+               veau:nbv(document.getElementById('bm-veau').value),
+               taureau:nbv(document.getElementById('bm-taureau').value)};
+  save(); renderFourrage();
+}
+function ouvrirFourrageModal(id){
+  const f=id?(D.fourrages||[]).find(x=>x.id===id):null;
+  document.getElementById('fourrage-titre').textContent=f?'Modifier un stock':'Ajouter un stock';
+  document.getElementById('fo-id').value=f?f.id:'';
+  document.getElementById('fo-type').value=f?f.type:'Ensilage de maïs';
+  document.getElementById('fo-qte').value=f?f.qte:'';
+  document.getElementById('fo-date').value=f&&f.date?f.date:today();
+  document.getElementById('fo-notes').value=f?(f.notes||''):'';
+  openM('fourrage');
+}
+function saveFourrage(){
+  const qte=nbv(document.getElementById('fo-qte').value);
+  if(qte<=0){alert('Indiquez une quantité en tonnes de matière sèche.');return}
+  const id=document.getElementById('fo-id').value;
+  const o={id:id||uid(),type:document.getElementById('fo-type').value,qte:qte,
+    date:document.getElementById('fo-date').value,notes:document.getElementById('fo-notes').value};
+  if(!D.fourrages)D.fourrages=[];
+  const i=D.fourrages.findIndex(x=>x.id===o.id);
+  if(i>=0)D.fourrages[i]=o; else D.fourrages.push(o);
+  save(); closeM('fourrage'); renderFourrage(); majCompteursModules();
+}
+function supprFourrage(id){
+  if(!confirm('Supprimer ce stock ?'))return;
+  D.fourrages=(D.fourrages||[]).filter(x=>x.id!==id);
+  save(); renderFourrage(); majCompteursModules();
+}
+
+
+// ── Delais d'attente lait et viande ───────────────────────────────────
+// Regle absolue : aucun delai par defaut. Les delais sont fixes par l'AMM de
+// chaque medicament et figurent sur l'ordonnance. Un delai non saisi est
+// signale comme tel, jamais traite comme un zero.
+function delaisActifs(){
+  const res={lait:[],viande:[],sansDelai:[]};
+  const limite=addD(today(),-400);
+  (D.sante||[]).forEach(s=>{
+    if(!s.date||s.date<limite)return;
+    const ids=Array.isArray(s.animaux)?s.animaux:[s.animaux].filter(Boolean);
+    getLignesSante(s).forEach(l=>{
+      const vaccin=(l.type||'')==='Vaccination';
+      const dl=(l.delaiLait===undefined||l.delaiLait===null)?'':String(l.delaiLait).trim();
+      const dv=(l.delaiViande===undefined||l.delaiViande===null)?'':String(l.delaiViande).trim();
+      ids.forEach(id=>{
+        const a=(D.animaux||[]).find(x=>x.id===id); if(!a)return;
+        const base={a,s,l,produit:l.produit||l.type||'traitement'};
+        if(dl===''&&dv===''&&!vaccin){
+          if(diffD(addD(s.date,60))>=0)res.sansDelai.push(base);
+          return;
+        }
+        if(dl!==''){const fin=addD(s.date,parseInt(dl,10)||0), j=diffD(fin);
+          if(j>=0)res.lait.push(Object.assign({fin,jours:j},base))}
+        if(dv!==''){const fin=addD(s.date,parseInt(dv,10)||0), j=diffD(fin);
+          if(j>=0)res.viande.push(Object.assign({fin,jours:j},base))}
+      });
+    });
+  });
+  res.lait.sort((x,y)=>x.jours-y.jours);
+  res.viande.sort((x,y)=>x.jours-y.jours);
+  return res;
+}
+
+function blocDelai(liste,titre,verbe,couleur){
+  if(!liste.length)return `<div class="card" style="margin-bottom:16px"><div class="card-head"><h3>${titre}</h3></div>
+    <div class="card-body"><div class="empty" style="padding:22px"><p>Aucun animal concerné aujourd'hui.</p></div></div></div>`;
+  return `<div class="card" style="margin-bottom:16px;border-left:4px solid ${couleur}">
+    <div class="card-head"><h3>${titre}</h3><span class="badge" style="background:${couleur};color:#fff">${liste.length}</span></div>
+    <div class="tw"><table><thead><tr><th>Animal</th><th>Boucle</th><th>Produit</th><th>Traité le</th><th>${verbe} jusqu'au</th><th>Reste</th></tr></thead><tbody>
+    ${liste.map(d=>`<tr>
+      <td><strong>${esc(d.a.nom||'—')}</strong></td>
+      <td style="font-size:12px;color:var(--ink3)">${esc(d.a.boucle||'')}</td>
+      <td>${esc(d.produit)}</td>
+      <td>${fmt(d.s.date)}</td>
+      <td><strong>${fmt(d.fin)}</strong></td>
+      <td><span class="badge ${d.jours<=1?'b-red':d.jours<=3?'b-amber':'b-gray'}">${d.jours===0?'dernier jour':'J-'+d.jours}</span></td>
+    </tr>`).join('')}
+    </tbody></table></div></div>`;
+}
+
+function renderDelais(){
+  const el=document.getElementById('delais-corps'); if(!el)return;
+  const d=delaisActifs();
+  el.innerHTML=
+    blocDelai(d.lait,'🥛 Lait à ne pas livrer','Écarter','var(--red)')+
+    blocDelai(d.viande,'🥩 Animaux à ne pas envoyer à l\'abattoir','Attendre','var(--amber)')+
+    (d.sansDelai.length?`<div class="card" style="border-left:4px solid var(--amber)">
+      <div class="card-head"><h3>⚠️ Délai d'attente non renseigné</h3><span class="badge b-amber">${d.sansDelai.length}</span></div>
+      <div class="card-body">
+        <p style="font-size:13px;color:var(--ink2);line-height:1.65;margin-bottom:14px">
+          Ces traitements n'ont pas de délai saisi. BOVIQ ne peut pas le deviner : il dépend de l'autorisation de mise sur le marché du médicament et figure sur l'ordonnance et la notice.
+          <strong>Tant qu'il n'est pas renseigné, considérez l'animal comme sous délai.</strong>
+        </p>
+        ${d.sansDelai.map(x=>`<div class="alert-item"><span class="alert-icon">⚠️</span>
+          <div style="flex:1"><strong>${esc(x.a.nom||'—')}</strong> — ${esc(x.produit)}, traité le ${fmt(x.s.date)}</div>
+          <button class="btn btn-o btn-s" onclick="goTo('sante')">Compléter</button></div>`).join('')}
+      </div></div>`:'');
+}
+
+// ── Echeancier reglementaire ──────────────────────────────────────────
+function echeancesAnimaux(){
+  const out=[];
+  (D.animaux||[]).forEach(a=>{
+    if(!a.naissance)return;
+    const age=-diffD(a.naissance);
+    if(age<0||age>120)return;
+    if(D.bdniDeclares&&D.bdniDeclares[a.id])return;
+    out.push({titre:'Notification de naissance — '+(a.nom||a.boucle||'veau'),
+      detail:'Bouclage au plus tard le '+fmt(addD(a.naissance,20))+', notification à la BDNI au plus tard le '+fmt(addD(a.naissance,27))+'. Un animal notifié en retard devient inéligible à l\'aide bovine.',
+      date:addD(a.naissance,27), page:'bdni'});
+  });
+  return out;
+}
+
+function echeancesCalendrier(){
+  const auj=today(), an=new Date().getFullYear(), out=[];
+  const futur=(m,j)=>{const d=an+'-'+String(m).padStart(2,'0')+'-'+String(j).padStart(2,'0');
+    return d>=auj?d:(an+1)+'-'+String(m).padStart(2,'0')+'-'+String(j).padStart(2,'0')};
+  out.push({titre:'Ouverture de la télédéclaration PAC',detail:'Le portail Telepac ouvre début avril.',date:futur(4,1)});
+  out.push({titre:'Aide bovine — date limite sans réduction',detail:'Au-delà, réduction d\'1 % par jour ouvré ; plus aucune déclaration possible début juin.',date:futur(5,15)});
+  const r=D.reglementaire||{};
+  if(r.bse)out.push({titre:'Bilan sanitaire d\'élevage',detail:'La visite du vétérinaire sanitaire est à renouveler tous les deux ans. Dernière : '+fmt(r.bse)+'.',date:addD(r.bse,730)});
+  else out.push({titre:'Bilan sanitaire d\'élevage — date inconnue',detail:'Renseignez la date de votre dernière visite dans « Mes jalons » pour que l\'échéance soit calculée.',date:null});
+  if(r.ibr1||r.ibr2){
+    const der=[r.ibr1,r.ibr2].filter(Boolean).sort().pop();
+    out.push({titre:'Prophylaxie IBR — analyse sur lait de tank',detail:'Deux analyses par an en troupeau laitier. Dernière enregistrée : '+fmt(der)+'.',date:addD(der,182)});
+  } else out.push({titre:'Prophylaxie IBR — dates inconnues',detail:'Deux analyses sur lait de tank par an sont attendues en troupeau laitier. Renseignez-les dans « Mes jalons ».',date:null});
+  if(r.bea!=='oui')out.push({titre:'Référent bien-être animal',detail:'Chaque exploitation doit en désigner un depuis le 1er janvier 2022.',date:null});
+  return out;
+}
+
+function renderEcheances(){
+  const el=document.getElementById('echeances-corps'); if(!el)return;
+  const liste=echeancesAnimaux().concat(echeancesCalendrier());
+  const datees=liste.filter(x=>x.date).sort((a,b)=>a.date.localeCompare(b.date));
+  const sansDate=liste.filter(x=>!x.date);
+  const ligne=x=>{
+    const j=diffD(x.date);
+    const cls=j<0?'b-red':j<=14?'b-amber':'b-gray';
+    const txt=j<0?'en retard de '+Math.abs(j)+' j':j===0?'aujourd\'hui':'dans '+j+' j';
+    return `<div class="ech-item">
+      <span class="ech-dot-lg" style="background:${j<0?'var(--red)':j<=14?'var(--amber)':'var(--brand)'}"></span>
+      <div class="ech-body"><strong>${x.titre}</strong>
+        <div style="color:var(--ink3);font-size:12.5px;line-height:1.55;margin-top:3px">${x.detail}</div></div>
+      <div style="text-align:right;white-space:nowrap">
+        <div class="ech-date">${fmt(x.date)}</div>
+        <span class="badge ${cls}">${txt}</span></div>
+    </div>`;
+  };
+  el.innerHTML=`
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-head"><h3>Échéances datées</h3><span class="badge b-gray">${datees.length}</span></div>
+    <div class="card-body">${datees.length?datees.map(ligne).join(''):'<div class="empty" style="padding:22px"><p>Rien à échéance.</p></div>'}</div>
+  </div>
+  ${sansDate.length?`<div class="card" style="margin-bottom:16px;border-left:4px solid var(--amber)">
+    <div class="card-head"><h3>À renseigner</h3></div>
+    <div class="card-body">
+      ${sansDate.map(x=>`<div class="alert-item"><span class="alert-icon">📋</span>
+        <div style="flex:1"><strong>${x.titre}</strong><div style="color:var(--ink3);font-size:12.5px;margin-top:2px">${x.detail}</div></div>
+        <button class="btn btn-o btn-s" onclick="ouvrirJalonsModal()">Renseigner</button></div>`).join('')}
+    </div></div>`:''}
+  <div class="card">
+    <div class="card-head"><h3>Les règles de référence</h3></div>
+    <div class="card-body" style="font-size:13px;color:var(--ink2);line-height:1.75">
+      <div class="bilan-metric"><span>Bouclage des veaux</span><strong>20 jours après la naissance</strong></div>
+      <div class="bilan-metric"><span>Notification de naissance</span><strong>7 jours après le bouclage</strong></div>
+      <div class="bilan-metric"><span>Autres mouvements (achat, vente, mort)</span><strong>7 jours</strong></div>
+      <div class="bilan-metric"><span>Pertes naturelles déclarées à la DDT</span><strong>10 jours ouvrés</strong></div>
+      <div class="bilan-metric"><span>Registre d'élevage conservé</span><strong>5 ans</strong></div>
+      <div class="bilan-metric" style="border-bottom:none"><span>Bilan sanitaire d'élevage</span><strong>tous les 2 ans</strong></div>
+      <p style="font-size:12.5px;color:var(--ink3);margin-top:12px">BOVIQ n'est pas raccordé à la BDNI et ne déclare rien à votre place : il vous évite de rater une date. La déclaration se fait chez votre EDE, sur Boviclic ou sur l'outil de votre organisme.</p>
+    </div>
+  </div>`;
+}
+
+function ouvrirJalonsModal(){
+  const r=D.reglementaire||{};
+  document.getElementById('jl-bse').value=r.bse||'';
+  document.getElementById('jl-ibr1').value=r.ibr1||'';
+  document.getElementById('jl-ibr2').value=r.ibr2||'';
+  document.getElementById('jl-pac').value=r.pac||'';
+  document.getElementById('jl-bea').value=r.bea||'';
+  openM('jalons');
+}
+function saveJalons(){
+  D.reglementaire={bse:document.getElementById('jl-bse').value,
+    ibr1:document.getElementById('jl-ibr1').value,
+    ibr2:document.getElementById('jl-ibr2').value,
+    pac:document.getElementById('jl-pac').value,
+    bea:document.getElementById('jl-bea').value};
+  save(); closeM('jalons'); renderEcheances(); majCompteursModules();
+}
+
+// ── Aide a la decision de reforme ─────────────────────────────────────
+// Aucun score opaque : chaque vache est accompagnee des raisons qui la font
+// remonter, et des donnees qui manquent pour trancher.
+function candidatesReforme(){
+  const out=[];
+  (D.animaux||[]).forEach(a=>{
+    const estVL=(a._categ_ml||'').toUpperCase()==='VL'||(a.type||'').toLowerCase()==='vache';
+    if(!estVL||a.sexe!=='Femelle')return;
+    const raisons=[],manques=[];
+    const lact=nbv(a._ml_lact);
+    if(lact>=7)raisons.push('Lactation n° '+lact);
+    else if(!a._ml_lact)manques.push('numéro de lactation');
+    if(a.naissance){const ans=Math.floor(-diffD(a.naissance)/365);if(ans>=9)raisons.push(ans+' ans')}
+    else manques.push('date de naissance');
+    const gest=(D.repros||[]).some(r=>r.vache===a.id&&r.dateSaillie&&!r.velageReel);
+    const dernier=(D.repros||[]).filter(r=>r.vache===a.id&&r.velageReel).map(r=>r.velageReel).sort().pop();
+    if(!gest&&dernier){const j=-diffD(dernier);if(j>420)raisons.push('Vêlée il y a '+j+' jours, non gestante')}
+    if(!gest&&!dernier)manques.push('historique de vêlage');
+    if((a._ml_conseil_ia||'').toLowerCase().indexOf('déconseill')>=0)raisons.push('IA déconseillée au dernier contrôle');
+    const vl=nbv(a._ml_var_lait);
+    if(a._ml_var_lait!==null&&a._ml_var_lait!==undefined&&vl<=-15)raisons.push('Production en baisse de '+e0(Math.abs(vl))+' %');
+    let ss=null;
+    try{ss=(typeof calcSanteScore==='function')?calcSanteScore(a.id):null}catch(err){ss=null}
+    if(ss&&ss.grade==='C')raisons.push('Score santé C');
+    if(raisons.length)out.push({a,raisons,manques,score:raisons.length,gest});
+  });
+  out.sort((x,y)=>y.score-x.score);
+  return out;
+}
+
+function renderReforme(){
+  const el=document.getElementById('reforme-corps'); if(!el)return;
+  const liste=candidatesReforme();
+  const c=calculPrixRevient();
+  const litreParVache=c&&c.vaches>0?c.litres/c.vaches:0;
+  el.innerHTML=`
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-body" style="font-size:13.5px;color:var(--ink2);line-height:1.7">
+      Cet écran ne décide rien et ne note rien en secret. Il remonte les vaches sur lesquelles au moins un signal est présent, et affiche lesquels.
+      ${litreParVache?`Chaque départ retire environ <strong>${e0(litreParVache)} L</strong> de lait livré sur une année, soit <strong>${e0(litreParVache/1000*c.paye)} €</strong> de produit au prix ${c.b.annee}.`:''}
+    </div>
+  </div>
+  ${liste.length?liste.map(x=>`
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-head">
+        <h3>${esc(x.a.nom||'Sans nom')} <span style="font-size:12px;color:var(--ink3);font-weight:400">${esc(x.a.boucle||'')}</span></h3>
+        <span class="badge ${x.score>=3?'b-red':x.score===2?'b-amber':'b-gray'}">${x.score} signal${x.score>1?'ux':''}</span>
+      </div>
+      <div class="card-body">
+        ${x.raisons.map(r=>`<div class="alert-item" style="padding:7px 0"><span class="alert-icon">•</span><div style="flex:1">${r}</div></div>`).join('')}
+        ${x.gest?'<div class="alert-item" style="padding:7px 0"><span class="alert-icon">💚</span><div style="flex:1;color:var(--brand)">Gestante — un départ interromprait la gestation</div></div>':''}
+        ${x.manques.length?`<p style="font-size:12px;color:var(--ink3);margin-top:8px">Données manquantes pour trancher : ${x.manques.join(', ')}.</p>`:''}
+        <button class="btn btn-o btn-s" style="margin-top:10px" onclick="openFicheAnimal('${x.a.id}')">Ouvrir la fiche</button>
+      </div>
+    </div>`).join('')
+  :'<div class="empty"><div class="e-icon">⚖️</div><p>Aucune vache ne remonte de signal de réforme.</p></div>'}`;
+}
+
+// ── Mode salle de traite ──────────────────────────────────────────────
+function ouvrirModeTraite(){
+  const d=delaisActifs();
+  const bloc=(liste,titre)=>`<div class="traite-bloc"><h3>${titre}</h3>${
+    liste.length?liste.slice(0,12).map(x=>`<div class="traite-ligne"><span>${esc(x.a.nom||'—')}</span><span style="color:var(--accent)">jusqu'au ${fmt(x.fin)}</span></div>`).join('')
+    :'<div class="traite-ligne" style="color:rgba(255,255,255,.55)">Aucune</div>'}</div>`;
+  document.getElementById('traite-delais').innerHTML=
+    bloc(d.lait,'Lait à écarter')+
+    (d.sansDelai.length?`<div class="traite-bloc"><h3>Délai non renseigné</h3>${
+      d.sansDelai.slice(0,8).map(x=>`<div class="traite-ligne"><span>${esc(x.a.nom||'—')}</span><span style="color:#FCD34D">à vérifier</span></div>`).join('')}</div>`:'');
+  document.getElementById('traite-overlay').classList.add('open');
+}
+function fermerModeTraite(){document.getElementById('traite-overlay').classList.remove('open')}
+
+// ── Export ouvert ─────────────────────────────────────────────────────
+function telechargerCSV(nom,lignes){
+  const csv=lignes.map(l=>l.map(c=>{
+    const s=(c===null||c===undefined)?'':String(c);
+    return /[";\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;
+  }).join(';')).join('\r\n');
+  const blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='boviq_'+nom+'_'+today()+'.csv';
+  a.click();
+}
+function exportCSVAnimaux(){
+  const l=[['Nom','Boucle','Travail','Type','Catégorie','Race','Sexe','Naissance','Mère','Père','Notes']];
+  (D.animaux||[]).forEach(a=>l.push([a.nom,a.boucle,a._trav,a.type,a._categ_ml,a.race,a.sexe,a.naissance,a.mere,a.pere,a.notes]));
+  telechargerCSV('animaux',l);
+}
+function exportCSVRepros(){
+  const nom=id=>{const a=(D.animaux||[]).find(x=>x.id===id);return a?a.nom:''};
+  const l=[['Vache','Taureau','Date saillie','Primipare','Vêlage réel','Sexe veau','Poids','Facilité','Notes']];
+  (D.repros||[]).forEach(r=>l.push([nom(r.vache),nom(r.taureau),r.dateSaillie,r.primo,r.velageReel,r.sexeVeau,r.poids,r.facilite,r.notes]));
+  telechargerCSV('reproduction',l);
+}
+function exportCSVSante(){
+  const nom=id=>{const a=(D.animaux||[]).find(x=>x.id===id);return a?a.nom:''};
+  const l=[['Date','Animal','Ordonnance','Type','Produit','Posologie','Intervenant','Délai lait (j)','Délai viande (j)','Notes']];
+  (D.sante||[]).forEach(s=>{
+    const ids=Array.isArray(s.animaux)?s.animaux:[s.animaux].filter(Boolean);
+    getLignesSante(s).forEach(li=>ids.forEach(id=>
+      l.push([s.date,nom(id),s.ordonnance,li.type,li.produit,li.posologie,li.intervenant,li.delaiLait,li.delaiViande,s.notes])));
+  });
+  telechargerCSV('sanitaire',l);
+}
+
+// ── Compteurs de la barre laterale ────────────────────────────────────
+function majCompteursModules(){
+  try{
+    const d=delaisActifs();
+    const cd=document.getElementById('cnt-delais');
+    if(cd)cd.textContent=d.lait.length+d.viande.length+d.sansDelai.length;
+    const ce=document.getElementById('cnt-echeances');
+    if(ce)ce.textContent=echeancesAnimaux().concat(echeancesCalendrier()).filter(x=>x.date&&diffD(x.date)<=14).length;
+    const cf=document.getElementById('cnt-fourrage');
+    if(cf){const b=besoinsJourMS(),s=stockTotalMS();cf.textContent=(b>0&&s>0)?Math.floor(s/b)+' j':'—'}
+  }catch(e){console.warn('compteurs modules',e)}
 }
 
 </script>
