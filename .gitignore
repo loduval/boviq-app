@@ -29,3 +29,4 @@ boviq-bilan-*.html
 # Credentials
 scripts/.env
 .env
+.vercel

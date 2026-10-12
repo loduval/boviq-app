@@ -769,6 +769,10 @@ body.dark-mode{
   --brand:#40916C;--brand2:#52B788;--brand3:#74C69D;
   --brand-light:rgba(64,145,108,.22);--brand-pale:rgba(64,145,108,.12);
 }
+
+/* Regle recuperee : elle etait ecrite en clair dans le corps de la page
+   Statistiques, donc affichee comme du texte et jamais appliquee. */
+@media(max-width:768px){#stats-grid-top,#stats-milklic-section>div{grid-template-columns:1fr!important}}
 </style>
 </head>
 <body>
@@ -7899,7 +7903,6 @@ function renderStats() {
     </div>
   </div>
 
-  @media(max-width:768px){#stats-grid-top,#stats-milklic-section>div{grid-template-columns:1fr!important}}
 </div>
 </body>
 </html>
