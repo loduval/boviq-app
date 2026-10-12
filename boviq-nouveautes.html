@@ -10,15 +10,46 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --brand:#1B4332;--brand2:#2D6A4F;--brand3:#40916C;--brand4:#74C69D;--brand5:#D8F3DC;
-  --bg:#F4F1EB;--card:#FFFFFF;--card2:#FAFAF7;
-  --ink:#1E1B16;--ink2:#3D3A34;--ink3:#8C8474;--ink4:#B5AC9E;
-  --amber:#B45309;--amber-bg:#FEF3C7;
-  --line:#E3DED4;--line2:#EDE9E2;
-  --sh:0 1px 3px rgba(30,27,22,.06),0 4px 12px rgba(30,27,22,.06);
+  /* Socle commun BOVIQ */
+  --bg:#F4F1EB;
+  --bg2:#EDE8DF;
+  --card:#FFFFFF;
+  --card2:#FAFAF7;
+  --ink:#1E1B16;
+  --ink2:#3D3A32;
+  --ink3:#7A7060;
+  --ink4:#B8B0A2;
+  --line:#E3DED4;
+  --line2:#D1CBBD;
+  --brand:#1B4332;
+  --brand2:#2D6A4F;
+  --brand3:#40916C;
+  --brand-light:#D8F3DC;
+  --brand-pale:#F0F7F2;
+  --green:#1B4332;
+  --blue:#1D4ED8;
+  --blue-l:#DBEAFE;
+  --amber:#B45309;
+  --amber-l:#FEF3C7;
+  --red:#B91C1C;
+  --red-l:#FEE2E2;
+  --purple:#6D28D9;
+  --purple-l:#EDE9FE;
+  --teal:#0D9488;
+  --teal-l:#CCFBF1;
+  --r:12px;
+  --r2:16px;
+  --r-sm:8px;
+  --sh:0 1px 3px rgba(30,27,22,.06),0 4px 14px rgba(30,27,22,.06);
+  --sh2:0 4px 18px rgba(30,27,22,.10);
+  --sh3:0 10px 36px rgba(30,27,22,.14);
+
+  /* Spécifique à cette page */
+  --brand4:#74C69D;
+  --brand5:#D8F3DC;
+  --amber-bg:#FEF3C7;
   --sh-md:0 2px 8px rgba(30,27,22,.08),0 8px 28px rgba(30,27,22,.08);
   --sh-lg:0 4px 16px rgba(30,27,22,.1),0 16px 48px rgba(30,27,22,.1);
-  --r:14px;--r-sm:8px;
 }
 
 html{font-size:15px;scroll-behavior:smooth}
@@ -197,6 +228,24 @@ footer{
 footer a{color:var(--brand2);text-decoration:none}
 footer a:hover{text-decoration:underline}
 @media(max-width:640px){.stats-row{grid-template-columns:repeat(2,1fr)}.hero-stats{gap:16px}}
+
+/* ── BOVIQ Design System v2 — couche de cohérence ───────────────────────── */
+/* Boutons : longueur homogène à l'intérieur d'une même zone d'action */
+.modal-f{flex-wrap:wrap;align-items:center}
+.modal-f .btn{min-width:132px;justify-content:center}
+.modal-f .btn.btn-s{min-width:112px}
+.modal-f .btn-icon{min-width:0}
+/* Phrases jamais coupées en plein milieu */
+.card p,.card li,.modal p,.log-item span,.stat-label,.alert-row .anames{
+  overflow-wrap:break-word;word-break:normal;hyphens:none}
+/* Libellés et valeurs alignés sur la même ligne de base */
+.stat-row,.alert-row,.conseil-row{align-items:center}
+/* Cibles tactiles confortables sur téléphone */
+@media(max-width:520px){
+  .btn{padding:10px 16px}
+  .modal-f{justify-content:stretch}
+  .modal-f .btn{flex:1 1 132px}
+}
 </style>
 </head>
 <body>

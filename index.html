@@ -11,13 +11,39 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --brand:#1B4332;--brand2:#2D6A4F;--brand3:#40916C;
-  --bg:#F4F1EB;--card:#FFF;
-  --ink:#1E1B16;--ink2:#3D3A34;--ink3:#8C8474;
-  --green:#1B4332;--amber:#B45309;--red:#B91C1C;
+  /* Socle commun BOVIQ */
+  --bg:#F4F1EB;
+  --bg2:#EDE8DF;
+  --card:#FFFFFF;
+  --card2:#FAFAF7;
+  --ink:#1E1B16;
+  --ink2:#3D3A32;
+  --ink3:#7A7060;
+  --ink4:#B8B0A2;
   --line:#E3DED4;
-  --sh:0 1px 4px rgba(30,27,22,.07),0 4px 16px rgba(30,27,22,.05);
-  --r:14px;
+  --line2:#D1CBBD;
+  --brand:#1B4332;
+  --brand2:#2D6A4F;
+  --brand3:#40916C;
+  --brand-light:#D8F3DC;
+  --brand-pale:#F0F7F2;
+  --green:#1B4332;
+  --blue:#1D4ED8;
+  --blue-l:#DBEAFE;
+  --amber:#B45309;
+  --amber-l:#FEF3C7;
+  --red:#B91C1C;
+  --red-l:#FEE2E2;
+  --purple:#6D28D9;
+  --purple-l:#EDE9FE;
+  --teal:#0D9488;
+  --teal-l:#CCFBF1;
+  --r:12px;
+  --r2:16px;
+  --r-sm:8px;
+  --sh:0 1px 3px rgba(30,27,22,.06),0 4px 14px rgba(30,27,22,.06);
+  --sh2:0 4px 18px rgba(30,27,22,.10);
+  --sh3:0 10px 36px rgba(30,27,22,.14);
 }
 html{font-size:14px}
 body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
@@ -388,6 +414,24 @@ loadMeteo();
 @keyframes bounceIn{
   from{opacity:0;transform:translateY(60px) scale(.6)}
   to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+/* ── BOVIQ Design System v2 — couche de cohérence ───────────────────────── */
+/* Boutons : longueur homogène à l'intérieur d'une même zone d'action */
+.modal-f{flex-wrap:wrap;align-items:center}
+.modal-f .btn{min-width:132px;justify-content:center}
+.modal-f .btn.btn-s{min-width:112px}
+.modal-f .btn-icon{min-width:0}
+/* Phrases jamais coupées en plein milieu */
+.card p,.card li,.modal p,.log-item span,.stat-label,.alert-row .anames{
+  overflow-wrap:break-word;word-break:normal;hyphens:none}
+/* Libellés et valeurs alignés sur la même ligne de base */
+.stat-row,.alert-row,.conseil-row{align-items:center}
+/* Cibles tactiles confortables sur téléphone */
+@media(max-width:520px){
+  .btn{padding:10px 16px}
+  .modal-f{justify-content:stretch}
+  .modal-f .btn{flex:1 1 132px}
 }
 </style>
 <a id="btn-news" href="boviq-nouveautes.html" target="_blank" title="Voir les nouveautés de cette session">
