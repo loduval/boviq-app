@@ -3521,6 +3521,18 @@
       "mere": "mmtozefi94ti",
       "pere": "mm20npn388sp",
       "notes": "Né(e) le 19/07/2026 de Tulipe"
+    },
+    {
+      "id": "mv6kq9h1ydlv",
+      "nom": "Veau de Tijuana",
+      "type": "Génisse",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0003",
+      "naissance": "2026-07-19",
+      "sexe": "Femelle",
+      "mere": "mmtp7kg6hsww",
+      "pere": "",
+      "notes": "Né(e) le 19/07/2026 de Tijuana"
     }
   ],
   "repros": [
@@ -4204,6 +4216,18 @@
       "primo": "Non",
       "velageReel": "2026-07-18",
       "sexeVeau": "Mâle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6kq9h12q28",
+      "vache": "mmtp7kg6hsww",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-19",
+      "sexeVeau": "Femelle",
       "poids": "",
       "facilite": "",
       "notes": "Déni de grossesse — "
