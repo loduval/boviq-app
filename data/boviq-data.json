@@ -3677,6 +3677,18 @@
       "mere": "mmto6xifptkw",
       "pere": "",
       "notes": "Né(e) le 27/07/2026 de Rivière"
+    },
+    {
+      "id": "mv6lawne97wd",
+      "nom": "Veau de Rivière",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0016",
+      "naissance": "2026-07-27",
+      "sexe": "Mâle",
+      "mere": "mmto6xifptkw",
+      "pere": "",
+      "notes": "Né(e) le 27/07/2026 de Rivière — jumeau 0015"
     }
   ],
   "repros": [
@@ -4519,6 +4531,18 @@
       "poids": "",
       "facilite": "",
       "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6lawneaxgu",
+      "vache": "mmto6xifptkw",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-27",
+      "sexeVeau": "Mâle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — jumeau 0015"
     }
   ],
   "sante": [
