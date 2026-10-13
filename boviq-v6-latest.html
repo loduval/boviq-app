@@ -868,6 +868,7 @@ body.dark-mode{
       <button class="btn btn-o btn-s" onclick="exportCSVAnimaux()">📄 Animaux (CSV)</button>
       <button class="btn btn-o btn-s" onclick="exportCSVRepros()">📄 Repro (CSV)</button>
       <button class="btn btn-o btn-s" onclick="exportCSVSante()">📄 Sanitaire (CSV)</button>
+      <button class="btn btn-o btn-s" onclick="ouvrirInventaireModal()">🏛️ Inventaire comptable</button>
       <button class="btn btn-o btn-s" onclick="document.getElementById('json-import').click()">📂 Importer JSON</button>
       <input type="file" id="json-import" accept=".json" style="display:none" onchange="importJSON(this)">
     </div>
@@ -1225,6 +1226,32 @@ body.dark-mode{
     <div class="modal-f">
       <button class="btn btn-o" onclick="closeM('fourrage')">Annuler</button>
       <button class="btn btn-p" onclick="saveFourrage()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== MODALE INVENTAIRE COMPTABLE ===== -->
+<div class="modal-bg" id="m-inventaire">
+  <div class="modal">
+    <div class="modal-h"><h3>Inventaire de cheptel</h3><button class="modal-x" onclick="closeM('inventaire')">&times;</button></div>
+    <div class="modal-b">
+      <div class="fi-sub">
+        À destination de votre cabinet comptable. En élevage laitier, le troupeau figure
+        en stocks au bilan : il doit être inventorié à chaque clôture, et cette variation
+        pèse directement sur le résultat.
+      </div>
+      <div class="fi" style="max-width:260px"><label>Date de clôture</label>
+        <input type="date" id="inv-date" onchange="apercuInventaire()"></div>
+      <div id="inv-apercu" style="margin-top:16px"></div>
+      <div class="fi-sub" style="margin-top:14px">
+        BOVIQ compte, date et classe les animaux. Il ne les valorise pas :
+        les barèmes et la décote relèvent de votre comptable.
+      </div>
+    </div>
+    <div class="modal-f">
+      <button class="btn btn-o" onclick="closeM('inventaire')">Fermer</button>
+      <button class="btn btn-p" onclick="exportInventaireCSV()">Exporter en CSV</button>
     </div>
   </div>
 </div>
@@ -8485,6 +8512,117 @@ function majCompteursModules(){
     const cf=document.getElementById('cnt-fourrage');
     if(cf){const b=besoinsJourMS(),s=stockTotalMS();cf.textContent=(b>0&&s>0)?Math.floor(s/b)+' j':'—'}
   }catch(e){console.warn('compteurs modules',e)}
+}
+
+
+// ── Inventaire de cheptel a date, pour le cabinet ─────────────────────
+// Categories d'age usuelles en comptabilite agricole. BOVIQ classe et date ;
+// il ne valorise pas : les baremes relevent du cabinet.
+function moisAu(naissance,dateRef){
+  if(!naissance)return null;
+  const n=new Date(naissance), r=new Date(dateRef);
+  if(isNaN(n)||isNaN(r))return null;
+  return (r.getFullYear()-n.getFullYear())*12+(r.getMonth()-n.getMonth());
+}
+
+function categorieComptable(a,dateRef){
+  const mo=moisAu(a.naissance,dateRef);
+  if(mo===null)return 'Date de naissance manquante';
+  if(mo<0)return 'Né après la date de clôture';
+  const femelle=a.sexe==='Femelle';
+  const vl=(a._categ_ml||'').toUpperCase()==='VL'||(a.type||'').toLowerCase()==='vache';
+  if(femelle&&vl)return 'Vaches laitières';
+  if(!femelle)return mo<12?'Mâles de moins d\'un an':mo<24?'Mâles de 1 à 2 ans':'Mâles de plus de 2 ans';
+  return mo<12?'Génisses de moins d\'un an':mo<24?'Génisses de 1 à 2 ans':'Génisses de plus de 2 ans';
+}
+
+const ORDRE_CATEGORIES=['Vaches laitières','Génisses de plus de 2 ans','Génisses de 1 à 2 ans',
+  'Génisses de moins d\'un an','Mâles de plus de 2 ans','Mâles de 1 à 2 ans','Mâles de moins d\'un an',
+  'Date de naissance manquante','Né après la date de clôture'];
+
+function inventaireA(dateRef){
+  const groupes={};
+  (D.animaux||[]).forEach(a=>{
+    // On exclut les animaux nés après la date de clôture.
+    if(a.naissance&&a.naissance>dateRef)return;
+    const c=categorieComptable(a,dateRef);
+    (groupes[c]=groupes[c]||[]).push(a);
+  });
+  const cats=ORDRE_CATEGORIES.filter(c=>groupes[c])
+    .concat(Object.keys(groupes).filter(c=>ORDRE_CATEGORIES.indexOf(c)<0));
+  return{groupes,cats,total:Object.values(groupes).reduce((s,l)=>s+l.length,0)};
+}
+
+// Mouvements de l'exercice, dans la limite de ce que BOVIQ enregistre.
+// L'honnetete sur les trous compte plus que l'exhaustivite apparente.
+function mouvementsEntre(debut,fin){
+  const naiss=(D.animaux||[]).filter(a=>a.naissance&&a.naissance>=debut&&a.naissance<=fin).length;
+  const velages=(D.repros||[]).filter(r=>r.velageReel&&r.velageReel>=debut&&r.velageReel<=fin).length;
+  const ventes=(D.ventesViande||[]).filter(v=>v.date&&v.date>=debut&&v.date<=fin).length;
+  return{naiss,velages,ventes};
+}
+
+function ouvrirInventaireModal(){
+  const el=document.getElementById('inv-date');
+  if(!el.value){const an=new Date().getFullYear();el.value=an+'-12-31';}
+  apercuInventaire();
+  openM('inventaire');
+}
+
+function apercuInventaire(){
+  const d=document.getElementById('inv-date').value;
+  const sortie=document.getElementById('inv-apercu');
+  if(!d){sortie.innerHTML='';return}
+  const inv=inventaireA(d);
+  const debut=(parseInt(d.slice(0,4),10)-1)+d.slice(4)  // meme jour, un an plus tot
+  const mv=mouvementsEntre(debut,d);
+  const incomplet=mv.velages===0&&mv.ventes===0;
+  sortie.innerHTML=
+    inv.cats.map(c=>{
+      const suspect=c.indexOf('manquante')>=0||c.indexOf('après')>=0;
+      return `<div class="bilan-metric"${suspect?' style="color:var(--amber)"':''}>
+        <span>${c}</span><strong>${inv.groupes[c].length}</strong></div>`;
+    }).join('')+
+    `<div class="bilan-metric" style="border-bottom:none"><span><strong>Total présent au ${fmt(d)}</strong></span><strong>${inv.total}</strong></div>
+     <div style="margin-top:14px;padding:12px 14px;background:var(--bg2);border-radius:var(--r-sm);font-size:12.5px;line-height:1.6;color:var(--ink2)">
+       <strong>Mouvements enregistrés sur les 12 mois précédents</strong><br>
+       ${mv.naiss} naissance${mv.naiss>1?'s':''} · ${mv.velages} vêlage${mv.velages>1?'s':''} déclaré${mv.velages>1?'s':''} · ${mv.ventes} vente${mv.ventes>1?'s':''}
+       ${incomplet?`<div style="color:var(--amber);margin-top:8px">⚠️ Peu ou pas de mouvements enregistrés. L'inventaire ci-dessus est fiable, mais votre comptable aura aussi besoin des entrées et sorties de l'exercice : pensez à déclarer vêlages, ventes et morts au fil de l'eau.</div>`:''}
+     </div>`;
+}
+
+function exportInventaireCSV(){
+  const d=document.getElementById('inv-date').value;
+  if(!d){alert('Choisissez une date de clôture.');return}
+  const inv=inventaireA(d);
+  const debut=(parseInt(d.slice(0,4),10)-1)+d.slice(4);
+  const mv=mouvementsEntre(debut,d);
+  const L=[];
+  L.push(['INVENTAIRE DE CHEPTEL']);
+  L.push(['Date de clôture',d]);
+  L.push(['Édité le',today()]);
+  L.push(['Source','BOVIQ — outil de suivi privé, non certifié']);
+  L.push([]);
+  L.push(['RÉCAPITULATIF PAR CATÉGORIE']);
+  L.push(['Catégorie','Effectif']);
+  inv.cats.forEach(c=>L.push([c,inv.groupes[c].length]));
+  L.push(['TOTAL',inv.total]);
+  L.push([]);
+  L.push(['MOUVEMENTS ENREGISTRÉS SUR 12 MOIS']);
+  L.push(['Naissances',mv.naiss]);
+  L.push(['Vêlages déclarés',mv.velages]);
+  L.push(['Ventes enregistrées',mv.ventes]);
+  L.push(['Note','BOVIQ n\'enregistre que les mouvements saisis par l\'éleveur. Cette liste peut être incomplète.']);
+  L.push([]);
+  L.push(['DÉTAIL ANIMAL PAR ANIMAL']);
+  L.push(['Catégorie','Nom','Boucle','Sexe','Race','Date de naissance','Âge en mois à la clôture']);
+  inv.cats.forEach(c=>inv.groupes[c]
+    .slice().sort((a,b)=>(a.naissance||'').localeCompare(b.naissance||''))
+    .forEach(a=>L.push([c,a.nom,a.boucle,a.sexe,a.race,a.naissance,moisAu(a.naissance,d)])));
+  L.push([]);
+  L.push(['BOVIQ compte, date et classe les animaux. Il ne les valorise pas :']);
+  L.push(['les barèmes et la décote relèvent du cabinet comptable.']);
+  telechargerCSV('inventaire_cheptel_'+d,L);
 }
 
 </script>
