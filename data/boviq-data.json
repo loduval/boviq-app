@@ -3497,6 +3497,18 @@
       "mere": "mm2jbp45d60e",
       "pere": "mm2hv85fm139",
       "notes": "Né(e) le 17/07/2026 de Supersayan"
+    },
+    {
+      "id": "mv6ko0eidbgo",
+      "nom": "Veau de Solstice",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0001",
+      "naissance": "2026-07-18",
+      "sexe": "Mâle",
+      "mere": "mmtod3e6wr7o",
+      "pere": "",
+      "notes": "Né(e) le 18/07/2026 de Solstice"
     }
   ],
   "repros": [
@@ -4167,6 +4179,18 @@
       "dateSaillie": "",
       "primo": "Non",
       "velageReel": "2026-07-14",
+      "sexeVeau": "Mâle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6ko0ei8afk",
+      "vache": "mmtod3e6wr7o",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-18",
       "sexeVeau": "Mâle",
       "poids": "",
       "facilite": "",
