@@ -3653,6 +3653,18 @@
       "mere": "mmtnxu3hxs5y",
       "pere": "",
       "notes": "Né(e) le 27/07/2026 de Rapide"
+    },
+    {
+      "id": "mv6l7edhhkpb",
+      "nom": "Veau de Pissenlie",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0014",
+      "naissance": "2026-07-27",
+      "sexe": "Mâle",
+      "mere": "mmtnm46so3td",
+      "pere": "",
+      "notes": "Né(e) le 27/07/2026 de Pissenlie"
     }
   ],
   "repros": [
@@ -4468,6 +4480,18 @@
       "primo": "Non",
       "velageReel": "2026-07-27",
       "sexeVeau": "Femelle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6l7edhn5u3",
+      "vache": "mmtnm46so3td",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-27",
+      "sexeVeau": "Mâle",
       "poids": "",
       "facilite": "",
       "notes": "Déni de grossesse — "
