@@ -3815,6 +3815,18 @@
       "mere": "muzf5734an95",
       "pere": "",
       "notes": "Né(e) le 31/07/2026 de Lazure"
+    },
+    {
+      "id": "mv788xu6qq2o",
+      "nom": "Beril",
+      "type": "Génisse",
+      "race": "Simmental",
+      "boucle": "Fr 53 8124 0047",
+      "naissance": "2026-10-06",
+      "sexe": "Femelle",
+      "mere": "mmtmp4vuai2q",
+      "pere": "",
+      "notes": "Né(e) le 06/10/2026 de Métis"
     }
   ],
   "repros": [
@@ -4581,6 +4593,18 @@
       "dateSaillie": "",
       "primo": "Non",
       "velageReel": "2026-07-31",
+      "sexeVeau": "Femelle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv788xu6i76b",
+      "vache": "mmtmp4vuai2q",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-10-06",
       "sexeVeau": "Femelle",
       "poids": "",
       "facilite": "",
