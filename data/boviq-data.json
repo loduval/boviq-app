@@ -3449,6 +3449,18 @@
       "mere": "mmtp9rjt48bx",
       "pere": "",
       "notes": "Né(e) le 13/07/2026 de Trefle"
+    },
+    {
+      "id": "mv6khk7qzylu",
+      "nom": "Veau de Trefle",
+      "type": "Génisse",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 9996",
+      "naissance": "2026-07-13",
+      "sexe": "Femelle",
+      "mere": "mmtp9rjt48bx",
+      "pere": "",
+      "notes": "Né(e) le 13/07/2026 de Trefle — Jumelle du 9995"
     }
   ],
   "repros": [
@@ -4099,6 +4111,18 @@
       "poids": "",
       "facilite": "",
       "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6khk7q82gi",
+      "vache": "mmtp9rjt48bx",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-13",
+      "sexeVeau": "Femelle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — Jumelle du 9995"
     }
   ],
   "sante": [
