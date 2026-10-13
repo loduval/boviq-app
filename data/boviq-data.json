@@ -2480,7 +2480,7 @@
     },
     {
       "id": "mmv4krktot7p",
-      "nom": "9912",
+      "nom": "Ananas",
       "type": "Génisse",
       "race": "Simmental",
       "boucle": "FR 53 8124 9912",
@@ -2489,8 +2489,12 @@
       "mere": "",
       "pere": "",
       "notes": "",
-      "_trav": "9912",
-      "_categ_ml": "GL"
+      "statut": "",
+      "dateSortie": "",
+      "dateEntree": "",
+      "provenance": "",
+      "ancienneBoucle": "",
+      "dateRebouclage": ""
     },
     {
       "id": "mmv4lpov65v5",
