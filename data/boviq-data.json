@@ -3413,12 +3413,18 @@
       "nom": "Veau de Malaga",
       "type": "Jeune mâle",
       "race": "Simmental",
-      "boucle": "FR 8124 9993",
+      "boucle": "FR 53 8124 9993",
       "naissance": "2026-07-13",
       "sexe": "Mâle",
       "mere": "mm4wlq6hl7gr",
       "pere": "",
-      "notes": "Né(e) le 13/07/2026 de Malaga"
+      "notes": "Né(e) le 13/07/2026 de Malaga",
+      "statut": "",
+      "dateSortie": "",
+      "dateEntree": "",
+      "provenance": "",
+      "ancienneBoucle": "",
+      "dateRebouclage": ""
     },
     {
       "id": "mv6kctzyhmu1",
