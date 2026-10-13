@@ -3629,6 +3629,18 @@
       "mere": "mmtn1d55i6jo",
       "pere": "",
       "notes": "Né(e) le 25/07/2026 de Olympie"
+    },
+    {
+      "id": "mv6l3sqosk0w",
+      "nom": "Veau de Robusta",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0012",
+      "naissance": "2026-07-26",
+      "sexe": "Mâle",
+      "mere": "muzg9stpucey",
+      "pere": "",
+      "notes": "Né(e) le 26/07/2026 de Robusta"
     }
   ],
   "repros": [
@@ -4419,6 +4431,18 @@
       "dateSaillie": "",
       "primo": "Non",
       "velageReel": "2026-07-25",
+      "sexeVeau": "Mâle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6l3sqorob0",
+      "vache": "muzg9stpucey",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-26",
       "sexeVeau": "Mâle",
       "poids": "",
       "facilite": "",
