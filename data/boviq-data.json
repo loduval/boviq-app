@@ -3461,6 +3461,18 @@
       "mere": "mmtp9rjt48bx",
       "pere": "",
       "notes": "Né(e) le 13/07/2026 de Trefle — Jumelle du 9995"
+    },
+    {
+      "id": "mv6kjw4vx2y3",
+      "nom": "Brioche",
+      "type": "Génisse",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 9997",
+      "naissance": "2026-07-13",
+      "sexe": "Femelle",
+      "mere": "mmtoazzbc4z6",
+      "pere": "",
+      "notes": "Né(e) le 13/07/2026 de Réveillone"
     }
   ],
   "repros": [
@@ -4111,6 +4123,18 @@
       "poids": "",
       "facilite": "",
       "notes": "Déni de grossesse — Jumelle du 9995"
+    },
+    {
+      "id": "mv6kjw4v2liz",
+      "vache": "mmtoazzbc4z6",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-13",
+      "sexeVeau": "Femelle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
     }
   ],
   "sante": [
