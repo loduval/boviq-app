@@ -3514,7 +3514,13 @@
       "sexe": "Mâle",
       "mere": "mmtod3e6wr7o",
       "pere": "",
-      "notes": "Né(e) le 18/07/2026 de Solstice"
+      "notes": "Né(e) le 18/07/2026 de Solstice",
+      "statut": "",
+      "dateSortie": "",
+      "dateEntree": "",
+      "provenance": "",
+      "ancienneBoucle": "",
+      "dateRebouclage": ""
     },
     {
       "id": "mv6kp89cozg2",
