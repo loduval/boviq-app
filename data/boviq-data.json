@@ -3581,6 +3581,18 @@
       "mere": "mmto1v5zsi4t",
       "pere": "",
       "notes": "Né(e) le 21/07/2026 de Ravigote"
+    },
+    {
+      "id": "mv6kwf0n5m6s",
+      "nom": "Bastet",
+      "type": "Génisse",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0008",
+      "naissance": "2026-07-23",
+      "sexe": "Femelle",
+      "mere": "mmtp0preqa9z",
+      "pere": "",
+      "notes": "Né(e) le 23/07/2026 de Thoueris"
     }
   ],
   "repros": [
@@ -4324,6 +4336,18 @@
       "primo": "Non",
       "velageReel": "2026-07-21",
       "sexeVeau": "Mâle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6kwf0n4lt6",
+      "vache": "mmtp0preqa9z",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-23",
+      "sexeVeau": "Femelle",
       "poids": "",
       "facilite": "",
       "notes": "Déni de grossesse — "
