@@ -3785,6 +3785,18 @@
       "mere": "muzg7lgbo5k6",
       "pere": "",
       "notes": "Né(e) le 28/07/2026 de Papaye"
+    },
+    {
+      "id": "mv6nb37dwuvy",
+      "nom": "Veau de Marguerite",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0023",
+      "naissance": "2026-07-28",
+      "sexe": "Mâle",
+      "mere": "muzfg9mtldhq",
+      "pere": "",
+      "notes": "Né(e) le 28/07/2026 de Marguerite"
     }
   ],
   "repros": [
@@ -4511,6 +4523,18 @@
     {
       "id": "mv6llydi1o74",
       "vache": "muzg7lgbo5k6",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-28",
+      "sexeVeau": "Mâle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6nb37dvtne",
+      "vache": "muzfg9mtldhq",
       "taureau": "",
       "dateSaillie": "",
       "primo": "Non",
