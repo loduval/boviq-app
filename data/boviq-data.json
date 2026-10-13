@@ -3341,6 +3341,18 @@
       "mere": "mmv3iylzgwe4",
       "pere": "",
       "notes": "Né(e) le 28/04/2026 de Uluru"
+    },
+    {
+      "id": "mv6jyis2l4eb",
+      "nom": "Veau de Niaoulie",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 9989",
+      "naissance": "2026-07-07",
+      "sexe": "Mâle",
+      "mere": "mm4wwjqho4aq",
+      "pere": "",
+      "notes": "Né(e) le 07/07/2026 de Niaoulie"
     }
   ],
   "repros": [
@@ -3892,6 +3904,18 @@
       "primo": "Non",
       "velageReel": "2026-04-28",
       "sexeVeau": "Femelle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6jyis2r13p",
+      "vache": "mm4wwjqho4aq",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-07",
+      "sexeVeau": "Mâle",
       "poids": "",
       "facilite": "",
       "notes": "Déni de grossesse — "
