@@ -1,5 +1,19 @@
 # BOVIQ — MEMORY SESSION
 
+> ⚠️ **Ce fichier date du 26/03/2026 et décrit un état dépassé** (GitHub Pages,
+> ~7 750 lignes). Depuis le 12/10/2026, la référence est le dossier
+> `~/Desktop/01-Projects/BOVIQ/01-AUDITS/` sur le Mac :
+>
+> | Document | Contenu |
+> |---|---|
+> | `BOVIQ-AUDIT-2026-10-12.md` | diagnostic complet (import Mil'Klic, repli silencieux, perfs) |
+> | `CHANTIER-2026-10-12.md` | refonte, bascule Vercel, points restés ouverts |
+> | `SESSION-2026-10-13-VEAUX-SORTIES.md` | jumeaux, veaux mort-nés, date de sortie dans l'inventaire |
+> | `DOSSIER-GESTION-2026-10-13.md`, `BILAN-2025-LECTURE-2026-10-13.md` | volet comptable |
+>
+> **Hébergement courant : `boviq-app.vercel.app`** — plus de `?v=N`, les en-têtes
+> de cache sont appliqués par `vercel.json`. `boviq-v6-latest.html` : 9 100 lignes.
+
 Dernière mise à jour : **26/03/2026 — 17h30** — Session Stats + fix PAT token + module Lait
 
 ---
