@@ -1251,7 +1251,8 @@ body.dark-mode{
     </div>
     <div class="modal-f">
       <button class="btn btn-o" onclick="closeM('inventaire')">Fermer</button>
-      <button class="btn btn-p" onclick="exportInventaireCSV()">Exporter en CSV</button>
+      <button class="btn btn-o" onclick="exportInventaireCSV()">Export CSV</button>
+      <button class="btn btn-p" onclick="exportInventairePDF()">Export PDF</button>
     </div>
   </div>
 </div>
@@ -8623,6 +8624,143 @@ function exportInventaireCSV(){
   L.push(['BOVIQ compte, date et classe les animaux. Il ne les valorise pas :']);
   L.push(['les barèmes et la décote relèvent du cabinet comptable.']);
   telechargerCSV('inventaire_cheptel_'+d,L);
+}
+
+
+// ── Inventaire de cheptel en PDF ──────────────────────────────────────
+// Couleurs reprises du design system BOVIQ, converties en RVB pour jsPDF.
+const PDF_COULEURS={
+  brand:[27,67,50],        // --brand   #1B4332
+  brand2:[45,106,79],      // --brand2  #2D6A4F
+  brandLight:[216,243,220],// --brand-light #D8F3DC
+  ink:[30,27,22],          // --ink     #1E1B16
+  ink2:[61,58,50],         // --ink2    #3D3A32
+  ink3:[122,112,96],       // --ink3    #7A7060
+  line:[227,222,212],      // --line    #E3DED4
+  bg2:[237,232,223],       // --bg2     #EDE8DF
+  amber:[180,83,9]         // --amber   #B45309
+};
+
+async function exportInventairePDF(){
+  const d=document.getElementById('inv-date').value;
+  if(!d){alert('Choisissez une date de clôture.');return}
+  try{await loadJsPdf();await loadAutoTable()}catch(e){alert('❌ '+e.message);return}
+
+  const C=PDF_COULEURS;
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const w=doc.internal.pageSize.width, h=doc.internal.pageSize.height, M=14;
+  const inv=inventaireA(d);
+  const debut=(parseInt(d.slice(0,4),10)-1)+d.slice(4);
+  const mv=mouvementsEntre(debut,d);
+  const faible=mv.velages===0&&mv.ventes===0;
+
+  // ── Bandeau de marque ───────────────────────────────────────────────
+  doc.setFillColor.apply(doc,C.brand); doc.rect(0,0,w,30,'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(19); doc.setTextColor(255);
+  doc.text('BOVIQ',M,15);
+  doc.setFont('helvetica','normal'); doc.setFontSize(11); doc.setTextColor(216,243,220);
+  doc.text('Inventaire de cheptel',M+30,15);
+  doc.setFontSize(9); doc.setTextColor(200,220,208);
+  doc.text('Clôture au '+fmt(d),M,24);
+  doc.text('Édité le '+new Date().toLocaleDateString('fr-FR'),w-M,24,{align:'right'});
+
+  let y=42;
+
+  // ── Note liminaire ──────────────────────────────────────────────────
+  doc.setFillColor.apply(doc,C.bg2);
+  doc.roundedRect(M,y-6,w-M*2,22,2,2,'F');
+  doc.setTextColor.apply(doc,C.ink2); doc.setFont('helvetica','normal'); doc.setFontSize(8.6);
+  doc.text(doc.splitTextToSize(
+    "En élevage laitier, le cheptel figure en stocks au bilan : il est inventorié à chaque clôture, et sa "
+    +"variation entre au résultat imposable. Ce document recense les animaux présents à la date indiquée, "
+    +"classés par catégorie d'âge et de sexe. Il ne comporte aucune valorisation : les barèmes relèvent du cabinet.",
+    w-M*2-8),M+4,y);
+  y+=26;
+
+  // ── Recapitulatif par categorie ─────────────────────────────────────
+  doc.setTextColor.apply(doc,C.brand); doc.setFont('helvetica','bold'); doc.setFontSize(12.5);
+  doc.text('Récapitulatif par catégorie',M,y); y+=5;
+
+  doc.autoTable({
+    startY:y,
+    head:[['Catégorie','Effectif']],
+    body:inv.cats.map(c=>[c,String(inv.groupes[c].length)]),
+    foot:[['Total présent au '+fmt(d),String(inv.total)]],
+    theme:'grid',
+    styles:{font:'helvetica',fontSize:9.5,cellPadding:3,lineColor:C.line,lineWidth:.15,textColor:C.ink},
+    headStyles:{fillColor:C.brand,textColor:255,fontStyle:'bold',fontSize:9.5},
+    footStyles:{fillColor:C.brandLight,textColor:C.brand,fontStyle:'bold',fontSize:10},
+    columnStyles:{1:{halign:'right',cellWidth:30}},
+    alternateRowStyles:{fillColor:[250,250,247]},
+    margin:{left:M,right:M},
+    didParseCell:f=>{
+      // Les categories qui signalent une donnee incomplete passent en ambre.
+      if(f.section==='body'&&f.column.index===0){
+        const v=String(f.cell.raw);
+        if(v.indexOf('manquante')>=0||v.indexOf('après')>=0)f.row.cells[0].styles.textColor=C.amber;
+      }
+    }
+  });
+  y=doc.lastAutoTable.finalY+12;
+
+  // ── Mouvements de l'exercice ────────────────────────────────────────
+  doc.setTextColor.apply(doc,C.brand); doc.setFont('helvetica','bold'); doc.setFontSize(12.5);
+  doc.text('Mouvements enregistrés sur douze mois',M,y); y+=6;
+  doc.setFont('helvetica','normal'); doc.setFontSize(9.5); doc.setTextColor.apply(doc,C.ink2);
+  doc.text('Du '+fmt(debut)+' au '+fmt(d)+' : '+mv.naiss+' naissance'+(mv.naiss>1?'s':'')
+    +', '+mv.velages+' vêlage'+(mv.velages>1?'s':'')+' déclaré'+(mv.velages>1?'s':'')
+    +', '+mv.ventes+' vente'+(mv.ventes>1?'s':'')+'.',M,y); y+=7;
+
+  if(faible){
+    doc.setFillColor(254,243,199);                       // --amber-l
+    const texte=doc.splitTextToSize(
+      "Avertissement : peu ou pas de mouvements ont été saisis sur la période. Les effectifs ci-dessus sont "
+      +"fiables, mais ils ne suffisent pas à établir une variation d'inventaire : les entrées et sorties de "
+      +"l'exercice doivent être reprises par ailleurs.",w-M*2-8);
+    const hb=texte.length*4.2+8;
+    doc.roundedRect(M,y-4,w-M*2,hb,2,2,'F');
+    doc.setTextColor.apply(doc,C.amber); doc.setFont('helvetica','bold'); doc.setFontSize(8.6);
+    doc.text(texte,M+4,y+1);
+    y+=hb+6;
+  }
+
+  // ── Detail animal par animal ────────────────────────────────────────
+  doc.setTextColor.apply(doc,C.brand); doc.setFont('helvetica','bold'); doc.setFontSize(12.5);
+  doc.text('Détail animal par animal',M,y); y+=5;
+
+  const corps=[];
+  inv.cats.forEach(c=>inv.groupes[c]
+    .slice().sort((a,b)=>(a.naissance||'').localeCompare(b.naissance||''))
+    .forEach(a=>corps.push([c,a.nom||'—',a.boucle||'—',a.sexe||'—',a.race||'—',
+      a.naissance?fmt(a.naissance):'—',moisAu(a.naissance,d)!==null?String(moisAu(a.naissance,d)):'—'])));
+
+  doc.autoTable({
+    startY:y,
+    head:[['Catégorie','Nom','Boucle','Sexe','Race','Naissance','Âge (mois)']],
+    body:corps,
+    theme:'grid',
+    styles:{font:'helvetica',fontSize:7.4,cellPadding:1.9,lineColor:C.line,lineWidth:.12,textColor:C.ink,overflow:'linebreak'},
+    headStyles:{fillColor:C.brand2,textColor:255,fontStyle:'bold',fontSize:7.6},
+    columnStyles:{0:{cellWidth:34},1:{cellWidth:24},2:{cellWidth:30},3:{cellWidth:17},
+                  5:{cellWidth:22},6:{halign:'right',cellWidth:18}},
+    alternateRowStyles:{fillColor:[250,250,247]},
+    margin:{left:M,right:M,bottom:20}
+  });
+
+  // ── Pied de page sur chaque page ────────────────────────────────────
+  const n=doc.internal.getNumberOfPages();
+  for(let p=1;p<=n;p++){
+    doc.setPage(p);
+    doc.setDrawColor.apply(doc,C.line); doc.setLineWidth(.2);
+    doc.line(M,h-14,w-M,h-14);
+    doc.setFont('helvetica','normal'); doc.setFontSize(7.4); doc.setTextColor.apply(doc,C.ink3);
+    doc.text("BOVIQ compte, date et classe les animaux. Il ne les valorise pas.",M,h-9.5);
+    doc.text("Outil de suivi privé, non certifié, non raccordé à la BDNI.",M,h-6);
+    doc.text('Page '+p+' sur '+n,w-M,h-9.5,{align:'right'});
+  }
+
+  doc.save('BOVIQ_inventaire_cheptel_'+d+'.pdf');
 }
 
 </script>
