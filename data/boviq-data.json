@@ -3593,6 +3593,18 @@
       "mere": "mmtp0preqa9z",
       "pere": "",
       "notes": "Né(e) le 23/07/2026 de Thoueris"
+    },
+    {
+      "id": "mv6kxmu3dksx",
+      "nom": "Brozette",
+      "type": "Génisse",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0009",
+      "naissance": "2026-07-24",
+      "sexe": "Femelle",
+      "mere": "muzge6nflwi9",
+      "pere": "",
+      "notes": "Né(e) le 24/07/2026 de Titane"
     }
   ],
   "repros": [
@@ -4347,6 +4359,18 @@
       "dateSaillie": "",
       "primo": "Non",
       "velageReel": "2026-07-23",
+      "sexeVeau": "Femelle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6kxmu3wf6n",
+      "vache": "muzge6nflwi9",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-24",
       "sexeVeau": "Femelle",
       "poids": "",
       "facilite": "",
