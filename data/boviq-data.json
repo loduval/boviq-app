@@ -3569,6 +3569,18 @@
       "mere": "mmtolzdlm021",
       "pere": "",
       "notes": "Né(e) le 21/07/2026 de Sublime"
+    },
+    {
+      "id": "mv6kufkov35r",
+      "nom": "Veau de Ravigote",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0007",
+      "naissance": "2026-07-21",
+      "sexe": "Mâle",
+      "mere": "mmto1v5zsi4t",
+      "pere": "",
+      "notes": "Né(e) le 21/07/2026 de Ravigote"
     }
   ],
   "repros": [
@@ -4295,6 +4307,18 @@
     {
       "id": "mv6ktjk21pah",
       "vache": "mmtolzdlm021",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-21",
+      "sexeVeau": "Mâle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6kufkoxhix",
+      "vache": "mmto1v5zsi4t",
       "taureau": "",
       "dateSaillie": "",
       "primo": "Non",
