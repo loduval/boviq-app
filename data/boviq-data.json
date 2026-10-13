@@ -3311,14 +3311,20 @@
     {
       "id": "mv6jkx6fgxp7",
       "nom": "Veau de Urbaine",
-      "type": "Génisse",
+      "type": "Vache",
       "race": "Simmental",
       "boucle": "FR 53 8124 0045",
       "naissance": "2026-09-29",
       "sexe": "Femelle",
       "mere": "mmv3ykq5dt6b",
       "pere": "",
-      "notes": "Né(e) le 29/09/2026 de Urbaine"
+      "notes": "Né(e) le 29/09/2026 de Urbaine",
+      "statut": "",
+      "dateSortie": "",
+      "dateEntree": "",
+      "provenance": "",
+      "ancienneBoucle": "",
+      "dateRebouclage": ""
     }
   ],
   "repros": [
