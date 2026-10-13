@@ -2205,8 +2205,12 @@
       "mere": "",
       "pere": "",
       "notes": "",
-      "_trav": "9786",
-      "_categ_ml": "GL"
+      "statut": "",
+      "dateSortie": "",
+      "dateEntree": "",
+      "provenance": "",
+      "ancienneBoucle": "",
+      "dateRebouclage": ""
     },
     {
       "id": "mmv3zafxf23s",
@@ -4551,5 +4555,14 @@
   "bdniDeclares": {
     "naissance_mnofahtvqhtk": "2026-04-07",
     "naissance_mn3e1xcs0l45": "2026-04-07"
-  }
+  },
+  "fourrages": [],
+  "besoinsMS": {
+    "vl": 14,
+    "genisse": 8,
+    "veau": 3,
+    "taureau": 10
+  },
+  "reglementaire": {},
+  "mlControles": []
 }
