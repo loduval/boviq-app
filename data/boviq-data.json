@@ -3407,6 +3407,18 @@
       "mere": "mmtn50n9dcmr",
       "pere": "",
       "notes": "Né(e) le 12/07/2026 de Omelette"
+    },
+    {
+      "id": "mv6kbh5mu3qd",
+      "nom": "Veau de Malaga",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 8124 9993",
+      "naissance": "2026-07-13",
+      "sexe": "Mâle",
+      "mere": "mm4wlq6hl7gr",
+      "pere": "",
+      "notes": "Né(e) le 13/07/2026 de Malaga"
     }
   ],
   "repros": [
@@ -4017,6 +4029,18 @@
       "dateSaillie": "",
       "primo": "Non",
       "velageReel": "2026-07-12",
+      "sexeVeau": "Mâle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6kbh5lqwjd",
+      "vache": "mm4wlq6hl7gr",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-13",
       "sexeVeau": "Mâle",
       "poids": "",
       "facilite": "",
