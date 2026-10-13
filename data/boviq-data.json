@@ -3726,11 +3726,17 @@
       "type": "Jeune mâle",
       "race": "Simmental",
       "boucle": "FR 53 8124 0019",
-      "naissance": "2026-07-29",
+      "naissance": "2026-07-28",
       "sexe": "Mâle",
       "mere": "muzfeqwwe4rm",
       "pere": "",
-      "notes": "Né(e) le 29/07/2026 de Mirtille"
+      "notes": "Né(e) le 29/07/2026 de Mirtille",
+      "statut": "",
+      "dateSortie": "",
+      "dateEntree": "",
+      "provenance": "",
+      "ancienneBoucle": "",
+      "dateRebouclage": ""
     },
     {
       "id": "mv6lem27y4ue",
