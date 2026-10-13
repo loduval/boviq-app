@@ -3605,6 +3605,18 @@
       "mere": "muzge6nflwi9",
       "pere": "",
       "notes": "Né(e) le 24/07/2026 de Titane"
+    },
+    {
+      "id": "mv6kz8xus8k3",
+      "nom": "Veau de Patata",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0010",
+      "naissance": "2026-07-25",
+      "sexe": "Mâle",
+      "mere": "mmtnqok4td4h",
+      "pere": "",
+      "notes": "Né(e) le 25/07/2026 de Patata"
     }
   ],
   "repros": [
@@ -4372,6 +4384,18 @@
       "primo": "Non",
       "velageReel": "2026-07-24",
       "sexeVeau": "Femelle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6kz8xuqw77",
+      "vache": "mmtnqok4td4h",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-25",
+      "sexeVeau": "Mâle",
       "poids": "",
       "facilite": "",
       "notes": "Déni de grossesse — "
