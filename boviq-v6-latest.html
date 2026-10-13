@@ -977,6 +977,7 @@ body.dark-mode{
     </div>
   </div>
   <div id="repro-table-view">
+    <div id="repro-orphelines"></div>
     <div class="card"><div class="tw"><table><thead><tr>
     <th class="sortable" data-table="repro" data-col="vache">Vache <span class="sort-icon">⇅</span></th><th class="sortable" data-table="repro" data-col="taureau">Taureau <span class="sort-icon">⇅</span></th><th class="sortable" data-table="repro" data-col="saillie">Saillie <span class="sort-icon">⇅</span></th><th class="sortable" data-table="repro" data-col="gestation">Gestation <span class="sort-icon">⇅</span></th><th class="sortable" data-table="repro" data-col="tarissement">Tarissement <span class="sort-icon">⇅</span></th><th class="sortable" data-table="repro" data-col="velage">Vêlage prévu <span class="sort-icon">⇅</span></th><th class="sortable" data-table="repro" data-col="statut">Statut <span class="sort-icon">⇅</span></th><th></th>
   </tr></thead><tbody id="tb-repro"></tbody></table></div></div>
@@ -1545,6 +1546,16 @@ body.dark-mode{
     <button class="btn btn-o" onclick="closeM('sortie')">Annuler</button>
     <button class="btn btn-p" style="background:var(--red)" onclick="confirmerSortie()">Confirmer la sortie</button>
   </div>
+</div></div>
+
+<!-- SUPPRESSION ANIMAL -->
+<div class="modal-bg" id="m-suppr"><div class="modal" style="max-width:480px">
+  <div class="modal-h"><h3>🗑 Supprimer un animal</h3><button class="modal-x" onclick="closeM('suppr')">&times;</button></div>
+  <div class="modal-b" style="display:flex;flex-direction:column;gap:14px">
+    <input type="hidden" id="suppr-id">
+    <div id="suppr-corps" style="display:flex;flex-direction:column;gap:14px"></div>
+  </div>
+  <div class="modal-f" id="suppr-actions" style="display:flex;gap:10px"></div>
 </div></div>
 <div class="modal-bg" id="m-taureau"><div class="modal">
   <div class="modal-h"><h3>Ajouter un taureau</h3><button class="modal-x" onclick="closeM('taureau')">&times;</button></div>
@@ -2218,7 +2229,64 @@ function saveAnimal(){
   i>=0?D.animaux[i]=o:D.animaux.push(o);
   save();closeM('animal');popSelects();renderAll();
 }
-function delAnimal(id){if(!confirm('Supprimer cet animal ?'))return;D.animaux=D.animaux.filter(x=>x.id!==id);save();popSelects();renderAll()}
+// ── Suppression d'un animal ───────────────────────────────────────────
+// Supprimer efface la trace de la sortie : l'animal disparaît de l'inventaire
+// sans date ni motif, et ses saillies restent accrochées à un identifiant mort.
+// On montre ce qui est rattaché, on propose la sortie, et si l'on supprime
+// quand même, on nettoie.
+function liensAnimal(id){
+  const dansSante=s=>{const l=Array.isArray(s.animaux)?s.animaux:(s.animaux?[s.animaux]:[]);return l.indexOf(id)>=0};
+  return{
+    repros:D.repros.filter(r=>r.vache===id).length,
+    soins:D.sante.filter(dansSante).length,
+    journal:(D.journal||[]).filter(j=>(j.animaux||[]).indexOf(id)>=0).length,
+    enfants:D.animaux.filter(a=>a.mere===id||a.pere===id).length,
+    ventes:(D.ventesViande||[]).filter(v=>v.animalId===id).length
+  };
+}
+function delAnimal(id){
+  const a=D.animaux.find(x=>x.id===id);if(!a)return;
+  document.getElementById('suppr-id').value=id;
+  const l=liensAnimal(id);
+  const items=[[l.repros,'saillie','saillies'],[l.soins,'ordonnance','ordonnances'],
+    [l.journal,'événement de journal','événements de journal'],
+    [l.enfants,'descendant','descendants'],[l.ventes,'vente de viande','ventes de viande']]
+    .filter(x=>x[0]>0).map(x=>`<li>${x[0]} ${x[0]>1?x[2]:x[1]}</li>`).join('');
+  const present=!a.statut;
+  document.getElementById('suppr-corps').innerHTML=
+    `<p style="margin:0;font-size:15px;color:var(--ink)"><strong>${esc(a.nom)}</strong>${a.boucle?' · <span style="color:var(--ink3);font-size:13px">'+esc(a.boucle)+'</span>':''}</p>`
+    +(present?`<div style="background:var(--amber-l);border-radius:var(--r-sm);padding:13px 15px;font-size:13px;line-height:1.65;color:var(--ink2)">
+        Cet animal est présent au troupeau. <strong>Le supprimer efface toute trace de sa sortie</strong> :
+        il disparaît de l'inventaire de fin d'année sans date ni motif, et le cabinet comptable ne peut
+        plus justifier la variation de cheptel.<br><br>
+        Pour une vente, une mort, une réforme ou un équarrissage, utilisez <strong>Sortir l'animal</strong> :
+        la fiche et l'historique restent, avec la date.</div>`:'')
+    +(items?`<div style="font-size:13px;line-height:1.65;color:var(--ink2)">La suppression entraînera aussi :
+        <ul style="margin:8px 0 10px;padding-left:20px">${items}</ul>
+        <span style="color:var(--ink3);font-size:12px">${[l.repros?'les saillies sont supprimées':'',
+            (l.soins||l.journal)?'les ordonnances et les événements perdent cet animal':'',
+            l.enfants?'les descendants perdent leur filiation':'',
+            l.ventes?'les ventes gardent une référence vide':''].filter(Boolean).join(', ').replace(/^./,c=>c.toUpperCase())}.</span></div>`
+      :`<p style="margin:0;font-size:13px;color:var(--ink3)">Aucun enregistrement n'est rattaché à cet animal.</p>`);
+  document.getElementById('suppr-actions').innerHTML=
+    `<button class="btn btn-o" style="flex:1" onclick="closeM('suppr')">Annuler</button>`
+    +(present?`<button class="btn btn-p" style="flex:1" onclick="closeM('suppr');openSortieModal('${id}')">Sortir l'animal</button>`:'')
+    +`<button class="btn btn-p" style="flex:1;background:var(--red)" onclick="confirmerSuppression()">Supprimer</button>`;
+  openM('suppr');
+}
+function confirmerSuppression(){
+  const id=document.getElementById('suppr-id').value;
+  const a=D.animaux.find(x=>x.id===id);if(!a)return;
+  D.repros=D.repros.filter(r=>r.vache!==id);
+  D.sante.forEach(s=>{
+    if(Array.isArray(s.animaux))s.animaux=s.animaux.filter(x=>x!==id);
+    else if(s.animaux===id)s.animaux=[];
+  });
+  (D.journal||[]).forEach(j=>{if(Array.isArray(j.animaux))j.animaux=j.animaux.filter(x=>x!==id)});
+  D.animaux.forEach(x=>{if(x.mere===id)x.mere='';if(x.pere===id)x.pere='';});
+  D.animaux=D.animaux.filter(x=>x.id!==id);
+  save();closeM('suppr');popSelects();renderAll();
+}
 
 function getAnimalAlertLevel(animalId){
   // urgent = rouge : délai attente <3j, terme dépassé, BDNI urgent
@@ -2378,8 +2446,8 @@ function applySortSante(list){
     let va,vb;
     if(s.col==='date'){va=a.date||'';vb=b.date||''}
     else if(s.col==='animal'){
-      const na=(Array.isArray(a.animaux)?a.animaux:[a.animaux]).map(id=>{const x=D.animaux.find(z=>z.id===id);return x?x.nom:'?'}).join(', ');
-      const nb=(Array.isArray(b.animaux)?b.animaux:[b.animaux]).map(id=>{const x=D.animaux.find(z=>z.id===id);return x?x.nom:'?'}).join(', ');
+      const na=(Array.isArray(a.animaux)?a.animaux:[a.animaux]).map(id=>{const x=D.animaux.find(z=>z.id===id);return x?x.nom:'Animal supprimé'}).join(', ');
+      const nb=(Array.isArray(b.animaux)?b.animaux:[b.animaux]).map(id=>{const x=D.animaux.find(z=>z.id===id);return x?x.nom:'Animal supprimé'}).join(', ');
       va=na;vb=nb;
     }
     else if(s.col==='type'){va=getLignesSante(a)[0]?.type||'';vb=getLignesSante(b)[0]?.type||''}
@@ -2837,7 +2905,7 @@ function renderReproGantt(){
   <div class="gantt-axis"><span>${axeLeft}</span><span>${axeToday}</span><span>${axeRight}</span></div>`;
 
   rows.forEach(({r,a,g,dSaillie,dTarissement,dVelage,daysLeft})=>{
-    const nom=a?a.nom:'?';
+    const nom=a?a.nom:'Animal supprimé';
     const race=a?a.race:'';
     const overdue=daysLeft<0;
     const enTarissement=!overdue&&now>=dTarissement;
@@ -2929,7 +2997,7 @@ function renderRepro(){
     const st=reproStatut(r);
     const tarJ=r.primo==='Oui'?g-CONST.TARISSEMENT_PRIMIPARE:g-CONST.TARISSEMENT_MULTIPARE;
     return `<tr>
-      <td><span class="td-name">${a?a.nom:'?'}</span><span class="td-sub">${race}</span></td>
+      <td><span class="td-name">${a?esc(a.nom):'<span style="color:var(--amber)">Vache supprimée</span>'}</span><span class="td-sub">${race}</span></td>
       <td>${t?t.nom:(r.taureau||'—')}</td>
       <td>${fmt(r.dateSaillie)}</td>
       <td>${g}j</td>
@@ -2941,8 +3009,65 @@ function renderRepro(){
         <button class="btn btn-d btn-icon btn-s" onclick="delRepro('${r.id}')">🗑</button>
       </td></tr>`;
   }).join('');
+  renderOrphelines();
   // Si vue gantt active, la rafraîchir aussi
   if(typeof reproViewMode!=='undefined'&&reproViewMode==='gantt')renderReproGantt();
+}
+
+// ── Saillies orphelines ───────────────────────────────────────────────
+// Supprimer un animal laissait ses saillies derrière lui : elles s'affichaient
+// en « ? », alimentaient les alertes de terme dépassé et faussaient les
+// compteurs de gestation. On les nomme, et on les rend traitables.
+function reprosOrphelines(){
+  const ids=new Set(D.animaux.map(a=>a.id));
+  return D.repros.filter(r=>r.vache&&!ids.has(r.vache))
+    .sort((a,b)=>(a.dateSaillie||'').localeCompare(b.dateSaillie||''));
+}
+function renderOrphelines(){
+  const el=document.getElementById('repro-orphelines');if(!el)return;
+  const orph=reprosOrphelines();
+  if(!orph.length){el.innerHTML='';return}
+  const n=orph.length, pl=n>1;
+  const options=D.animaux.filter(a=>!a.statut&&a.sexe==='Femelle')
+    .slice().sort((x,y)=>(x.nom||'').localeCompare(y.nom||''))
+    .map(a=>`<option value="${a.id}">${esc(a.nom)}${a.boucle?' — '+esc(a.boucle):''}</option>`).join('');
+  el.innerHTML=`<div class="card" style="border-left:3px solid var(--amber);margin-bottom:16px">
+    <div class="card-head"><h3>⚠️ ${n} saillie${pl?'s':''} sans vache</h3></div>
+    <div class="card-body">
+      <p style="margin:0 0 14px;font-size:13px;line-height:1.65;color:var(--ink2)">
+        La vache de ${pl?'ces saillies a':'cette saillie a'} été supprimée du troupeau.
+        ${pl?'Elles comptent':'Elle compte'} encore dans les alertes de vêlage et dans les gestations en cours.
+        Rattachez-${pl?'les':'la'} à la bonne vache, ou supprimez-${pl?'les':'la'}.</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+      ${orph.map(r=>{
+        const t=D.taureaux.find(x=>x.id===r.taureau);
+        return `<div class="ligne-sante" id="orph-${r.id}">
+          <div class="l-row l-row-2">
+            <div class="fi"><label>Saillie du ${fmt(r.dateSaillie)}${t?' — '+esc(t.nom):''}</label>
+              <select class="orph-cible"><option value="">— Choisir la vache —</option>${options}</select></div>
+            <div class="fi"><label>Que faire</label>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-p btn-s" style="flex:1" onclick="rattacherOrpheline('${r.id}')">Rattacher</button>
+                <button class="btn btn-d btn-s" style="flex:1" onclick="supprimerOrpheline('${r.id}')">Supprimer</button>
+              </div></div>
+          </div></div>`;
+      }).join('')}
+      </div>
+    </div></div>`;
+}
+function rattacherOrpheline(id){
+  const el=document.getElementById('orph-'+id);if(!el)return;
+  const cible=el.querySelector('.orph-cible').value;
+  if(!cible){alert('Choisissez d\'abord la vache à laquelle rattacher cette saillie.');return}
+  const r=D.repros.find(x=>x.id===id);if(!r)return;
+  r.vache=cible;
+  save();popSelects();renderAll();
+}
+function supprimerOrpheline(id){
+  const r=D.repros.find(x=>x.id===id);if(!r)return;
+  if(!confirm('Supprimer la saillie du '+fmt(r.dateSaillie)+' ?\n\nElle disparaîtra des alertes et des gestations en cours.'))return;
+  D.repros=D.repros.filter(x=>x.id!==id);
+  save();renderAll();
 }
 
 // ========================================
@@ -3142,7 +3267,7 @@ function renderSante(){
     const anims=(Array.isArray(s.animaux)?s.animaux:[s.animaux]).map(id=>{
       const a=D.animaux.find(x=>x.id===id);
       const t=D.taureaux.find(x=>x.id===id);
-      return a?a.nom:t?t.nom:'?';
+      return a?a.nom:t?t.nom:'Animal supprimé';
     }).join(', ');
     // Lignes : on prend le délai max
     const lignes=getLignesSante(s);
@@ -3571,7 +3696,7 @@ function renderPlanning(){
   D.repros.forEach(r=>{
     if(!r.dateSaillie||r.velageReel)return;
     const a=D.animaux.find(x=>x.id===r.vache);
-    const nom=a?a.nom:'?';
+    const nom=a?a.nom:'Animal supprimé';
     const g=gestFor(a?a.race:'Autre');
     const dv=addD(r.dateSaillie,g);
     if(evts[dv]!==undefined)evts[dv].push({cls:'ev-velage',ico:'🍼',txt:nom+' — vêlage prévu'});
@@ -3584,7 +3709,7 @@ function renderPlanning(){
   D.sante.forEach(s=>{
     const{dl,dv}=getSanteMaxDelais(s);
     const noms=(Array.isArray(s.animaux)?s.animaux:[s.animaux]).map(id=>{
-      const x=D.animaux.find(a=>a.id===id);return x?x.nom:'?';
+      const x=D.animaux.find(a=>a.id===id);return x?x.nom:'Animal supprimé';
     }).join(', ');
     [dl,dv].filter(j=>j>0).forEach(j=>{
       const fd=addD(s.date,j);
@@ -3658,7 +3783,7 @@ function renderDashboard(){
   D.repros.forEach(r=>{
     if(!r.dateSaillie||r.velageReel)return;
     const a=D.animaux.find(x=>x.id===r.vache);
-    const nom=a?a.nom:'?';const race=a?a.race:'Autre';
+    const nom=a?a.nom:'Vache supprimée';const race=a?a.race:'Autre';
     const g=gestFor(race);const primo=r.primo==='Oui';
     const dv=addD(r.dateSaillie,g);const d=diffD(dv);
     const dt=addD(r.dateSaillie,primo?g-CONST.TARISSEMENT_PRIMIPARE:g-CONST.TARISSEMENT_MULTIPARE);const dT=diffD(dt);
@@ -3671,7 +3796,7 @@ function renderDashboard(){
   D.sante.forEach(s=>{
     // Alertes : utilise NOM des animaux
     const noms=(Array.isArray(s.animaux)?s.animaux:[s.animaux]).map(id=>{
-      const x=D.animaux.find(a=>a.id===id)||D.taureaux.find(t=>t.id===id);return x?x.nom:'?';
+      const x=D.animaux.find(a=>a.id===id)||D.taureaux.find(t=>t.id===id);return x?x.nom:'Animal supprimé';
     }).join(', ');
     const lignes=getLignesSante(s);
     const dl=Math.max(...lignes.map(l=>parseInt(l.delaiLait)||0));
@@ -3973,7 +4098,7 @@ function getAllEcheances(){
   D.repros.forEach(r=>{
     if(!r.dateSaillie||r.velageReel)return;
     const a=D.animaux.find(x=>x.id===r.vache);
-    const nom=a?a.nom:'?';const g=gestFor(a?a.race:'Autre');
+    const nom=a?a.nom:'Animal supprimé';const g=gestFor(a?a.race:'Autre');
     const dv=addD(r.dateSaillie,g);const d=diffD(dv);
     const primo=r.primo==='Oui';const dt=addD(r.dateSaillie,primo?g-CONST.TARISSEMENT_PRIMIPARE:g-CONST.TARISSEMENT_MULTIPARE);const dTar=diffD(dt);
     echs.push({date:dv,type:'velage',color:d<0?'d-red':d<=15?'d-amber':'d-green',
@@ -3983,7 +4108,7 @@ function getAllEcheances(){
   });
   D.sante.forEach(s=>{
     const noms=(Array.isArray(s.animaux)?s.animaux:[s.animaux]).map(id=>{
-      const x=D.animaux.find(a=>a.id===id)||D.taureaux.find(t=>t.id===id);return x?x.nom:'?';
+      const x=D.animaux.find(a=>a.id===id)||D.taureaux.find(t=>t.id===id);return x?x.nom:'Animal supprimé';
     }).join(', ');
     const{dl,dv}=getSanteMaxDelais(s);
     const lignes=getLignesSante(s);
@@ -4112,10 +4237,10 @@ function exportReproCSV(){
   const rows=D.repros.map(r=>{
     const a=D.animaux.find(x=>x.id===r.vache);
     const t=D.taureaux.find(x=>x.id===r.taureau);
-    const race=a?a.race:'?';const g=gestFor(race);
+    const race=a?a.race:'—';const g=gestFor(race);
     const tarJ=r.primo==='Oui'?g-CONST.TARISSEMENT_PRIMIPARE:g-CONST.TARISSEMENT_MULTIPARE;
     const st=reproStatut(r);
-    return[a?a.nom:'?',race,t?t.nom:'',r.dateSaillie,g,r.dateSaillie?addD(r.dateSaillie,tarJ):'',
+    return[a?a.nom:'Animal supprimé',race,t?t.nom:'',r.dateSaillie,g,r.dateSaillie?addD(r.dateSaillie,tarJ):'',
       r.dateSaillie?addD(r.dateSaillie,g):'',r.velageReel||'',r.sexeVeau||'',r.poids||'',r.facilite||'',st.l,r.notes||''];
   });
   const csv=[h,...rows].map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(";")).join("\n");
@@ -4994,7 +5119,7 @@ async function exportSantePdf(){
   const rows=[];
   sorted.forEach(s=>{
     const animaux=Array.isArray(s.animaux)?s.animaux:[s.animaux];
-    const noms=animaux.map(id=>{const a=D.animaux.find(x=>x.id===id);const t=D.taureaux.find(x=>x.id===id);return a?(a.nom+(a.boucle?' ('+a.boucle+')':'')):(t?t.nom:'?')}).join(', ');
+    const noms=animaux.map(id=>{const a=D.animaux.find(x=>x.id===id);const t=D.taureaux.find(x=>x.id===id);return a?(a.nom+(a.boucle?' ('+a.boucle+')':'')):(t?t.nom:'Animal supprimé')}).join(', ');
     const lignes=getLignesSante(s);
     lignes.forEach((l,li)=>{
       const dlait=parseInt(l.delaiLait)||0;
@@ -6280,7 +6405,7 @@ function renderJournal(){
   });
   statsHtml+='</div>';
 
-  const getNoms=j=>(j.animaux||[]).map(id=>{const a=D.animaux.find(x=>x.id===id)||D.taureaux.find(x=>x.id===id);return a?a.nom:'?'}).join(', ');
+  const getNoms=j=>(j.animaux||[]).map(id=>{const a=D.animaux.find(x=>x.id===id)||D.taureaux.find(x=>x.id===id);return a?a.nom:'Animal supprimé'}).join(', ');
 
   // Si filtre actif → liste simple améliorée
   if(fA||fT){
@@ -6443,7 +6568,7 @@ function getBDNIMouvements(){
     const dateD=new Date(r.velageReel);
     const j=Math.round((new Date()-dateD)/86400000);
     if(j>60)return;// Oublié si >60j
-    const nomMere=D.animaux.find(x=>x.id===r.vache)?.nom||'?';
+    const nomMere=D.animaux.find(x=>x.id===r.vache)?.nom||'vache supprimée';
     const nb=r.nbVeaux||1, mn=r.mortNes||0;
     // Un veau mort-né se notifie quand même : naissance, puis mort.
     const detail=(nb>1?' — '+nb+' veaux':'')
@@ -6934,7 +7059,7 @@ ${genissesMures.map(a=>{const m=Math.round((now-new Date(a.naissance))/864e5/30.
     const a=D.animaux.find(x=>x.id===id);
     const lait=a?._ml_lait24||0;
     const prod=lait*305*PRIX_LAIT;
-    return{id,nom:a?a.nom:'?',cout,prod:Math.round(prod),ratio:prod>0?cout/prod:null,lait};
+    return{id,nom:a?a.nom:'Animal supprimé',cout,prod:Math.round(prod),ratio:prod>0?cout/prod:null,lait};
   }).filter(e=>e.cout>0&&e.prod>0&&e.lait>0); // VL uniquement
   const coutVachesSort=[...coutVaches].sort((a,b)=>b.cout-a.cout);
   const totalCoutVet=coutVaches.reduce((s,e)=>s+e.cout,0);
@@ -7230,9 +7355,9 @@ function buildPopupAlertes(){
     const a=D.animaux.find(x=>x.id===r.vache);
     const g=gestFor(a?a.race:'Autre');
     const d=diffD(addD(r.dateSaillie,g));
-    if(d<0)items.push({cat:'urgent',icon:'🔴',nom:a?a.nom:'?',label:'Terme dépassé',detail:'depuis '+Math.abs(d)+' jour'+(Math.abs(d)>1?'s':''),badge:'b-red',badgeTxt:'J+'+Math.abs(d),page:'repro'});
-    else if(d<=5)items.push({cat:'urgent',icon:'🟠',nom:a?a.nom:'?',label:'Vêlage imminent',detail:'dans '+d+' jour'+(d>1?'s':''),badge:'b-amber',badgeTxt:'J-'+d,page:'repro'});
-    else if(d<=14)items.push({cat:'proche',icon:'🟡',nom:a?a.nom:'?',label:'Vêlage à venir',detail:'dans '+d+' jours',badge:'b-amber',badgeTxt:'J-'+d,page:'repro'});
+    if(d<0)items.push({cat:'urgent',icon:'🔴',nom:a?a.nom:'Animal supprimé',label:'Terme dépassé',detail:'depuis '+Math.abs(d)+' jour'+(Math.abs(d)>1?'s':''),badge:'b-red',badgeTxt:'J+'+Math.abs(d),page:'repro'});
+    else if(d<=5)items.push({cat:'urgent',icon:'🟠',nom:a?a.nom:'Animal supprimé',label:'Vêlage imminent',detail:'dans '+d+' jour'+(d>1?'s':''),badge:'b-amber',badgeTxt:'J-'+d,page:'repro'});
+    else if(d<=14)items.push({cat:'proche',icon:'🟡',nom:a?a.nom:'Animal supprimé',label:'Vêlage à venir',detail:'dans '+d+' jours',badge:'b-amber',badgeTxt:'J-'+d,page:'repro'});
   });
 
   // 2. Délais d'attente actifs (lait ou viande)
@@ -7243,7 +7368,7 @@ function buildPopupAlertes(){
     const fin=addD(s.date,maxJ);
     const d=diffD(fin);
     if(d<=0)return;
-    const noms=(Array.isArray(s.animaux)?s.animaux:[s.animaux]).map(id=>(D.animaux.find(a=>a.id===id)||D.taureaux.find(t=>t.id===id)||{nom:'?'}).nom).join(', ');
+    const noms=(Array.isArray(s.animaux)?s.animaux:[s.animaux]).map(id=>(D.animaux.find(a=>a.id===id)||D.taureaux.find(t=>t.id===id)||{nom:'Animal supprimé'}).nom).join(', ');
     items.push({cat:'urgent',icon:'⏱️',nom:noms,label:'Délai attente'+(dl>0?' lait':'')+(dv>0?' viande':''),detail:'fin le '+fmt(fin)+' ('+d+'j restant'+(d>1?'s':'')+')',badge:'b-red',badgeTxt:d+'j',page:'sante'});
   });
 
@@ -7615,14 +7740,14 @@ function scheduleNotifications(){
     if(diff<0){
       setTimeout(()=>{
         new Notification('🚨 BOVIQ — Terme dépassé',{
-          body:`${vache?vache.nom:'?'} — terme dépassé de ${Math.abs(diff)} jours`,
+          body:`${vache?vache.nom:'Vache supprimée'} — terme dépassé de ${Math.abs(diff)} jours`,
           icon:'icons/boviq-192.png',tag:'terme-'+r.id
         });
       },2000);
     } else if(diff<=3){
       setTimeout(()=>{
         new Notification('🍼 BOVIQ — Vêlage imminent',{
-          body:`${vache?vache.nom:'?'} — vêlage dans ${diff} jour${diff>1?'s':''}`,
+          body:`${vache?vache.nom:'Vache supprimée'} — vêlage dans ${diff} jour${diff>1?'s':''}`,
           icon:'icons/boviq-192.png',tag:'velage-'+r.id
         });
       },3000);
