@@ -3371,6 +3371,18 @@
       "mere": "mmv3fkq2o89r",
       "pere": "",
       "notes": "Né(e) le 28/04/2026 de Ushuaia"
+    },
+    {
+      "id": "mv6k7n8to7k5",
+      "nom": "Betterave",
+      "type": "Génisse",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 9990",
+      "naissance": "2026-07-10",
+      "sexe": "Femelle",
+      "mere": "mmtnyquh34de",
+      "pere": "",
+      "notes": "Né(e) le 10/07/2026 de Rhubarbe — Jumelle morte née"
     }
   ],
   "repros": [
@@ -3949,6 +3961,18 @@
       "poids": "",
       "facilite": "",
       "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6k7n8tdbwm",
+      "vache": "mmtnyquh34de",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-10",
+      "sexeVeau": "Femelle",
+      "poids": "",
+      "facilite": "2 — Aide légère",
+      "notes": "Déni de grossesse — Jumelle morte née"
     }
   ],
   "sante": [
