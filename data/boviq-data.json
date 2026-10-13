@@ -3797,6 +3797,18 @@
       "mere": "muzfg9mtldhq",
       "pere": "",
       "notes": "Né(e) le 28/07/2026 de Marguerite"
+    },
+    {
+      "id": "mv6nccd9obvz",
+      "nom": "Veau de Lazure",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0024",
+      "naissance": "2026-07-31",
+      "sexe": "Mâle",
+      "mere": "muzf5734an95",
+      "pere": "",
+      "notes": "Né(e) le 31/07/2026 de Lazure"
     }
   ],
   "repros": [
@@ -4539,6 +4551,18 @@
       "dateSaillie": "",
       "primo": "Non",
       "velageReel": "2026-07-28",
+      "sexeVeau": "Mâle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6nccd9r8bp",
+      "vache": "muzf5734an95",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-31",
       "sexeVeau": "Mâle",
       "poids": "",
       "facilite": "",
