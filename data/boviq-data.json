@@ -3545,6 +3545,18 @@
       "mere": "mmto4evcboht",
       "pere": "",
       "notes": "Né(e) le 21/07/2026 de Rutabaga"
+    },
+    {
+      "id": "mv6ksns61s3n",
+      "nom": "Bougie",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0005",
+      "naissance": "2026-07-21",
+      "sexe": "Mâle",
+      "mere": "mmtnoxowf2o3",
+      "pere": "",
+      "notes": "Né(e) le 21/07/2026 de Passiflore"
     }
   ],
   "repros": [
@@ -4247,6 +4259,18 @@
     {
       "id": "mv6kradefh5q",
       "vache": "mmto4evcboht",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-21",
+      "sexeVeau": "Mâle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6ksns6gj2g",
+      "vache": "mmtnoxowf2o3",
       "taureau": "",
       "dateSaillie": "",
       "primo": "Non",
