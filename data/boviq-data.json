@@ -3737,6 +3737,18 @@
       "mere": "muzfhyzyl6xo",
       "pere": "",
       "notes": "Né(e) le 28/07/2026 de Nami"
+    },
+    {
+      "id": "mv6lftuptiue",
+      "nom": "Veau de Paella",
+      "type": "Génisse",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0020",
+      "naissance": "2026-07-28",
+      "sexe": "Femelle",
+      "mere": "muzfm1uej4wf",
+      "pere": "",
+      "notes": "Né(e) le 28/07/2026 de Paella"
     }
   ],
   "repros": [
@@ -4631,6 +4643,18 @@
     {
       "id": "mv6lem27wbvy",
       "vache": "muzfhyzyl6xo",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-28",
+      "sexeVeau": "Femelle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6lftup1l83",
+      "vache": "muzfm1uej4wf",
       "taureau": "",
       "dateSaillie": "",
       "primo": "Non",
