@@ -3383,6 +3383,18 @@
       "mere": "mmtnyquh34de",
       "pere": "",
       "notes": "Né(e) le 10/07/2026 de Rhubarbe — Jumelle morte née"
+    },
+    {
+      "id": "mv6k91cgglv4",
+      "nom": "Betterave",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 9991",
+      "naissance": "2026-07-12",
+      "sexe": "Mâle",
+      "mere": "muzf7dul3kyz",
+      "pere": "",
+      "notes": "Né(e) le 12/07/2026 de Larousse"
     }
   ],
   "repros": [
@@ -3973,6 +3985,18 @@
       "poids": "",
       "facilite": "2 — Aide légère",
       "notes": "Déni de grossesse — Jumelle morte née"
+    },
+    {
+      "id": "mv6k91cgv23c",
+      "vache": "muzf7dul3kyz",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-12",
+      "sexeVeau": "Mâle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
     }
   ],
   "sante": [
