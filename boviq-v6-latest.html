@@ -177,6 +177,9 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .sf-input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(45,106,79,.1)}
 @media(max-width:768px){.sf-grid{grid-template-columns:1fr 1fr}.sf-field-reset{grid-column:1/-1;flex-direction:row;align-items:center}}
 @media(max-width:500px){.ligne-sante .l-row-2,.ligne-sante .l-row-3{grid-template-columns:1fr}}
+.veau-aide{font-size:11.5px;color:var(--ink3);line-height:1.5;margin-top:10px}
+.ligne-sante.veau-mortne{background:var(--red-l);border-color:rgba(220,38,38,.28)}
+.ligne-sante.veau-mortne .l-num{background:rgba(220,38,38,.14);color:var(--red)}
 
 /* === FICHE ANIMAL === */
 .fiche-hero{background:linear-gradient(135deg,var(--brand2) 0%,var(--brand) 100%);border-radius:var(--r2) var(--r2) 0 0;padding:24px 24px 20px;color:white;margin:-0px}
@@ -1417,11 +1420,17 @@ body.dark-mode{
   <div class="modal-b"><div class="fg">
     <div class="fi"><label>Vache</label><select id="v-vache"></select></div>
     <div class="fi"><label>Date du vêlage</label><input type="date" id="v-date"></div>
-    <div class="fi"><label>Sexe du veau</label><select id="v-sexe"><option value="">—</option><option>Mâle</option><option>Femelle</option></select></div>
-    <div class="fi"><label>Nom du veau</label><input id="v-nom-veau" placeholder="Ex: Olympe, Oscar..."></div>
-    <div class="fi"><label>N° Boucle du veau</label><div style="display:flex;gap:6px;align-items:center"><input id="v-boucle-veau" placeholder="FR 53 ..." style="flex:1"><button type="button" class="btn btn-o btn-s btn-scan-cam" onclick="scanBoucle('v-boucle-veau')" title="Scanner">📷 Scanner</button></div></div>
-    <div class="fi"><label>Poids veau (kg)</label><input type="number" id="v-poids" step="0.5"></div>
     <div class="fi"><label>Facilité vêlage</label><select id="v-facilite"><option value="">—</option><option>1 — Seule</option><option>2 — Aide légère</option><option>3 — Aide forte</option><option>4 — Vétérinaire</option><option>5 — Césarienne</option></select></div>
+    <div class="fi full">
+      <div class="sante-produits-wrap">
+        <div class="sante-produits-head">
+          <span class="spw-title">🍼 Veau(x) du vêlage</span>
+          <button class="btn btn-p btn-s" type="button" id="v-btn-jumeau" onclick="addVeauLigne()">+ Ajouter un jumeau</button>
+        </div>
+        <div id="v-veaux-container"></div>
+        <div class="veau-aide">Un veau mort-né reste dans l'historique de la vache et dans ses mouvements à déclarer, mais il n'entre pas à l'inventaire et ne reçoit pas de boucle.</div>
+      </div>
+    </div>
     <div class="fi full"><label>Notes</label><textarea id="v-notes" placeholder="Observations..."></textarea></div>
   </div></div>
   <div class="modal-f"><button class="btn btn-o" onclick="closeM('velage')">Annuler</button><button class="btn btn-p" onclick="saveVelage()">Enregistrer le vêlage</button></div>
@@ -1528,7 +1537,8 @@ body.dark-mode{
         <option value="Réformé">🔄 Réformé</option>
       </select>
     </div>
-    <div class="fi"><label>Date de sortie</label><input type="date" id="sortie-date"></div>
+    <div class="fi"><label>Date de sortie</label><input type="date" id="sortie-date">
+      <span style="font-size:11.5px;color:var(--ink3);margin-top:5px;display:block">L'animal reste à l'inventaire jusqu'à cette date, puis en sort. C'est elle que lit l'inventaire de fin d'année transmis au comptable.</span></div>
     <div class="fi"><label>Notes (optionnel)</label><textarea id="sortie-notes" placeholder="Acheteur, cause du décès…" style="min-height:50px"></textarea></div>
   </div>
   <div class="modal-f">
@@ -2578,6 +2588,10 @@ function saveRepro(){
     notes:esc(document.getElementById('r-notes').value.trim())
   };
   const i=D.repros.findIndex(x=>x.id===o.id);
+  // Le détail des veaux (jumeaux, mort-nés) se saisit au vêlage : ne pas l'écraser ici.
+  if(i>=0&&D.repros[i].veaux){
+    o.veaux=D.repros[i].veaux;o.nbVeaux=D.repros[i].nbVeaux;o.mortNes=D.repros[i].mortNes;
+  }
   i>=0?D.repros[i]=o:D.repros.push(o);
   save();closeM('repro');renderAll();
 }
@@ -2586,66 +2600,182 @@ function delRepro(id){if(!confirm('Supprimer ?'))return;D.repros=D.repros.filter
 // ========================================
 // DÉCLARATION VÊLAGE
 // ========================================
-function openVelageModal(){
+// ── Veaux d'un vêlage : jumeaux et mort-nés ───────────────────────────
+// Un vêlage peut donner plusieurs veaux, et tous ne naissent pas vivants.
+// Le mort-né n'a pas de boucle : il n'entre donc pas à l'inventaire, mais il
+// reste dans l'historique de la vache et dans les mouvements à déclarer.
+const VEAUX_MAX=3;
+let _veauCount=0;
+function escAttr(s){return esc(s).replace(/"/g,'&quot;')}
+
+function veauLigneHTML(idx,v){
+  v=v||{};
+  const mort=v.etat==='Mort-né';
+  return `<div class="ligne-sante${mort?' veau-mortne':''}" id="veau-${idx}">
+    <div class="ligne-sante-head">
+      <span class="l-num"><span class="v-num-txt">Veau ${idx+1}</span></span>
+      <button type="button" class="remove-ligne" onclick="removeVeauLigne(${idx})">Retirer</button>
+    </div>
+    <div class="l-row l-row-2">
+      <div class="fi"><label>État à la naissance</label>
+        <select class="v-etat" onchange="majVeauLigne(${idx})">
+          <option value="Vivant"${mort?'':' selected'}>Vivant</option>
+          <option value="Mort-né"${mort?' selected':''}>Mort-né</option>
+        </select></div>
+      <div class="fi"><label>Sexe</label>
+        <select class="v-sexe"><option value="">—</option><option${v.sexe==='Mâle'?' selected':''}>Mâle</option><option${v.sexe==='Femelle'?' selected':''}>Femelle</option></select></div>
+    </div>
+    <div class="l-row l-row-2 v-identite"${mort?' style="display:none"':''}>
+      <div class="fi"><label>Nom du veau</label><input class="v-nom" value="${escAttr(v.nom||'')}" placeholder="Ex: Olympe, Oscar…"></div>
+      <div class="fi"><label>N° Boucle</label><div style="display:flex;gap:6px;align-items:center"><input class="v-boucle" id="v-boucle-${idx}" value="${escAttr(v.boucle||'')}" placeholder="FR 53 …" style="flex:1"><button type="button" class="btn btn-o btn-s btn-scan-cam" onclick="scanBoucle('v-boucle-${idx}')" title="Scanner">📷</button></div></div>
+    </div>
+    <div class="l-row l-row-2">
+      <div class="fi"><label>Poids (kg)</label><input type="number" class="v-poids" step="0.5" value="${escAttr(v.poids||'')}"></div>
+      <div class="fi v-cause-wrap"${mort?'':' style="display:none"'}><label>Cause présumée</label><input class="v-cause" value="${escAttr(v.cause||'')}" placeholder="Vêlage difficile, prématuré…"></div>
+    </div>
+  </div>`;
+}
+function addVeauLigne(v){
+  const c=document.getElementById('v-veaux-container');
+  if(c.querySelectorAll('.ligne-sante').length>=VEAUX_MAX)return;
+  const idx=_veauCount++;
+  const d=document.createElement('div');
+  d.innerHTML=veauLigneHTML(idx,v);
+  c.appendChild(d.firstChild);
+  majBoutonJumeau();
+}
+function removeVeauLigne(idx){
+  const el=document.getElementById('veau-'+idx);
+  if(el)el.remove();
+  majBoutonJumeau();
+}
+function majVeauLigne(idx){
+  const el=document.getElementById('veau-'+idx);if(!el)return;
+  const mort=el.querySelector('.v-etat').value==='Mort-né';
+  el.classList.toggle('veau-mortne',mort);
+  el.querySelector('.v-identite').style.display=mort?'none':'';
+  el.querySelector('.v-cause-wrap').style.display=mort?'':'none';
+  if(mort){el.querySelector('.v-nom').value='';el.querySelector('.v-boucle').value='';}
+}
+function majBoutonJumeau(){
+  const c=document.getElementById('v-veaux-container');
+  const lignes=[...c.querySelectorAll('.ligne-sante')];
+  lignes.forEach((el,i)=>{
+    el.querySelector('.v-num-txt').textContent='Veau '+(i+1);
+    el.querySelector('.remove-ligne').style.display=lignes.length>1?'':'none';
+  });
+  const b=document.getElementById('v-btn-jumeau');
+  if(b)b.style.display=lignes.length>=VEAUX_MAX?'none':'';
+}
+function getVeauxFromModal(){
+  const out=[];
+  document.querySelectorAll('#v-veaux-container .ligne-sante').forEach(el=>{
+    out.push({
+      etat:el.querySelector('.v-etat').value,
+      sexe:el.querySelector('.v-sexe').value,
+      nom:esc(el.querySelector('.v-nom').value.trim()),
+      boucle:esc(el.querySelector('.v-boucle').value.trim()),
+      poids:el.querySelector('.v-poids').value,
+      cause:esc(el.querySelector('.v-cause').value.trim())
+    });
+  });
+  return out;
+}
+// Résumé lisible des veaux d'un vêlage, pour la fiche et les listes.
+function resumeVeaux(r){
+  if(!r.veaux||!r.veaux.length)
+    return (r.sexeVeau?' · '+esc(r.sexeVeau):'')+(r.poids?' · '+esc(r.poids)+'kg':'');
+  return ' · '+r.veaux.map(v=>{
+    if(v.etat==='Mort-né')
+      return '<span style="color:var(--red)">'+esc(v.sexe||'Veau')+' mort-né</span>';
+    const an=v.animalId?D.animaux.find(a=>a.id===v.animalId):null;
+    const nom=an?esc(an.nom):(v.nom?esc(v.nom):'');
+    return esc(v.sexe||'')+(nom?' '+nom:'')+(v.poids?' ('+esc(v.poids)+'kg)':'');
+  }).join(' · ');
+}
+
+function openVelageModal(vacheId){
   popSelects();
   document.getElementById('v-date').value=today();
-  ['v-nom-veau','v-boucle-veau','v-poids','v-notes'].forEach(x=>document.getElementById(x).value='');
-  document.getElementById('v-sexe').value='';
+  document.getElementById('v-notes').value='';
   document.getElementById('v-facilite').value='';
+  if(vacheId)document.getElementById('v-vache').value=vacheId;
+  _veauCount=0;
+  document.getElementById('v-veaux-container').innerHTML='';
+  addVeauLigne();
   openM('velage');
 }
 function saveVelage(){
   const vacheId=document.getElementById('v-vache').value;
   const dateV=document.getElementById('v-date').value;
-  const sexe=document.getElementById('v-sexe').value;
-  const nomVeau=esc(document.getElementById('v-nom-veau').value.trim());
   if(!vacheId||!dateV){alert('Sélectionnez la vache et la date du vêlage');return}
-  if(!sexe){alert('Indiquez le sexe du veau');return}
-  const poids=document.getElementById('v-poids').value;
+  const veaux=getVeauxFromModal();
+  if(!veaux.length){alert('Ajoutez au moins un veau');return}
+  if(veaux.some(v=>!v.sexe)){alert('Indiquez le sexe de chaque veau');return}
   const facilite=document.getElementById('v-facilite').value;
-  const boucleVeau=esc(document.getElementById('v-boucle-veau').value.trim());
   const notes=esc(document.getElementById('v-notes').value.trim());
   const vache=D.animaux.find(a=>a.id===vacheId);
+  const nomVache=vache?vache.nom:'la vache';
+  const vivants=veaux.filter(v=>v.etat!=='Mort-né');
+  const mortNes=veaux.length-vivants.length;
 
   // 1. Mettre à jour la repro active (ou en créer une si déni de grossesse)
   const reproActive=D.repros.filter(r=>r.vache===vacheId&&r.dateSaillie&&!r.velageReel)
     .sort((a,b)=>(a.dateSaillie||'').localeCompare(b.dateSaillie||''));
+  let r;
   if(reproActive.length){
-    const r=reproActive[reproActive.length-1]; // la plus récente
-    r.velageReel=dateV;r.sexeVeau=sexe;r.poids=poids;r.facilite=facilite;
+    r=reproActive[reproActive.length-1]; // la plus récente
+    r.velageReel=dateV;r.facilite=facilite;
     if(notes)r.notes=(r.notes?r.notes+' | ':'')+notes;
   } else {
     // Pas de saillie connue → créer un enregistrement repro minimal
-    D.repros.push({id:uid(),vache:vacheId,taureau:'',dateSaillie:'',primo:'Non',
-      velageReel:dateV,sexeVeau:sexe,poids,facilite,notes:'Déni de grossesse — '+notes});
+    r={id:uid(),vache:vacheId,taureau:'',dateSaillie:'',primo:'Non',
+       velageReel:dateV,facilite,notes:'Déni de grossesse — '+notes};
+    D.repros.push(r);
   }
+  const taureau=r.taureau||'';
 
-  // 2. Trouver le taureau (si repro active)
-  const taureau=reproActive.length?reproActive[reproActive.length-1].taureau:'';
+  // 2. Les veaux vivants entrent à l'inventaire ; les mort-nés, non.
+  veaux.forEach((v,i)=>{
+    if(v.etat==='Mort-né'){v.animalId='';return}
+    const suffixe=veaux.length>1?' '+(i+1):'';
+    const nv={
+      id:uid(),
+      nom:v.nom||('Veau'+suffixe+' de '+nomVache),
+      type:v.sexe==='Femelle'?'Génisse':'Jeune mâle',
+      race:vache?vache.race:'Autre',
+      boucle:v.boucle,
+      naissance:dateV,
+      sexe:v.sexe,
+      mere:vacheId,
+      pere:taureau,
+      notes:'Né(e) le '+fmt(dateV)+' de '+nomVache+(veaux.length>1?' — vêlage multiple':'')+(notes?' — '+notes:'')
+    };
+    D.animaux.push(nv);
+    v.animalId=nv.id;
+  });
 
-  // 3. Créer le veau automatiquement dans l'inventaire
-  const typeVeau=sexe==='Femelle'?'Génisse':'Jeune mâle';
-  const newVeau={
-    id:uid(),
-    nom:nomVeau||('Veau de '+vache.nom),
-    type:typeVeau,
-    race:vache?vache.race:'Autre',
-    boucle:boucleVeau,
-    naissance:dateV,
-    sexe:sexe,
-    mere:vacheId,
-    pere:taureau,
-    notes:'Né(e) le '+fmt(dateV)+' de '+vache.nom+(notes?' — '+notes:'')
-  };
-  D.animaux.push(newVeau);
+  // 3. Garder la trace complète du vêlage, mort-nés compris.
+  //    sexeVeau et poids restent alimentés : exports et analyses s'appuient dessus.
+  r.veaux=veaux;
+  r.nbVeaux=veaux.length;
+  r.mortNes=mortNes;
+  const ref=vivants[0]||veaux[0];
+  r.sexeVeau=ref.sexe||'';
+  r.poids=ref.poids||'';
 
-  // 4. Promouvoir la génisse en vache si c'est son premier vêlage
+  // 4. Une génisse qui vêle devient vache, même si le veau est mort-né.
   if(vache&&vache.type==='Génisse'){
     vache.type='Vache';
   }
 
   save();closeM('velage');popSelects();renderAll();
-  alert('✅ Vêlage enregistré !\n\n'+vache.nom+' → '+typeVeau+' '+(nomVeau||'')+' ajouté(e) à l\'inventaire.');
+  const resume=veaux.map(v=>v.etat==='Mort-né'
+    ?(v.sexe||'Veau')+' mort-né'
+    :(v.sexe||'Veau')+(v.nom?' '+v.nom:'')).join(' · ');
+  alert('✅ Vêlage enregistré\n\n'+nomVache+' → '+resume
+    +(mortNes?'\n\n'+mortNes+' mort-né'+(mortNes>1?'s':'')+' : conservé'+(mortNes>1?'s':'')
+      +' dans l\'historique de la vache, hors inventaire.':''));
 }
 
 let reproViewMode='table';
@@ -2898,8 +3028,10 @@ function openSortieModal(id){
 function confirmerSortie(){
   const id=document.getElementById('sortie-id').value;
   const a=D.animaux.find(x=>x.id===id);if(!a)return;
+  const dateSortie=document.getElementById('sortie-date').value;
+  if(!dateSortie){alert('Indiquez la date de sortie : c\'est elle qui fait sortir l\'animal de l\'inventaire comptable.');return}
   a.statut=document.getElementById('sortie-statut').value;
-  a.dateSortie=document.getElementById('sortie-date').value;
+  a.dateSortie=dateSortie;
   const notes=document.getElementById('sortie-notes').value.trim();
   if(notes)a.notes=(a.notes?a.notes+'\n':'')+a.statut+' : '+notes;
   save();closeM('sortie');renderAll();
@@ -5555,7 +5687,7 @@ function openFicheAnimal(id){
       const st=reproStatut(r);
       const g=gestFor(a.race);
       const velInfo=r.velageReel
-        ?`Vêlage <strong>${fmt(r.velageReel)}</strong>${r.sexeVeau?' · '+r.sexeVeau:''}${r.poids?' · '+r.poids+'kg':''}`
+        ?`Vêlage <strong>${fmt(r.velageReel)}</strong>${r.nbVeaux>1?' · <strong>'+r.nbVeaux+' veaux</strong>':''}${resumeVeaux(r)}`
         :(r.dateSaillie?`Vêlage prévu <strong>${fmt(addD(r.dateSaillie,g))}</strong>`:'');
       h+=`<div class="tl-item">
         <div class="tl-dot repro">💚</div>
@@ -6311,8 +6443,13 @@ function getBDNIMouvements(){
     const dateD=new Date(r.velageReel);
     const j=Math.round((new Date()-dateD)/86400000);
     if(j>60)return;// Oublié si >60j
+    const nomMere=D.animaux.find(x=>x.id===r.vache)?.nom||'?';
+    const nb=r.nbVeaux||1, mn=r.mortNes||0;
+    // Un veau mort-né se notifie quand même : naissance, puis mort.
+    const detail=(nb>1?' — '+nb+' veaux':'')
+      +(mn?' — '+mn+' mort-né'+(mn>1?'s':'')+' (naissance + mort à déclarer)':'');
     mouvs.push({key,type:'Naissance',date:r.velageReel,
-      label:'Vêlage de '+( D.animaux.find(x=>x.id===r.vache)?.nom||'?'),
+      label:'Vêlage de '+nomMere+detail,
       urgence:j>7,declare:!!D.bdniDeclares[key],jours:j});
   });
   // Sorties (ventes/morts/équarrissage dans les 60 derniers jours)
@@ -8537,30 +8674,51 @@ function categorieComptable(a,dateRef){
   return mo<12?'Génisses de moins d\'un an':mo<24?'Génisses de 1 à 2 ans':'Génisses de plus de 2 ans';
 }
 
+const CAT_SANS_DATE='Sortis sans date de sortie';
 const ORDRE_CATEGORIES=['Vaches laitières','Génisses de plus de 2 ans','Génisses de 1 à 2 ans',
   'Génisses de moins d\'un an','Mâles de plus de 2 ans','Mâles de 1 à 2 ans','Mâles de moins d\'un an',
-  'Date de naissance manquante','Né après la date de clôture'];
+  'Date de naissance manquante','Né après la date de clôture',CAT_SANS_DATE];
+
+// Une catégorie d'anomalie signale une saisie à compléter, pas un effectif fiable.
+function catAnomalie(c){
+  return c.indexOf('manquante')>=0||c.indexOf('après')>=0||c===CAT_SANS_DATE;
+}
 
 function inventaireA(dateRef){
   const groupes={};
   (D.animaux||[]).forEach(a=>{
-    // On exclut les animaux nés après la date de clôture.
+    // Né après la date de clôture : pas encore au troupeau.
     if(a.naissance&&a.naissance>dateRef)return;
-    const c=categorieComptable(a,dateRef);
+    // Sorti au plus tard à la clôture : il ne figure plus à l'inventaire.
+    if(a.dateSortie&&a.dateSortie<=dateRef)return;
+    // Marqué sorti mais sans date : on ne peut pas trancher. Le dire vaut
+    // mieux que le compter en silence d'un côté ou de l'autre.
+    const c=(a.statut&&!a.dateSortie)?CAT_SANS_DATE:categorieComptable(a,dateRef);
     (groupes[c]=groupes[c]||[]).push(a);
   });
   const cats=ORDRE_CATEGORIES.filter(c=>groupes[c])
     .concat(Object.keys(groupes).filter(c=>ORDRE_CATEGORIES.indexOf(c)<0));
-  return{groupes,cats,total:Object.values(groupes).reduce((s,l)=>s+l.length,0)};
+  // Le total ne compte que les animaux réellement présents.
+  const total=cats.filter(c=>c!==CAT_SANS_DATE)
+    .reduce((s,c)=>s+groupes[c].length,0);
+  return{groupes,cats,total,sansDate:(groupes[CAT_SANS_DATE]||[])};
 }
 
 // Mouvements de l'exercice, dans la limite de ce que BOVIQ enregistre.
 // L'honnetete sur les trous compte plus que l'exhaustivite apparente.
 function mouvementsEntre(debut,fin){
-  const naiss=(D.animaux||[]).filter(a=>a.naissance&&a.naissance>=debut&&a.naissance<=fin).length;
-  const velages=(D.repros||[]).filter(r=>r.velageReel&&r.velageReel>=debut&&r.velageReel<=fin).length;
-  const ventes=(D.ventesViande||[]).filter(v=>v.date&&v.date>=debut&&v.date<=fin).length;
-  return{naiss,velages,ventes};
+  const dans=x=>!!x&&x>=debut&&x<=fin;
+  const velees=(D.repros||[]).filter(r=>dans(r.velageReel));
+  return{
+    naiss:(D.animaux||[]).filter(a=>dans(a.naissance)).length,
+    velages:velees.length,
+    mortNes:velees.reduce((s,r)=>s+(r.mortNes||0),0),
+    entrees:(D.animaux||[]).filter(a=>dans(a.dateEntree)).length,
+    ventes:(D.ventesViande||[]).filter(v=>dans(v.date)).length,
+    sorties:(D.animaux||[]).filter(a=>a.statut&&dans(a.dateSortie))
+      .sort((a,b)=>(a.dateSortie||'').localeCompare(b.dateSortie||'')),
+    sansDate:(D.animaux||[]).filter(a=>a.statut&&!a.dateSortie)
+  };
 }
 
 // Un troupeau laitier produit environ un velage par vache et par an, et
@@ -8570,7 +8728,9 @@ function mouvementsSuffisants(inv,mv){
   const vl=(inv.groupes['Vaches laitières']||[]).length;
   const manques=[];
   if(vl>0&&mv.velages<vl*0.5)manques.push(mv.velages+' vêlage'+(mv.velages>1?'s':'')+' déclaré'+(mv.velages>1?'s':'')+' pour '+vl+' vaches laitières');
-  if(mv.ventes===0)manques.push('aucune vente ni sortie enregistrée');
+  if(!mv.sorties.length&&!mv.ventes)manques.push('aucune sortie ni vente enregistrée sur la période');
+  const n=mv.sansDate.length;
+  if(n)manques.push(n+(n>1?' animaux marqués sortis':' animal marqué sorti')+' sans date de sortie');
   return{ok:manques.length===0,manques};
 }
 
@@ -8589,16 +8749,19 @@ function apercuInventaire(){
   const debut=(parseInt(d.slice(0,4),10)-1)+d.slice(4)  // meme jour, un an plus tot
   const mv=mouvementsEntre(debut,d);
   const diag=mouvementsSuffisants(inv,mv);
+  const motifs={};
+  mv.sorties.forEach(a=>{motifs[a.statut]=(motifs[a.statut]||0)+1});
+  const detailSorties=Object.keys(motifs).map(k=>motifs[k]+' '+k.toLowerCase()).join(' · ');
+
   sortie.innerHTML=
-    inv.cats.map(c=>{
-      const suspect=c.indexOf('manquante')>=0||c.indexOf('après')>=0;
-      return `<div class="bilan-metric"${suspect?' style="color:var(--amber)"':''}>
-        <span>${c}</span><strong>${inv.groupes[c].length}</strong></div>`;
-    }).join('')+
+    inv.cats.filter(c=>c!==CAT_SANS_DATE).map(c=>
+      `<div class="bilan-metric"${catAnomalie(c)?' style="color:var(--amber)"':''}>
+        <span>${c}</span><strong>${inv.groupes[c].length}</strong></div>`).join('')+
     `<div class="bilan-metric" style="border-bottom:none"><span><strong>Total présent au ${fmt(d)}</strong></span><strong>${inv.total}</strong></div>
      <div style="margin-top:14px;padding:12px 14px;background:var(--bg2);border-radius:var(--r-sm);font-size:12.5px;line-height:1.6;color:var(--ink2)">
        <strong>Mouvements enregistrés sur les 12 mois précédents</strong><br>
-       ${mv.naiss} naissance${mv.naiss>1?'s':''} · ${mv.velages} vêlage${mv.velages>1?'s':''} déclaré${mv.velages>1?'s':''} · ${mv.ventes} vente${mv.ventes>1?'s':''}
+       ${mv.naiss} naissance${mv.naiss>1?'s':''} · ${mv.velages} vêlage${mv.velages>1?'s':''} déclaré${mv.velages>1?'s':''}${mv.mortNes?' dont '+mv.mortNes+' veau'+(mv.mortNes>1?'x':'')+' mort-né'+(mv.mortNes>1?'s':''):''} · ${mv.entrees} entrée${mv.entrees>1?'s':''} · ${mv.sorties.length} sortie${mv.sorties.length>1?'s':''}${detailSorties?' ('+detailSorties+')':''} · ${mv.ventes} vente${mv.ventes>1?'s':''} de viande
+       ${inv.sansDate.length?`<div style="color:var(--amber);margin-top:10px">⚠️ ${inv.sansDate.length} ${inv.sansDate.length>1?'animaux marqués sortis':'animal marqué sorti'} sans date : ${inv.sansDate.map(a=>'<a href="#" onclick="closeM(\'inventaire\');openFicheAnimal(\''+a.id+'\');return false" style="color:var(--amber);text-decoration:underline">'+esc(a.nom)+'</a>').join(' · ')}. Tant que la date manque, ${inv.sansDate.length>1?'ils sont comptés à part et n\'entrent pas':'il est compté à part et n\'entre pas'} dans le total.</div>`:''}
        ${!diag.ok?`<div style="color:var(--amber);margin-top:8px">⚠️ Mouvements incomplets : ${diag.manques.join(', ')}. Les effectifs ci-dessus restent fiables, mais votre comptable aura aussi besoin des entrées et sorties de l'exercice. Pensez à déclarer vêlages, ventes et morts au fil de l'eau.</div>`:''}
      </div>`;
 }
@@ -8617,18 +8780,36 @@ function exportInventaireCSV(){
   L.push([]);
   L.push(['RÉCAPITULATIF PAR CATÉGORIE']);
   L.push(['Catégorie','Effectif']);
-  inv.cats.forEach(c=>L.push([c,inv.groupes[c].length]));
-  L.push(['TOTAL',inv.total]);
+  inv.cats.filter(c=>c!==CAT_SANS_DATE).forEach(c=>L.push([c,inv.groupes[c].length]));
+  L.push(['TOTAL PRÉSENT',inv.total]);
+  if(inv.sansDate.length)L.push([CAT_SANS_DATE,inv.sansDate.length,'hors total — date de sortie à compléter']);
   L.push([]);
   L.push(['MOUVEMENTS ENREGISTRÉS SUR 12 MOIS']);
+  L.push(['Du',debut,'au',d]);
   L.push(['Naissances',mv.naiss]);
   L.push(['Vêlages déclarés',mv.velages]);
-  L.push(['Ventes enregistrées',mv.ventes]);
+  L.push(['dont veaux mort-nés',mv.mortNes]);
+  L.push(['Entrées',mv.entrees]);
+  L.push(['Sorties',mv.sorties.length]);
+  L.push(['Ventes de viande',mv.ventes]);
   L.push(['Note','BOVIQ n\'enregistre que les mouvements saisis par l\'éleveur. Cette liste peut être incomplète.']);
   L.push([]);
-  L.push(['DÉTAIL ANIMAL PAR ANIMAL']);
+  L.push(['SORTIES DE L\'EXERCICE']);
+  if(mv.sorties.length){
+    L.push(['Date de sortie','Motif','Nom','Boucle','Sexe','Race','Naissance','Catégorie à la sortie']);
+    mv.sorties.forEach(a=>L.push([a.dateSortie,a.statut,a.nom,a.boucle,a.sexe,a.race,a.naissance,
+      categorieComptable(a,a.dateSortie)]));
+  } else L.push(['Aucune sortie enregistrée sur la période']);
+  if(inv.sansDate.length){
+    L.push([]);
+    L.push(['SORTIES SANS DATE — À COMPLÉTER']);
+    L.push(['Motif','Nom','Boucle','Naissance']);
+    inv.sansDate.forEach(a=>L.push([a.statut,a.nom,a.boucle,a.naissance]));
+  }
+  L.push([]);
+  L.push(['DÉTAIL ANIMAL PAR ANIMAL — PRÉSENTS À LA CLÔTURE']);
   L.push(['Catégorie','Nom','Boucle','Sexe','Race','Date de naissance','Âge en mois à la clôture']);
-  inv.cats.forEach(c=>inv.groupes[c]
+  inv.cats.filter(c=>c!==CAT_SANS_DATE).forEach(c=>inv.groupes[c]
     .slice().sort((a,b)=>(a.naissance||'').localeCompare(b.naissance||''))
     .forEach(a=>L.push([c,a.nom,a.boucle,a.sexe,a.race,a.naissance,moisAu(a.naissance,d)])));
   L.push([]);
@@ -8696,7 +8877,7 @@ async function exportInventairePDF(){
   doc.autoTable({
     startY:y,
     head:[['Catégorie','Effectif']],
-    body:inv.cats.map(c=>[c,String(inv.groupes[c].length)]),
+    body:inv.cats.filter(c=>c!==CAT_SANS_DATE).map(c=>[c,String(inv.groupes[c].length)]),
     foot:[['Total présent au '+fmt(d),String(inv.total)]],
     theme:'grid',
     styles:{font:'helvetica',fontSize:9.5,cellPadding:3,lineColor:C.line,lineWidth:.15,textColor:C.ink},
@@ -8709,7 +8890,7 @@ async function exportInventairePDF(){
       // Les categories qui signalent une donnee incomplete passent en ambre.
       if(f.section==='body'&&f.column.index===0){
         const v=String(f.cell.raw);
-        if(v.indexOf('manquante')>=0||v.indexOf('après')>=0)f.row.cells[0].styles.textColor=C.amber;
+        if(catAnomalie(v))f.row.cells[0].styles.textColor=C.amber;
       }
     }
   });
@@ -8719,9 +8900,14 @@ async function exportInventairePDF(){
   doc.setTextColor.apply(doc,C.brand); doc.setFont('helvetica','bold'); doc.setFontSize(12.5);
   doc.text('Mouvements enregistrés sur douze mois',M,y); y+=6;
   doc.setFont('helvetica','normal'); doc.setFontSize(9.5); doc.setTextColor.apply(doc,C.ink2);
-  doc.text('Du '+fmt(debut)+' au '+fmt(d)+' : '+mv.naiss+' naissance'+(mv.naiss>1?'s':'')
+  const phrase='Du '+fmt(debut)+' au '+fmt(d)+' : '+mv.naiss+' naissance'+(mv.naiss>1?'s':'')
     +', '+mv.velages+' vêlage'+(mv.velages>1?'s':'')+' déclaré'+(mv.velages>1?'s':'')
-    +', '+mv.ventes+' vente'+(mv.ventes>1?'s':'')+'.',M,y); y+=7;
+    +(mv.mortNes?' dont '+mv.mortNes+' veau'+(mv.mortNes>1?'x':'')+' mort-né'+(mv.mortNes>1?'s':''):'')
+    +', '+mv.entrees+' entrée'+(mv.entrees>1?'s':'')
+    +', '+mv.sorties.length+' sortie'+(mv.sorties.length>1?'s':'')
+    +', '+mv.ventes+' vente'+(mv.ventes>1?'s':'')+' de viande.';
+  const lignesPhrase=doc.splitTextToSize(phrase,w-M*2);
+  doc.text(lignesPhrase,M,y); y+=lignesPhrase.length*5+2;
 
   if(!diag.ok){
     doc.setFillColor(254,243,199);                       // --amber-l
@@ -8737,13 +8923,41 @@ async function exportInventairePDF(){
   }
   y+=8;
 
+  // ── Sorties de l'exercice ───────────────────────────────────────────
+  // Sans elles, le comptable ne peut pas rapprocher l'inventaire N-1 de l'inventaire N.
+  if(mv.sorties.length||inv.sansDate.length){
+    if(y>h-70){doc.addPage();y=22;}
+    doc.setTextColor.apply(doc,C.brand); doc.setFont('helvetica','bold'); doc.setFontSize(12.5);
+    doc.text('Sorties de l\'exercice',M,y); y+=5;
+    const corpsS=mv.sorties.map(a=>[fmt(a.dateSortie),a.statut||'—',a.nom||'—',
+      (a.boucle||'—').toUpperCase(),categorieComptable(a,a.dateSortie)]);
+    inv.sansDate.forEach(a=>corpsS.push(['Date manquante',a.statut||'—',a.nom||'—',
+      (a.boucle||'—').toUpperCase(),'—']));
+    doc.autoTable({
+      startY:y,
+      head:[['Date de sortie','Motif','Nom','Boucle','Catégorie à la sortie']],
+      body:corpsS.length?corpsS:[['—','—','Aucune sortie enregistrée sur la période','—','—']],
+      theme:'grid',
+      styles:{font:'helvetica',fontSize:8,cellPadding:2.1,lineColor:C.line,lineWidth:.12,textColor:C.ink,overflow:'linebreak'},
+      headStyles:{fillColor:C.brand2,textColor:255,fontStyle:'bold',fontSize:8.2},
+      columnStyles:{0:{cellWidth:28},1:{cellWidth:24},3:{cellWidth:32}},
+      alternateRowStyles:{fillColor:[250,250,247]},
+      margin:{left:M,right:M,bottom:20},
+      didParseCell:f=>{
+        // Une sortie sans date ne peut pas etre rattachee a un exercice : on l'affiche en ambre.
+        if(f.section==='body'&&String(f.row.raw[0])==='Date manquante')f.cell.styles.textColor=C.amber;
+      }
+    });
+    y=doc.lastAutoTable.finalY+12;
+  }
+
   // ── Detail animal par animal ────────────────────────────────────────
   if(y>h-60){doc.addPage();y=22;}
   doc.setTextColor.apply(doc,C.brand); doc.setFont('helvetica','bold'); doc.setFontSize(12.5);
-  doc.text('Détail animal par animal',M,y); y+=5;
+  doc.text('Détail animal par animal : présents à la clôture',M,y); y+=5;
 
   const corps=[];
-  inv.cats.forEach(c=>inv.groupes[c]
+  inv.cats.filter(c=>c!==CAT_SANS_DATE).forEach(c=>inv.groupes[c]
     .slice().sort((a,b)=>(a.naissance||'').localeCompare(b.naissance||''))
     .forEach(a=>corps.push([c,a.nom||'—',(a.boucle||'—').toUpperCase(),a.sexe||'—',a.race||'—',
       a.naissance?fmt(a.naissance):'—',moisAu(a.naissance,d)!==null?String(moisAu(a.naissance,d)):'—'])));
