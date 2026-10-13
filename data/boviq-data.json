@@ -3479,12 +3479,18 @@
       "nom": "Veau de Tisane",
       "type": "Jeune mâle",
       "race": "Simmental",
-      "boucle": "",
+      "boucle": "FR 53 8124 9998",
       "naissance": "2026-07-14",
       "sexe": "Mâle",
       "mere": "mmtp45gzwpeo",
       "pere": "",
-      "notes": "Né(e) le 14/07/2026 de Tisane"
+      "notes": "Né(e) le 14/07/2026 de Tisane",
+      "statut": "",
+      "dateSortie": "",
+      "dateEntree": "",
+      "provenance": "",
+      "ancienneBoucle": "",
+      "dateRebouclage": ""
     },
     {
       "id": "mv6kmotodixx",
@@ -3743,12 +3749,18 @@
       "nom": "Veau de Paella",
       "type": "Génisse",
       "race": "Simmental",
-      "boucle": "FR 53 8124 0020",
+      "boucle": "FR 53 8124 0021",
       "naissance": "2026-07-28",
       "sexe": "Femelle",
       "mere": "muzfm1uej4wf",
       "pere": "",
-      "notes": "Né(e) le 28/07/2026 de Paella"
+      "notes": "Né(e) le 28/07/2026 de Paella",
+      "statut": "",
+      "dateSortie": "",
+      "dateEntree": "",
+      "provenance": "",
+      "ancienneBoucle": "",
+      "dateRebouclage": ""
     }
   ],
   "repros": [
