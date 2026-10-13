@@ -3713,6 +3713,18 @@
       "mere": "mmtoimnaz0hx",
       "pere": "",
       "notes": "Né(e) le 28/07/2026 de Superstar"
+    },
+    {
+      "id": "mv6ldmmrzn0a",
+      "nom": "Veau de Mirtille",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0019",
+      "naissance": "2026-07-29",
+      "sexe": "Mâle",
+      "mere": "muzfeqwwe4rm",
+      "pere": "",
+      "notes": "Né(e) le 29/07/2026 de Mirtille"
     }
   ],
   "repros": [
@@ -4588,6 +4600,18 @@
       "primo": "Non",
       "velageReel": "2026-07-28",
       "sexeVeau": "Femelle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6ldmmrxukx",
+      "vache": "muzfeqwwe4rm",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-29",
+      "sexeVeau": "Mâle",
       "poids": "",
       "facilite": "",
       "notes": "Déni de grossesse — "
