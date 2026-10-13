@@ -3617,6 +3617,18 @@
       "mere": "mmtnqok4td4h",
       "pere": "",
       "notes": "Né(e) le 25/07/2026 de Patata"
+    },
+    {
+      "id": "mv6l2oob4pou",
+      "nom": "Veau de Olympie",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0011",
+      "naissance": "2026-07-25",
+      "sexe": "Mâle",
+      "mere": "mmtn1d55i6jo",
+      "pere": "",
+      "notes": "Né(e) le 25/07/2026 de Olympie"
     }
   ],
   "repros": [
@@ -4391,6 +4403,18 @@
     {
       "id": "mv6kz8xuqw77",
       "vache": "mmtnqok4td4h",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-25",
+      "sexeVeau": "Mâle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6l2oob15f5",
+      "vache": "mmtn1d55i6jo",
       "taureau": "",
       "dateSaillie": "",
       "primo": "Non",
