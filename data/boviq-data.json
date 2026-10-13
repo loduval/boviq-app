@@ -3485,6 +3485,18 @@
       "mere": "mmtp45gzwpeo",
       "pere": "",
       "notes": "Né(e) le 14/07/2026 de Tisane"
+    },
+    {
+      "id": "mv6kmotodixx",
+      "nom": "Veau de Supersayan",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 9999",
+      "naissance": "2026-07-17",
+      "sexe": "Mâle",
+      "mere": "mm2jbp45d60e",
+      "pere": "mm2hv85fm139",
+      "notes": "Né(e) le 17/07/2026 de Supersayan"
     }
   ],
   "repros": [
@@ -3578,8 +3590,8 @@
       "taureau": "mm2hv85fm139",
       "dateSaillie": "2025-12-22",
       "primo": "Non",
-      "velageReel": "",
-      "sexeVeau": "",
+      "velageReel": "2026-07-17",
+      "sexeVeau": "Mâle",
       "poids": "",
       "facilite": "",
       "notes": ""
