@@ -3333,14 +3333,20 @@
     {
       "id": "mv6jviydnh6y",
       "nom": "Veau de Uluru",
-      "type": "Génisse",
+      "type": "Mâle",
       "race": "Simmental",
-      "boucle": "FR 53 8124 9988",
+      "boucle": "FR 53 8124 9987",
       "naissance": "2026-04-28",
       "sexe": "Femelle",
       "mere": "mmv3iylzgwe4",
       "pere": "",
-      "notes": "Né(e) le 28/04/2026 de Uluru"
+      "notes": "Né(e) le 28/04/2026 de Uluru",
+      "statut": "",
+      "dateSortie": "",
+      "dateEntree": "",
+      "provenance": "",
+      "ancienneBoucle": "",
+      "dateRebouclage": ""
     },
     {
       "id": "mv6jyis2l4eb",
