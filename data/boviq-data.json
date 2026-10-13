@@ -3814,7 +3814,13 @@
       "sexe": "Mâle",
       "mere": "muzf5734an95",
       "pere": "",
-      "notes": "Né(e) le 31/07/2026 de Lazure"
+      "notes": "Né(e) le 31/07/2026 de Lazure",
+      "statut": "Mort",
+      "dateSortie": "",
+      "dateEntree": "",
+      "provenance": "",
+      "ancienneBoucle": "",
+      "dateRebouclage": ""
     },
     {
       "id": "mv6nd21gv41v",
