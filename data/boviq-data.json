@@ -3533,6 +3533,18 @@
       "mere": "mmtp7kg6hsww",
       "pere": "",
       "notes": "Né(e) le 19/07/2026 de Tijuana"
+    },
+    {
+      "id": "mv6kradenrl1",
+      "nom": "Veau de Rutabaga",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0004",
+      "naissance": "2026-07-21",
+      "sexe": "Mâle",
+      "mere": "mmto4evcboht",
+      "pere": "",
+      "notes": "Né(e) le 21/07/2026 de Rutabaga"
     }
   ],
   "repros": [
@@ -4228,6 +4240,18 @@
       "primo": "Non",
       "velageReel": "2026-07-19",
       "sexeVeau": "Femelle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6kradefh5q",
+      "vache": "mmto4evcboht",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-21",
+      "sexeVeau": "Mâle",
       "poids": "",
       "facilite": "",
       "notes": "Déni de grossesse — "
