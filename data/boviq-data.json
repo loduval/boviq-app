@@ -3725,6 +3725,18 @@
       "mere": "muzfeqwwe4rm",
       "pere": "",
       "notes": "Né(e) le 29/07/2026 de Mirtille"
+    },
+    {
+      "id": "mv6lem27y4ue",
+      "nom": "Veau de Nami",
+      "type": "Génisse",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0019",
+      "naissance": "2026-07-28",
+      "sexe": "Femelle",
+      "mere": "muzfhyzyl6xo",
+      "pere": "",
+      "notes": "Né(e) le 28/07/2026 de Nami"
     }
   ],
   "repros": [
@@ -4612,6 +4624,18 @@
       "primo": "Non",
       "velageReel": "2026-07-29",
       "sexeVeau": "Mâle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6lem27wbvy",
+      "vache": "muzfhyzyl6xo",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-28",
+      "sexeVeau": "Femelle",
       "poids": "",
       "facilite": "",
       "notes": "Déni de grossesse — "
