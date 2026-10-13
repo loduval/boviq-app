@@ -3665,6 +3665,18 @@
       "mere": "mmtnm46so3td",
       "pere": "",
       "notes": "Né(e) le 27/07/2026 de Pissenlie"
+    },
+    {
+      "id": "mv6l91ucxuqq",
+      "nom": "Veau de Rivière",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0015",
+      "naissance": "2026-07-27",
+      "sexe": "Mâle",
+      "mere": "mmto6xifptkw",
+      "pere": "",
+      "notes": "Né(e) le 27/07/2026 de Rivière"
     }
   ],
   "repros": [
@@ -4487,6 +4499,18 @@
     {
       "id": "mv6l7edhn5u3",
       "vache": "mmtnm46so3td",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-27",
+      "sexeVeau": "Mâle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6l91uci6m4",
+      "vache": "mmto6xifptkw",
       "taureau": "",
       "dateSaillie": "",
       "primo": "Non",
