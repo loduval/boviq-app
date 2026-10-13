@@ -3509,6 +3509,18 @@
       "mere": "mmtod3e6wr7o",
       "pere": "",
       "notes": "Né(e) le 18/07/2026 de Solstice"
+    },
+    {
+      "id": "mv6kp89cozg2",
+      "nom": "Veau de Tulipe",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0002",
+      "naissance": "2026-07-19",
+      "sexe": "Mâle",
+      "mere": "mmtozefi94ti",
+      "pere": "mm20npn388sp",
+      "notes": "Né(e) le 19/07/2026 de Tulipe"
     }
   ],
   "repros": [
@@ -3782,8 +3794,8 @@
       "taureau": "mm20npn388sp",
       "dateSaillie": "2026-02-04",
       "primo": "Non",
-      "velageReel": "",
-      "sexeVeau": "",
+      "velageReel": "2026-07-19",
+      "sexeVeau": "Mâle",
       "poids": "",
       "facilite": "",
       "notes": ""
