@@ -3689,6 +3689,18 @@
       "mere": "mmto6xifptkw",
       "pere": "",
       "notes": "Né(e) le 27/07/2026 de Rivière — jumeau 0015"
+    },
+    {
+      "id": "mv6lbu7kcyjf",
+      "nom": "Veau de Ratoma",
+      "type": "Génisse",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0017",
+      "naissance": "2026-07-27",
+      "sexe": "Femelle",
+      "mere": "mmto9yyj4zn6",
+      "pere": "",
+      "notes": "Né(e) le 27/07/2026 de Ratoma"
     }
   ],
   "repros": [
@@ -4543,6 +4555,18 @@
       "poids": "",
       "facilite": "",
       "notes": "Déni de grossesse — jumeau 0015"
+    },
+    {
+      "id": "mv6lbu7kmpm0",
+      "vache": "mmto9yyj4zn6",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-27",
+      "sexeVeau": "Femelle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
     }
   ],
   "sante": [
