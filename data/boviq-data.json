@@ -2015,7 +2015,7 @@
     {
       "id": "mmv3iylzgwe4",
       "nom": "Uluru",
-      "type": "Génisse",
+      "type": "Vache",
       "race": "Simmental",
       "boucle": "FR 53 8124 9737",
       "naissance": "2023-06-27",
@@ -3329,6 +3329,18 @@
       "provenance": "",
       "ancienneBoucle": "",
       "dateRebouclage": ""
+    },
+    {
+      "id": "mv6jviydnh6y",
+      "nom": "Veau de Uluru",
+      "type": "Génisse",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 9988",
+      "naissance": "2026-04-28",
+      "sexe": "Femelle",
+      "mere": "mmv3iylzgwe4",
+      "pere": "",
+      "notes": "Né(e) le 28/04/2026 de Uluru"
     }
   ],
   "repros": [
@@ -3867,6 +3879,18 @@
       "dateSaillie": "",
       "primo": "Non",
       "velageReel": "2026-09-29",
+      "sexeVeau": "Femelle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6jviyd3di9",
+      "vache": "mmv3iylzgwe4",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-04-28",
       "sexeVeau": "Femelle",
       "poids": "",
       "facilite": "",
