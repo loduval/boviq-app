@@ -3701,6 +3701,18 @@
       "mere": "mmto9yyj4zn6",
       "pere": "",
       "notes": "Né(e) le 27/07/2026 de Ratoma"
+    },
+    {
+      "id": "mv6lcrgjv2h1",
+      "nom": "Veau de Superstar",
+      "type": "Génisse",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0018",
+      "naissance": "2026-07-28",
+      "sexe": "Femelle",
+      "mere": "mmtoimnaz0hx",
+      "pere": "",
+      "notes": "Né(e) le 28/07/2026 de Superstar"
     }
   ],
   "repros": [
@@ -4563,6 +4575,18 @@
       "dateSaillie": "",
       "primo": "Non",
       "velageReel": "2026-07-27",
+      "sexeVeau": "Femelle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6lcrgjjsnw",
+      "vache": "mmtoimnaz0hx",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-28",
       "sexeVeau": "Femelle",
       "poids": "",
       "facilite": "",
