@@ -3773,6 +3773,18 @@
       "provenance": "",
       "ancienneBoucle": "",
       "dateRebouclage": ""
+    },
+    {
+      "id": "mv6llydiwkch",
+      "nom": "Veau de Papaye",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0022",
+      "naissance": "2026-07-28",
+      "sexe": "Mâle",
+      "mere": "muzg7lgbo5k6",
+      "pere": "",
+      "notes": "Né(e) le 28/07/2026 de Papaye"
     }
   ],
   "repros": [
@@ -4684,6 +4696,18 @@
       "primo": "Non",
       "velageReel": "2026-07-28",
       "sexeVeau": "Femelle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6llydi1o74",
+      "vache": "muzg7lgbo5k6",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-28",
+      "sexeVeau": "Mâle",
       "poids": "",
       "facilite": "",
       "notes": "Déni de grossesse — "
