@@ -8563,6 +8563,17 @@ function mouvementsEntre(debut,fin){
   return{naiss,velages,ventes};
 }
 
+// Un troupeau laitier produit environ un velage par vache et par an, et
+// vend toujours des animaux. En dessous, les mouvements saisis ne suffisent
+// pas a etablir une variation d'inventaire : le document doit le dire.
+function mouvementsSuffisants(inv,mv){
+  const vl=(inv.groupes['Vaches laitières']||[]).length;
+  const manques=[];
+  if(vl>0&&mv.velages<vl*0.5)manques.push(mv.velages+' vêlage'+(mv.velages>1?'s':'')+' déclaré'+(mv.velages>1?'s':'')+' pour '+vl+' vaches laitières');
+  if(mv.ventes===0)manques.push('aucune vente ni sortie enregistrée');
+  return{ok:manques.length===0,manques};
+}
+
 function ouvrirInventaireModal(){
   const el=document.getElementById('inv-date');
   if(!el.value){const an=new Date().getFullYear();el.value=an+'-12-31';}
@@ -8577,7 +8588,7 @@ function apercuInventaire(){
   const inv=inventaireA(d);
   const debut=(parseInt(d.slice(0,4),10)-1)+d.slice(4)  // meme jour, un an plus tot
   const mv=mouvementsEntre(debut,d);
-  const incomplet=mv.velages===0&&mv.ventes===0;
+  const diag=mouvementsSuffisants(inv,mv);
   sortie.innerHTML=
     inv.cats.map(c=>{
       const suspect=c.indexOf('manquante')>=0||c.indexOf('après')>=0;
@@ -8588,7 +8599,7 @@ function apercuInventaire(){
      <div style="margin-top:14px;padding:12px 14px;background:var(--bg2);border-radius:var(--r-sm);font-size:12.5px;line-height:1.6;color:var(--ink2)">
        <strong>Mouvements enregistrés sur les 12 mois précédents</strong><br>
        ${mv.naiss} naissance${mv.naiss>1?'s':''} · ${mv.velages} vêlage${mv.velages>1?'s':''} déclaré${mv.velages>1?'s':''} · ${mv.ventes} vente${mv.ventes>1?'s':''}
-       ${incomplet?`<div style="color:var(--amber);margin-top:8px">⚠️ Peu ou pas de mouvements enregistrés. L'inventaire ci-dessus est fiable, mais votre comptable aura aussi besoin des entrées et sorties de l'exercice : pensez à déclarer vêlages, ventes et morts au fil de l'eau.</div>`:''}
+       ${!diag.ok?`<div style="color:var(--amber);margin-top:8px">⚠️ Mouvements incomplets : ${diag.manques.join(', ')}. Les effectifs ci-dessus restent fiables, mais votre comptable aura aussi besoin des entrées et sorties de l'exercice. Pensez à déclarer vêlages, ventes et morts au fil de l'eau.</div>`:''}
      </div>`;
 }
 
@@ -8653,7 +8664,7 @@ async function exportInventairePDF(){
   const inv=inventaireA(d);
   const debut=(parseInt(d.slice(0,4),10)-1)+d.slice(4);
   const mv=mouvementsEntre(debut,d);
-  const faible=mv.velages===0&&mv.ventes===0;
+  const diag=mouvementsSuffisants(inv,mv);
 
   // ── Bandeau de marque ───────────────────────────────────────────────
   doc.setFillColor.apply(doc,C.brand); doc.rect(0,0,w,30,'F');
@@ -8712,27 +8723,29 @@ async function exportInventairePDF(){
     +', '+mv.velages+' vêlage'+(mv.velages>1?'s':'')+' déclaré'+(mv.velages>1?'s':'')
     +', '+mv.ventes+' vente'+(mv.ventes>1?'s':'')+'.',M,y); y+=7;
 
-  if(faible){
+  if(!diag.ok){
     doc.setFillColor(254,243,199);                       // --amber-l
     const texte=doc.splitTextToSize(
-      "Avertissement : peu ou pas de mouvements ont été saisis sur la période. Les effectifs ci-dessus sont "
-      +"fiables, mais ils ne suffisent pas à établir une variation d'inventaire : les entrées et sorties de "
-      +"l'exercice doivent être reprises par ailleurs.",w-M*2-8);
-    const hb=texte.length*4.2+8;
+      "Avertissement : les mouvements saisis sur la période sont incomplets ("+diag.manques.join(' ; ')+"). "
+      +"Les effectifs ci-dessus restent fiables, mais ils ne suffisent pas à établir une variation "
+      +"d'inventaire : les entrées et sorties de l'exercice doivent être reprises par ailleurs.",w-M*2-8);
+    const hb=texte.length*4.4+9;
     doc.roundedRect(M,y-4,w-M*2,hb,2,2,'F');
     doc.setTextColor.apply(doc,C.amber); doc.setFont('helvetica','bold'); doc.setFontSize(8.6);
-    doc.text(texte,M+4,y+1);
-    y+=hb+6;
+    doc.text(texte,M+4,y+1.5);
+    y+=hb+4;
   }
+  y+=8;
 
   // ── Detail animal par animal ────────────────────────────────────────
+  if(y>h-60){doc.addPage();y=22;}
   doc.setTextColor.apply(doc,C.brand); doc.setFont('helvetica','bold'); doc.setFontSize(12.5);
   doc.text('Détail animal par animal',M,y); y+=5;
 
   const corps=[];
   inv.cats.forEach(c=>inv.groupes[c]
     .slice().sort((a,b)=>(a.naissance||'').localeCompare(b.naissance||''))
-    .forEach(a=>corps.push([c,a.nom||'—',a.boucle||'—',a.sexe||'—',a.race||'—',
+    .forEach(a=>corps.push([c,a.nom||'—',(a.boucle||'—').toUpperCase(),a.sexe||'—',a.race||'—',
       a.naissance?fmt(a.naissance):'—',moisAu(a.naissance,d)!==null?String(moisAu(a.naissance,d)):'—'])));
 
   doc.autoTable({
