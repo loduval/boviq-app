@@ -3809,6 +3809,18 @@
       "mere": "muzf5734an95",
       "pere": "",
       "notes": "Né(e) le 31/07/2026 de Lazure"
+    },
+    {
+      "id": "mv6nd21gv41v",
+      "nom": "Veau de Lazure",
+      "type": "Génisse",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0025",
+      "naissance": "2026-07-31",
+      "sexe": "Femelle",
+      "mere": "muzf5734an95",
+      "pere": "",
+      "notes": "Né(e) le 31/07/2026 de Lazure"
     }
   ],
   "repros": [
@@ -4564,6 +4576,18 @@
       "primo": "Non",
       "velageReel": "2026-07-31",
       "sexeVeau": "Mâle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6nd21g1lbc",
+      "vache": "muzf5734an95",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-31",
+      "sexeVeau": "Femelle",
       "poids": "",
       "facilite": "",
       "notes": "Déni de grossesse — "
