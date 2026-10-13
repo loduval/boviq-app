@@ -3641,6 +3641,18 @@
       "mere": "muzg9stpucey",
       "pere": "",
       "notes": "Né(e) le 26/07/2026 de Robusta"
+    },
+    {
+      "id": "mv6l4qq158xk",
+      "nom": "Veau de Rapide",
+      "type": "Génisse",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0013",
+      "naissance": "2026-07-27",
+      "sexe": "Femelle",
+      "mere": "mmtnxu3hxs5y",
+      "pere": "",
+      "notes": "Né(e) le 27/07/2026 de Rapide"
     }
   ],
   "repros": [
@@ -4444,6 +4456,18 @@
       "primo": "Non",
       "velageReel": "2026-07-26",
       "sexeVeau": "Mâle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6l4qq1s0vb",
+      "vache": "mmtnxu3hxs5y",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-27",
+      "sexeVeau": "Femelle",
       "poids": "",
       "facilite": "",
       "notes": "Déni de grossesse — "
