@@ -3431,6 +3431,18 @@
       "mere": "mm4wvg0ei9h5",
       "pere": "",
       "notes": "Né(e) le 13/07/2026 de Nirvana"
+    },
+    {
+      "id": "mv6kdu5xbun9",
+      "nom": "Veau de Trefle",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 9996",
+      "naissance": "2026-07-13",
+      "sexe": "Mâle",
+      "mere": "mmtp9rjt48bx",
+      "pere": "",
+      "notes": "Né(e) le 13/07/2026 de Trefle"
     }
   ],
   "repros": [
@@ -4061,6 +4073,18 @@
     {
       "id": "mv6kctzytk7m",
       "vache": "mm4wvg0ei9h5",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-07-13",
+      "sexeVeau": "Mâle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6kdu5xiw5p",
+      "vache": "mmtp9rjt48bx",
       "taureau": "",
       "dateSaillie": "",
       "primo": "Non",
