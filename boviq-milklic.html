@@ -1119,10 +1119,68 @@ async function loadML(){
       +"L'import est désactivé pour ne rien écraser. Rétablissez la connexion, puis rechargez.";
     document.body.appendChild(b);
   }
-  // ── Bridge V6 : écrire dans localStorage pour que boviq-v6-latest.html puisse lire les données ML ──
-  try{localStorage.setItem(ML_KEY,JSON.stringify(ML));}catch(e){console.warn('localStorage MilKlic:',e);}
+  // ── Bridge V6 : ecrire dans localStorage, SANS jamais ecraser plus riche ──
+  majCopieLocale();
   updateSidebar();
   showSyncStatus('ok');
+}
+
+// Nombre de mesures datees contenues dans un jeu : c'est ce qui distingue
+// une copie a jour d'une copie en retard, le nombre d'animaux etant stable.
+function richesseML(x){
+  if(!x||!x.animaux)return 0;
+  let n=0;
+  Object.values(x.animaux).forEach(a=>{
+    ['histoLait','histoTB','histoTP','histoCell'].forEach(k=>{
+      if(a[k])n+=Object.keys(a[k]).length;
+    });
+  });
+  return n;
+}
+
+// Ecrit la copie locale, sauf si celle qui s'y trouve est plus fournie.
+// Dans ce cas on ne touche a rien et on propose de renvoyer vers le serveur.
+function majCopieLocale(){
+  let locale=null;
+  try{const c=localStorage.getItem(ML_KEY); if(c)locale=JSON.parse(c);}catch(e){}
+  const rLocale=richesseML(locale), rNouveau=richesseML(ML);
+
+  if(locale&&rLocale>rNouveau){
+    console.warn('Copie locale plus riche ('+rLocale+' mesures) que le serveur ('+rNouveau+') — conservee.');
+    ML_LOCALE_PLUS_RICHE={locale,rLocale,rNouveau};
+    bandeauCopieLocale(rLocale,rNouveau);
+    return;                                  // on n'ecrase pas
+  }
+  try{localStorage.setItem(ML_KEY,JSON.stringify(ML));}catch(e){console.warn('localStorage MilKlic:',e);}
+}
+
+let ML_LOCALE_PLUS_RICHE=null;
+
+function bandeauCopieLocale(rLocale,rNouveau){
+  if(document.getElementById('bandeau-copie-locale'))return;
+  const b=document.createElement('div');
+  b.id='bandeau-copie-locale';
+  b.style.cssText='position:fixed;left:0;right:0;top:0;z-index:9998;background:#B45309;color:#fff;'
+    +'padding:12px 18px;font-size:13px;line-height:1.55;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.28)';
+  b.innerHTML='<strong>Cet appareil contient des données plus récentes que le serveur</strong> &mdash; '
+    +rLocale+' mesures ici contre '+rNouveau+' en ligne. Rien n\'a été écrasé. '
+    +'<button onclick="restaurerDepuisLocal()" style="margin-left:10px;background:#fff;color:#7C2D12;border:none;'
+    +'border-radius:7px;padding:6px 14px;font:600 12.5px/1 inherit;cursor:pointer">Envoyer ma version vers le serveur</button>';
+  document.body.appendChild(b);
+}
+
+// Reprend la copie locale comme reference et la pousse en ligne.
+async function restaurerDepuisLocal(){
+  if(!ML_LOCALE_PLUS_RICHE)return;
+  if(!confirm("La version de cet appareil ("+ML_LOCALE_PLUS_RICHE.rLocale+" mesures) va remplacer "
+    +"celle du serveur ("+ML_LOCALE_PLUS_RICHE.rNouveau+" mesures).\n\nContinuer ?"))return;
+  ML=ML_LOCALE_PLUS_RICHE.locale;
+  const b=document.getElementById('bandeau-copie-locale'); if(b)b.remove();
+  ML_LOCALE_PLUS_RICHE=null;
+  await saveML();
+  updateSidebar();
+  showPage('dashboard');
+  alert("C'est fait : le serveur reprend la version de cet appareil.");
 }
 async function clearData(){
   if(!confirm('Effacer toutes les données MilKlic et recharger les données initiales ?'))return;
