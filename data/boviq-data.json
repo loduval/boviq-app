@@ -2001,7 +2001,7 @@
     {
       "id": "mmv3fkq2o89r",
       "nom": "Ushuaia",
-      "type": "Génisse",
+      "type": "Vache",
       "race": "Simmental",
       "boucle": "FR 53 8124 9713",
       "naissance": "2023-03-07",
@@ -3359,6 +3359,18 @@
       "mere": "mm4wwjqho4aq",
       "pere": "",
       "notes": "Né(e) le 07/07/2026 de Niaoulie"
+    },
+    {
+      "id": "mv6k490qqxik",
+      "nom": "Veau de Ushuaia",
+      "type": "Génisse",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 9988",
+      "naissance": "2026-04-28",
+      "sexe": "Femelle",
+      "mere": "mmv3fkq2o89r",
+      "pere": "",
+      "notes": "Né(e) le 28/04/2026 de Ushuaia"
     }
   ],
   "repros": [
@@ -3922,6 +3934,18 @@
       "primo": "Non",
       "velageReel": "2026-07-07",
       "sexeVeau": "Mâle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv6k490pgsto",
+      "vache": "mmv3fkq2o89r",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-04-28",
+      "sexeVeau": "Femelle",
       "poids": "",
       "facilite": "",
       "notes": "Déni de grossesse — "
