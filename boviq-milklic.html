@@ -675,6 +675,61 @@ function processValorise(rows){
   return n;
 }
 
+// La date du dernier controle est celle de la colonne la plus recente, tous
+// historiques confondus. S'appuyer sur le seul fichier « Historique lait »
+// laissait la date inchangee quand on importait les autres, sans rien dire.
+function dernierControleISO(){
+  if(!ML||!ML.animaux)return null;
+  let max=null;
+  Object.values(ML.animaux).forEach(a=>{
+    ['histoLait','histoTB','histoTP','histoCell'].forEach(cle=>{
+      Object.keys(a[cle]||{}).forEach(d=>{ if(!max||d>max)max=d; });
+    });
+  });
+  return max;
+}
+function isoVersJJMMAA(iso){
+  if(!iso)return null;
+  const p=iso.split('-');
+  return p.length===3 ? p[2]+'/'+p[1]+'/'+p[0].slice(2) : iso;
+}
+// Jours ecoules depuis le dernier controle, pour signaler un historique fige.
+function ageControleJours(){
+  const iso=dernierControleISO();
+  if(!iso)return null;
+  const d=new Date(iso+'T00:00:00');
+  if(isNaN(d))return null;
+  return Math.round((new Date()-d)/86400000);
+}
+
+// Un historique fige passe inapercu : la date s'affiche, mais rien ne dit
+// qu'elle ne bouge plus. Au-dela de 100 jours, on le dit.
+const CONTROLE_ANCIEN_J=100;
+function majBandeauControle(){
+  const el=document.getElementById('dash-date');
+  if(!el||!ML)return;
+  const j=ageControleJours();
+  let txt=`Contrôle : ${ML.controleDate||'?'} · Import : ${ML.importDate||'?'}`;
+  el.style.color='';
+  el.textContent=txt;
+  const vieux=document.getElementById('alerte-controle');
+  if(vieux)vieux.remove();
+  if(j===null||j<=CONTROLE_ANCIEN_J)return;
+  const mois=Math.round(j/30);
+  const d=document.createElement('div');
+  d.id='alerte-controle';
+  d.style.cssText='margin:14px 0 0;padding:13px 16px;background:var(--amber-l);'
+    +'border-left:3px solid var(--amber);border-radius:8px;font-size:13.5px;'
+    +'line-height:1.6;color:var(--ink2)';
+  d.innerHTML='<strong style="color:var(--amber)">Le dernier contrôle date de '
+    + j + ' jours, soit environ ' + mois + ' mois.</strong><br>'
+    + "Le contrôle laitier passe toutes les quatre à dix semaines : "
+    + "les chiffres affichés ici ne reflètent plus l'état du troupeau. "
+    + "Téléchargez les fichiers récents depuis Mil'Klic, puis importez-les.";
+  const head=el.closest('.page-head');
+  if(head&&head.parentNode)head.parentNode.insertBefore(d,head.nextSibling);
+}
+
 function processHisto(rows,field){
   if(rows.length<2)return 0;
   const dates=rows[1].slice(6);let n=0;
@@ -749,7 +804,7 @@ function handleFiles(files){
         try{
           if(type==='bruts')count=processBruts(rows);
           else if(type==='valorise')count=processValorise(rows);
-          else if(type==='histoLait'){count=processHisto(rows,'histoLait');const ld=rows[1]?.filter(d=>/\d{2}\/\d{2}\/\d{2}/.test(d)).pop();if(ld)ML.controleDate=ld}
+          else if(type==='histoLait')count=processHisto(rows,'histoLait');
           else if(type==='histoTB')count=processHisto(rows,'histoTB');
           else if(type==='histoTP')count=processHisto(rows,'histoTP');
           else if(type==='histoCell')count=processHistoCell(rows);
@@ -764,6 +819,12 @@ function handleFiles(files){
   Promise.all(tasks).then(async()=>{
     fi.value='';
     const reussis=log.filter(it=>it.ok).length;
+    // La date se deduit des donnees reellement presentes, quel que soit le
+    // fichier qui les a apportees.
+    if(reussis){
+      const iso=dernierControleISO();
+      if(iso)ML.controleDate=isoVersJJMMAA(iso);
+    }
     const ligne=it=>`<div class="log-item"><span class="log-icon">${it.ok?'✅':'❌'}</span><div><strong>${it.name}</strong><span>${it.ok?(LABELS[it.type]||it.type)+' — '+it.count+' lignes '+(it.extra||''):it.msg}</span></div></div>`;
 
     if(!reussis){
@@ -793,7 +854,7 @@ function renderDashboard(){
   const VLs=Object.values(ML.animaux).filter(a=>a.lait24!=null);
   const avg=(arr,fn)=>arr.length?(arr.reduce((s,a)=>s+(fn(a)||0),0)/arr.length).toFixed(1):'—';
   const avgL=VLs.length?(VLs.reduce((s,a)=>s+(a.leucos||0),0)/VLs.length).toFixed(0):'—';
-  document.getElementById('dash-date').textContent=`Contrôle : ${ML.controleDate||'?'} · Import : ${ML.importDate||'?'}`;
+  majBandeauControle();
   document.getElementById('dash-kpis').innerHTML=`
     <div class="kpi"><div class="kpi-label">Vaches contrôlées</div><div class="kpi-val">${VLs.length}</div><div class="kpi-sub">en traite</div></div>
     <div class="kpi"><div class="kpi-label">Lait moyen</div><div class="kpi-val">${avg(VLs,a=>a.lait24)} <span style="font-size:14px;color:var(--ink3)">L/j</span></div></div>
