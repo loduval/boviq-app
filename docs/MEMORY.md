@@ -11,7 +11,7 @@
 > | `SESSION-2026-10-13-VEAUX-SORTIES.md` | jumeaux, veaux mort-nés, date de sortie dans l'inventaire |
 > | `DOSSIER-GESTION-2026-10-13.md`, `BILAN-2025-LECTURE-2026-10-13.md` | volet comptable |
 >
-> **Hébergement courant : `boviq-app.vercel.app`** — plus de `?v=N`, les en-têtes
+> **Hébergement courant : `boviq.vercel.app`** — plus de `?v=N`, les en-têtes
 > de cache sont appliqués par `vercel.json`. `boviq-v6-latest.html` : 9 100 lignes.
 
 Dernière mise à jour : **26/03/2026 — 17h30** — Session Stats + fix PAT token + module Lait
