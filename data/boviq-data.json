@@ -2081,7 +2081,7 @@
     {
       "id": "mmv3pv1sobv4",
       "nom": "Universale",
-      "type": "Génisse",
+      "type": "Vache",
       "race": "Simmental",
       "boucle": "FR 53 8124 9776",
       "naissance": "2023-11-29",
@@ -3827,6 +3827,18 @@
       "mere": "mmtmp4vuai2q",
       "pere": "",
       "notes": "Né(e) le 06/10/2026 de Métis"
+    },
+    {
+      "id": "mv7xsg0tff7t",
+      "nom": "Veau de Universale",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0046",
+      "naissance": "2026-10-06",
+      "sexe": "Mâle",
+      "mere": "mmv3pv1sobv4",
+      "pere": "",
+      "notes": "Né(e) le 06/10/2026 de Universale"
     }
   ],
   "repros": [
@@ -3879,6 +3891,18 @@
       "notes": ""
     },
     {
+      "id": "mm4x5raoxbce",
+      "vache": "mm4wlq6hl7gr",
+      "taureau": "mm2hv85fm139",
+      "dateSaillie": "2025-09-12",
+      "primo": "Non",
+      "velageReel": "2026-07-15",
+      "sexeVeau": "Mâle",
+      "poids": "",
+      "facilite": "",
+      "notes": ""
+    },
+    {
       "id": "mn3bf8i56jz8",
       "vache": "mmtnftx4x4vp",
       "taureau": "mm20npn388sp",
@@ -3886,6 +3910,18 @@
       "primo": "Non",
       "velageReel": "",
       "sexeVeau": "",
+      "poids": "",
+      "facilite": "",
+      "notes": ""
+    },
+    {
+      "id": "mn3bgtu9op6b",
+      "vache": "mmtozefi94ti",
+      "taureau": "mm20npn388sp",
+      "dateSaillie": "2026-02-04",
+      "primo": "Non",
+      "velageReel": "2026-07-19",
+      "sexeVeau": "Mâle",
       "poids": "",
       "facilite": "",
       "notes": ""
@@ -3987,6 +4023,78 @@
       "notes": ""
     },
     {
+      "id": "mn3cfrmczw2l",
+      "vache": "mmtn6nh4zhx4",
+      "taureau": "mm20npn388sp",
+      "dateSaillie": "2025-10-18",
+      "primo": "Non",
+      "velageReel": "",
+      "sexeVeau": "",
+      "poids": "",
+      "facilite": "",
+      "notes": ""
+    },
+    {
+      "id": "mn3cgprozc7c",
+      "vache": "mmtp4xmsq0wa",
+      "taureau": "mm20npn388sp",
+      "dateSaillie": "2025-10-18",
+      "primo": "Non",
+      "velageReel": "",
+      "sexeVeau": "",
+      "poids": "",
+      "facilite": "",
+      "notes": ""
+    },
+    {
+      "id": "mn3cho5kp7wa",
+      "vache": "mmtnrzqqpmbu",
+      "taureau": "mm20npn388sp",
+      "dateSaillie": "2025-10-19",
+      "primo": "Non",
+      "velageReel": "",
+      "sexeVeau": "",
+      "poids": "",
+      "facilite": "",
+      "notes": ""
+    },
+    {
+      "id": "mn3ckxp9xlml",
+      "vache": "mm209hgxujds",
+      "taureau": "mm20tt6cvp2g",
+      "dateSaillie": "2025-10-21",
+      "primo": "Non",
+      "velageReel": "",
+      "sexeVeau": "",
+      "poids": "",
+      "facilite": "",
+      "notes": ""
+    },
+    {
+      "id": "mn3cmyjwkc9p",
+      "vache": "mmtp6mx8wmpf",
+      "taureau": "mm20tt6cvp2g",
+      "dateSaillie": "2025-10-31",
+      "primo": "Non",
+      "velageReel": "",
+      "sexeVeau": "",
+      "poids": "",
+      "facilite": "",
+      "notes": ""
+    },
+    {
+      "id": "mn3co0xtakgc",
+      "vache": "mmtobyafongk",
+      "taureau": "mm20tt6cvp2g",
+      "dateSaillie": "2025-11-13",
+      "primo": "Non",
+      "velageReel": "",
+      "sexeVeau": "",
+      "poids": "",
+      "facilite": "",
+      "notes": ""
+    },
+    {
       "id": "mn3cowrarigz",
       "vache": "mmtp8j0pxbko",
       "taureau": "mm20npn388sp",
@@ -4003,6 +4111,18 @@
       "vache": "mmto369bpeec",
       "taureau": "mm20npn388sp",
       "dateSaillie": "2026-02-17",
+      "primo": "Non",
+      "velageReel": "",
+      "sexeVeau": "",
+      "poids": "",
+      "facilite": "",
+      "notes": ""
+    },
+    {
+      "id": "mn3cs2kxvra0",
+      "vache": "mmtnhoj5ov0z",
+      "taureau": "mm20tt6cvp2g",
+      "dateSaillie": "2025-12-08",
       "primo": "Non",
       "velageReel": "",
       "sexeVeau": "",
@@ -4498,6 +4618,18 @@
       "primo": "Non",
       "velageReel": "2026-10-06",
       "sexeVeau": "Femelle",
+      "poids": "",
+      "facilite": "",
+      "notes": "Déni de grossesse — "
+    },
+    {
+      "id": "mv7xsg0thiqg",
+      "vache": "mmv3pv1sobv4",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-10-06",
+      "sexeVeau": "Mâle",
       "poids": "",
       "facilite": "",
       "notes": "Déni de grossesse — "
