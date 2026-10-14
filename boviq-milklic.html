@@ -695,7 +695,17 @@ function isoVersJJMMAA(iso){
 }
 // Jours ecoules depuis le dernier controle, pour signaler un historique fige.
 function ageControleJours(){
-  const iso=dernierControleISO();
+  // La date affichee peut avoir ete saisie a la main apres un import de
+  // resultats bruts : elle prime alors sur les historiques, qui sont plus
+  // anciens.
+  let iso=dernierControleISO();
+  if(ML&&ML.controleDate){
+    const p=ML.controleDate.split('/');
+    if(p.length===3){
+      const saisie='20'+p[2]+'-'+p[1]+'-'+p[0];
+      if(!iso||saisie>iso)iso=saisie;
+    }
+  }
   if(!iso)return null;
   const d=new Date(iso+'T00:00:00');
   if(isNaN(d))return null;
@@ -728,6 +738,37 @@ function majBandeauControle(){
     + "Téléchargez les fichiers récents depuis Mil'Klic, puis importez-les.";
   const head=el.closest('.page-head');
   if(head&&head.parentNode)head.parentNode.insertBefore(d,head.nextSibling);
+}
+
+// Le fichier « Résultats bruts » ne porte aucune date : ni en en-tête, ni en
+// colonne. Importé seul, il met les chiffres à jour sans dire de quand ils
+// datent. Plutôt que de laisser s'afficher la date du contrôle précédent —
+// ce qui revient à dater de mars des valeurs de septembre — on la demande.
+function encartDateControle(){
+  return `<div class="log-item" style="align-items:flex-start;background:var(--amber-l);border-radius:8px;padding:14px 16px;margin-top:10px">
+    <span class="log-icon">📅</span>
+    <div style="flex:1">
+      <strong>De quand date ce contrôle ?</strong>
+      <span style="display:block;margin:6px 0 10px;line-height:1.6">Les valeurs ont bien été mises à jour, mais le fichier « Résultats bruts » ne contient aucune date. Sans elle, le tableau de bord afficherait encore <strong>${ML.controleDate||'—'}</strong>. Indiquez la date du passage du contrôleur, ou importez aussi les historiques (Lait, TB, TP, Cellules) qui la portent.</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <input type="date" id="saisie-date-controle" max="${new Date().toISOString().slice(0,10)}" style="padding:9px 11px;border:1px solid var(--line);border-radius:7px;font-family:inherit;font-size:14px">
+        <button class="btn btn-p btn-s" onclick="enregistrerDateControle()">Enregistrer la date</button>
+      </div>
+      <span id="date-controle-retour" style="display:block;margin-top:8px"></span>
+    </div></div>`;
+}
+async function enregistrerDateControle(){
+  const el=document.getElementById('saisie-date-controle');
+  const retour=document.getElementById('date-controle-retour');
+  if(!el||!el.value){
+    if(retour)retour.innerHTML='<span style="color:var(--amber)">Choisissez une date.</span>';
+    return;
+  }
+  ML.controleDate=isoVersJJMMAA(el.value);
+  await saveML();
+  updateSidebar();
+  if(retour)retour.innerHTML=`<span style="color:var(--brand)">✅ Contrôle daté du ${ML.controleDate}.</span>`;
+  setTimeout(()=>showPage('dashboard'),700);
 }
 
 function processHisto(rows,field){
@@ -785,6 +826,7 @@ function handleFiles(files){
   const sauvegarde=ML?JSON.parse(JSON.stringify(ML)):null;
   const socle=(ML&&ML.animaux)?JSON.parse(JSON.stringify(ML.animaux)):{};
   const ctrlPrec=ML?ML.controleDate:null;
+  const dernierControleAvant=dernierControleISO();
   ML={importDate:new Date().toISOString().slice(0,10),controleDate:ctrlPrec,animaux:socle};
   const log=[],tasks=[];
   const LABELS={bruts:'Résultats bruts',valorise:'Valorisé individuel',histoLait:'Historique lait',histoTB:'Historique TB',histoTP:'Historique TP',histoCell:'Historique cellules',inventaire:'Inventaire',gestation:'Gestation'};
@@ -821,9 +863,17 @@ function handleFiles(files){
     const reussis=log.filter(it=>it.ok).length;
     // La date se deduit des donnees reellement presentes, quel que soit le
     // fichier qui les a apportees.
+    const isoAvant=dernierControleAvant;
+    let dateAIndiquer=false;
     if(reussis){
       const iso=dernierControleISO();
       if(iso)ML.controleDate=isoVersJJMMAA(iso);
+      // Le fichier « Resultats bruts » et le valorise portent les valeurs du
+      // controle courant mais aucune date. Importes seuls, ils actualisent les
+      // chiffres en laissant la date d'avant : il faut la demander.
+      const valeurs=log.some(it=>it.ok&&(it.type==='bruts'||it.type==='valorise'));
+      const aucuneDateNeuve=(!iso||iso===isoAvant);
+      if(valeurs&&aucuneDateNeuve)dateAIndiquer=true;
     }
     const ligne=it=>`<div class="log-item"><span class="log-icon">${it.ok?'✅':'❌'}</span><div><strong>${it.name}</strong><span>${it.ok?(LABELS[it.type]||it.type)+' — '+it.count+' lignes '+(it.extra||''):it.msg}</span></div></div>`;
 
@@ -841,11 +891,12 @@ function handleFiles(files){
     await saveML();
     const tot=Object.keys(ML.animaux).length;
     document.getElementById('import-summary').textContent=`${tot} animaux consolidés · ${reussis}/${log.length} fichier${log.length>1?'s':''} intégré${reussis>1?'s':''}`;
-    document.getElementById('import-log').innerHTML=log.map(ligne).join('');
+    document.getElementById('import-log').innerHTML=log.map(ligne).join('')
+      +(dateAIndiquer?encartDateControle():'');
     document.getElementById('import-log-card').style.display='block';
     document.getElementById('btn-clear').style.display='inline-flex';
     updateSidebar();
-    setTimeout(()=>showPage('dashboard'),600);
+    if(!dateAIndiquer)setTimeout(()=>showPage('dashboard'),600);
   });
 }
 
