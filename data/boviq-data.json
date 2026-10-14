@@ -3813,8 +3813,14 @@
       "naissance": "2026-10-06",
       "sexe": "Femelle",
       "mere": "mmtmp4vuai2q",
-      "pere": "",
-      "notes": "Né(e) le 06/10/2026 de Métis"
+      "pere": "mm20npn388sp",
+      "notes": "Né(e) le 06/10/2026 de Métis",
+      "statut": "",
+      "dateSortie": "",
+      "dateEntree": "",
+      "provenance": "",
+      "ancienneBoucle": "",
+      "dateRebouclage": ""
     },
     {
       "id": "mv7xsg0tff7t",
