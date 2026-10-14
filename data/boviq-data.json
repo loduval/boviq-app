@@ -5346,7 +5346,15 @@
     "naissance_mnofahtvqhtk": "2026-04-07",
     "naissance_mn3e1xcs0l45": "2026-04-07"
   },
-  "fourrages": [],
+  "fourrages": [
+    {
+      "id": "mv7ylk7ar167",
+      "type": "Foin",
+      "qte": 15,
+      "date": "2026-10-14",
+      "notes": "achat foin"
+    }
+  ],
   "besoinsMS": {
     "vl": 14,
     "genisse": 8,
