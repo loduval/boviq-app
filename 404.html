@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BOVIQ — nouvelle adresse</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐄</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --brand:#1B4332; --brand2:#2D6A4F; --brand-light:#D8F3DC;
+    --ink:#1E1B16; --ink2:#3D3A32; --ink3:#7A7060;
+    --bg:#FAF8F4; --card:#FFFFFF; --line:#E3DED4;
+    --amber:#B45309; --amber-l:#FEF3C7;
+    --r:14px; --r-sm:9px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+    line-height:1.6; min-height:100vh;
+    display:flex; align-items:center; justify-content:center;
+    padding:24px 16px;
+  }
+  .carte{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--r);
+    max-width:560px; width:100%; overflow:hidden;
+    box-shadow:0 1px 3px rgba(30,27,22,.04), 0 12px 32px rgba(30,27,22,.07);
+  }
+  .bandeau{
+    background:linear-gradient(135deg,var(--brand) 0%,var(--brand2) 100%);
+    color:#fff; padding:30px 32px 26px;
+  }
+  .bandeau .marque{
+    font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--brand-light); opacity:.85; margin-bottom:10px;
+  }
+  .bandeau h1{
+    font-family:'Playfair Display',Georgia,serif; font-weight:700;
+    font-size:27px; line-height:1.25; letter-spacing:-.01em;
+  }
+  .corps{padding:28px 32px 32px}
+  .corps p{color:var(--ink2); font-size:15px; margin-bottom:16px}
+  .adresse{
+    display:block; text-align:center;
+    background:var(--brand-light); border:1px solid rgba(45,106,79,.22);
+    border-radius:var(--r-sm); padding:15px 18px; margin:22px 0;
+    font-size:17px; font-weight:600; color:var(--brand);
+    text-decoration:none; word-break:break-all;
+  }
+  .adresse:hover{background:#CDEBD3}
+  .encart{
+    background:var(--amber-l); border-left:3px solid var(--amber);
+    border-radius:var(--r-sm); padding:15px 18px; margin:22px 0;
+    font-size:14px; line-height:1.6; color:var(--ink2);
+  }
+  .encart strong{color:var(--amber)}
+  .actions{display:flex; flex-direction:column; gap:10px; margin-top:24px}
+  .btn{
+    display:block; width:100%; text-align:center;
+    padding:14px 20px; border-radius:var(--r-sm); border:1px solid transparent;
+    font-family:inherit; font-size:15px; font-weight:600; line-height:1.3;
+    cursor:pointer; text-decoration:none; transition:background .14s,border-color .14s;
+  }
+  .btn-p{background:var(--brand); color:#fff}
+  .btn-p:hover{background:var(--brand2)}
+  .btn-o{background:transparent; color:var(--brand); border-color:var(--line)}
+  .btn-o:hover{background:var(--bg); border-color:var(--brand2)}
+  .pied{
+    margin-top:22px; padding-top:18px; border-top:1px solid var(--line);
+    font-size:12.5px; color:var(--ink3); line-height:1.6; margin-bottom:0;
+  }
+  #compte{font-variant-numeric:tabular-nums}
+  @media(max-width:460px){
+    .bandeau{padding:26px 22px 22px} .bandeau h1{font-size:23px}
+    .corps{padding:24px 22px 26px}
+  }
+</style>
+</head>
+<body>
+<div class="carte">
+  <div class="bandeau">
+    <div class="marque">🐄 BOVIQ</div>
+    <h1>BOVIQ a changé d'adresse</h1>
+  </div>
+  <div class="corps">
+    <p>Cette page n'est plus mise à jour. La version en service, avec toutes
+       les corrections récentes, se trouve désormais ici :</p>
+
+    <a class="adresse" href="https://boviq.vercel.app/">boviq.vercel.app</a>
+
+    <div id="zone-sauvegarde" style="display:none">
+      <div class="encart">
+        <strong>Des données sont encore stockées dans ce navigateur.</strong>
+        Elles ont été enregistrées par l'ancienne version et n'ont pas été
+        envoyées sur le serveur. Téléchargez-les avant de continuer : le
+        fichier obtenu pourra être réimporté ou analysé plus tard.
+      </div>
+      <div class="actions">
+        <button class="btn btn-p" id="btn-telecharger">Télécharger ces données</button>
+        <a class="btn btn-o" href="https://boviq.vercel.app/">Continuer sans télécharger</a>
+      </div>
+    </div>
+
+    <div id="zone-simple">
+      <p>Aucune donnée n'est restée dans ce navigateur : tout ce qui a été
+         saisi se trouve déjà sur le serveur, et la nouvelle adresse y accède
+         directement.</p>
+      <div class="actions">
+        <a class="btn btn-p" href="https://boviq.vercel.app/">Ouvrir BOVIQ</a>
+      </div>
+      <p class="pied">Redirection automatique dans <span id="compte">10</span> secondes.</p>
+    </div>
+
+    <p class="pied">
+      Pensez à remplacer le raccourci de votre écran d'accueil : s'il pointe
+      encore vers cette adresse, vous retomberez sur l'ancienne version.
+      Le jeton GitHub devra être saisi à nouveau sur la nouvelle adresse,
+      pour des raisons de sécurité du navigateur.
+    </p>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  // Nettoyage du service worker figé au 21/03 et des pages qu'il gardait
+  // en cache. Le stockage local (localStorage) n'est PAS touché : il peut
+  // contenir des données que l'ancienne version n'a jamais envoyées au
+  // serveur, et il reste consultable tant qu'on ne l'efface pas.
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations()
+      .then(function(rs){ rs.forEach(function(r){ r.unregister(); }); })
+      .catch(function(){});
+  }
+  if (window.caches && caches.keys) {
+    caches.keys().then(function(ks){
+      ks.forEach(function(k){ caches.delete(k); });
+    }).catch(function(){});
+  }
+
+  // Y a-t-il quelque chose à récupérer ? Le jeton GitHub est délibérément
+  // exclu de l'export : un secret n'a pas sa place dans un fichier qui
+  // traîne dans le dossier Téléchargements.
+  var CLES = ['boviq', 'BOVIQ_MILKLIC'];
+  var trouve = {};
+  var aQuelqueChose = false;
+
+  CLES.forEach(function(cle){
+    var v = null;
+    try { v = localStorage.getItem(cle); } catch (e) { return; }
+    if (v === null || v === '') return;
+    try {
+      var o = JSON.parse(v);
+      var vide = !o || (typeof o === 'object' && Object.keys(o).length === 0);
+      if (!vide && o.animaux && typeof o.animaux === 'object') {
+        var n = Array.isArray(o.animaux) ? o.animaux.length
+                                         : Object.keys(o.animaux).length;
+        if (n === 0) vide = true;
+      }
+      if (vide) return;
+      trouve[cle] = o;
+    } catch (e) {
+      trouve[cle] = v;   // non-JSON : on garde tel quel plutôt que de perdre
+    }
+    aQuelqueChose = true;
+  });
+
+  var zoneSauv   = document.getElementById('zone-sauvegarde');
+  var zoneSimple = document.getElementById('zone-simple');
+
+  if (aQuelqueChose) {
+    // On ne redirige pas tout seul : l'utilisateur doit pouvoir récupérer.
+    zoneSauv.style.display = 'block';
+    zoneSimple.style.display = 'none';
+
+    document.getElementById('btn-telecharger').addEventListener('click', function(){
+      var paquet = {
+        origine: location.origin,
+        exporteLe: new Date().toISOString(),
+        note: "Donnees trouvees dans le stockage local de l'ancienne adresse BOVIQ. "
+            + "Le jeton GitHub n'est volontairement pas inclus.",
+        donnees: trouve
+      };
+      var blob = new Blob([JSON.stringify(paquet, null, 2)], {type:'application/json'});
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'boviq-donnees-locales-'
+                 + new Date().toISOString().slice(0,10) + '.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function(){ location.href = 'https://boviq.vercel.app/'; }, 1200);
+    });
+
+  } else {
+    // Rien a sauver : on bascule, en laissant le temps de lire.
+    var reste = 10;
+    var el = document.getElementById('compte');
+    var t = setInterval(function(){
+      reste -= 1;
+      if (el) el.textContent = reste;
+      if (reste <= 0) {
+        clearInterval(t);
+        location.href = 'https://boviq.vercel.app/';
+      }
+    }, 1000);
+  }
+})();
+</script>
+</body>
+</html>
