@@ -5300,7 +5300,7 @@
     },
     {
       "id": "vermifuge",
-      "actif": false
+      "actif": true
     }
   ],
   "_mlControleDate": "04/03/26",
