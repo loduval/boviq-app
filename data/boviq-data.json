@@ -3833,6 +3833,18 @@
       "mere": "mmv3pv1sobv4",
       "pere": "",
       "notes": "Né(e) le 06/10/2026 de Universale"
+    },
+    {
+      "id": "mvmg6mjbbrx7",
+      "nom": "Veau de Suprème",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FF 53 8124 0050",
+      "naissance": "2026-10-24",
+      "sexe": "Mâle",
+      "mere": "mmtof71fhmb5",
+      "pere": "mm20npn388sp",
+      "notes": "Né(e) le 24/10/2026 de Suprème"
     }
   ],
   "repros": [
@@ -4058,11 +4070,24 @@
       "taureau": "mm20npn388sp",
       "dateSaillie": "2025-12-22",
       "primo": "Non",
-      "velageReel": "",
-      "sexeVeau": "",
+      "velageReel": "2026-10-24",
+      "sexeVeau": "Mâle",
       "poids": "",
-      "facilite": "",
-      "notes": ""
+      "facilite": "1 — Seule",
+      "notes": "",
+      "veaux": [
+        {
+          "etat": "Vivant",
+          "sexe": "Mâle",
+          "nom": "",
+          "boucle": "FF 53 8124 0050",
+          "poids": "",
+          "cause": "",
+          "animalId": "mvmg6mjbbrx7"
+        }
+      ],
+      "nbVeaux": 1,
+      "mortNes": 0
     },
     {
       "id": "mnofahtvqhtk",
