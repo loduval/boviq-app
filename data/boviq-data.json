@@ -3869,6 +3869,18 @@
       "mere": "mmtp29g0g0dk",
       "pere": "",
       "notes": "Né(e) le 01/08/2016 de Topaze"
+    },
+    {
+      "id": "mvp8ymhm820a",
+      "nom": "Banquise",
+      "type": "Génisse",
+      "race": "Simmental",
+      "boucle": "FR  53 8124 0029",
+      "naissance": "2016-08-06",
+      "sexe": "Femelle",
+      "mere": "muzf42et8t4j",
+      "pere": "",
+      "notes": "Né(e) le 06/08/2016 de Lafontaine"
     }
   ],
   "repros": [
@@ -4689,6 +4701,31 @@
       "nbVeaux": 1,
       "mortNes": 0,
       "sexeVeau": "Mâle",
+      "poids": ""
+    },
+    {
+      "id": "mvp8ymhm2jso",
+      "vache": "muzf42et8t4j",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2016-08-06",
+      "facilite": "1 — Seule",
+      "notes": "Déni de grossesse — ",
+      "veaux": [
+        {
+          "etat": "Vivant",
+          "sexe": "Femelle",
+          "nom": "Banquise",
+          "boucle": "FR  53 8124 0029",
+          "poids": "",
+          "cause": "",
+          "animalId": "mvp8ymhm820a"
+        }
+      ],
+      "nbVeaux": 1,
+      "mortNes": 0,
+      "sexeVeau": "Femelle",
       "poids": ""
     }
   ],
