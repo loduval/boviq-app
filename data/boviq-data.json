@@ -3935,6 +3935,18 @@
       "provenance": "",
       "ancienneBoucle": "",
       "dateRebouclage": ""
+    },
+    {
+      "id": "mvp95cdowwv5",
+      "nom": "Veau de Lambada",
+      "type": "Génisse",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0034",
+      "naissance": "2016-08-15",
+      "sexe": "Femelle",
+      "mere": "muzf6ahu5fma",
+      "pere": "",
+      "notes": "Né(e) le 15/08/2016 de Lambada"
     }
   ],
   "repros": [
@@ -4838,6 +4850,31 @@
           "poids": "",
           "cause": "",
           "animalId": "mvp90sjq4jim"
+        }
+      ],
+      "nbVeaux": 1,
+      "mortNes": 0,
+      "sexeVeau": "Femelle",
+      "poids": ""
+    },
+    {
+      "id": "mvp95cdo23c8",
+      "vache": "muzf6ahu5fma",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2016-08-15",
+      "facilite": "1 — Seule",
+      "notes": "Déni de grossesse — ",
+      "veaux": [
+        {
+          "etat": "Vivant",
+          "sexe": "Femelle",
+          "nom": "",
+          "boucle": "FR 53 8124 0034",
+          "poids": "",
+          "cause": "",
+          "animalId": "mvp95cdowwv5"
         }
       ],
       "nbVeaux": 1,
