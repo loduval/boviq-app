@@ -3881,6 +3881,18 @@
       "mere": "muzf42et8t4j",
       "pere": "",
       "notes": "Né(e) le 06/08/2016 de Lafontaine"
+    },
+    {
+      "id": "mvp8zr6ndfd3",
+      "nom": "Veau de Rainette",
+      "type": "Génisse",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0030",
+      "naissance": "2016-08-08",
+      "sexe": "Femelle",
+      "mere": "mmtnuun395hz",
+      "pere": "",
+      "notes": "Né(e) le 08/08/2016 de Rainette"
     }
   ],
   "repros": [
@@ -4721,6 +4733,31 @@
           "poids": "",
           "cause": "",
           "animalId": "mvp8ymhm820a"
+        }
+      ],
+      "nbVeaux": 1,
+      "mortNes": 0,
+      "sexeVeau": "Femelle",
+      "poids": ""
+    },
+    {
+      "id": "mvp8zr6n296g",
+      "vache": "mmtnuun395hz",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2016-08-08",
+      "facilite": "1 — Seule",
+      "notes": "Déni de grossesse — ",
+      "veaux": [
+        {
+          "etat": "Vivant",
+          "sexe": "Femelle",
+          "nom": "",
+          "boucle": "FR 53 8124 0030",
+          "poids": "",
+          "cause": "",
+          "animalId": "mvp8zr6ndfd3"
         }
       ],
       "nbVeaux": 1,
