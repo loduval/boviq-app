@@ -3959,6 +3959,18 @@
       "mere": "muzfjqfq5auw",
       "pere": "",
       "notes": "Né(e) le 15/08/2016 de Origine"
+    },
+    {
+      "id": "mvp97oa805bv",
+      "nom": "Veau de Justesse",
+      "type": "Génisse",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0036",
+      "naissance": "2016-08-18",
+      "sexe": "Femelle",
+      "mere": "muzezfggwqmb",
+      "pere": "",
+      "notes": "Né(e) le 18/08/2016 de Justesse"
     }
   ],
   "repros": [
@@ -4912,6 +4924,31 @@
           "poids": "",
           "cause": "",
           "animalId": "mvp96t6pc727"
+        }
+      ],
+      "nbVeaux": 1,
+      "mortNes": 0,
+      "sexeVeau": "Femelle",
+      "poids": ""
+    },
+    {
+      "id": "mvp97oa8z834",
+      "vache": "muzezfggwqmb",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2016-08-18",
+      "facilite": "1 — Seule",
+      "notes": "Déni de grossesse — ",
+      "veaux": [
+        {
+          "etat": "Vivant",
+          "sexe": "Femelle",
+          "nom": "",
+          "boucle": "FR 53 8124 0036",
+          "poids": "",
+          "cause": "",
+          "animalId": "mvp97oa805bv"
         }
       ],
       "nbVeaux": 1,
