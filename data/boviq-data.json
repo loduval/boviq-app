@@ -3905,6 +3905,18 @@
       "mere": "muzgfqwp39wn",
       "pere": "",
       "notes": "Né(e) le 10/08/2016 de Tanzanie"
+    },
+    {
+      "id": "mvp91u75j48t",
+      "nom": "Veau de Région",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0032",
+      "naissance": "2016-08-11",
+      "sexe": "Mâle",
+      "mere": "mmto0ro5t3oi",
+      "pere": "mm20npn388sp",
+      "notes": "Né(e) le 11/08/2016 de Région"
     }
   ],
   "repros": [
@@ -4646,11 +4658,24 @@
       "taureau": "mm20npn388sp",
       "dateSaillie": "2026-08-24",
       "primo": "Non",
-      "velageReel": "",
-      "sexeVeau": "",
+      "velageReel": "2016-08-11",
+      "sexeVeau": "Mâle",
       "poids": "",
-      "facilite": "",
-      "notes": ""
+      "facilite": "1 — Seule",
+      "notes": "",
+      "veaux": [
+        {
+          "etat": "Vivant",
+          "sexe": "Mâle",
+          "nom": "",
+          "boucle": "FR 53 8124 0032",
+          "poids": "",
+          "cause": "",
+          "animalId": "mvp91u75j48t"
+        }
+      ],
+      "nbVeaux": 1,
+      "mortNes": 0
     },
     {
       "id": "mvp8ug4t4cr5",
