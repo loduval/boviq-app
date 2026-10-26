@@ -3835,16 +3835,16 @@
       "notes": "Né(e) le 06/10/2026 de Universale"
     },
     {
-      "id": "mvmg6mjbbrx7",
-      "nom": "Veau de Suprème",
+      "id": "mvp8ug4tg29r",
+      "nom": "Veau de Nectarine",
       "type": "Jeune mâle",
       "race": "Simmental",
-      "boucle": "FF 53 8124 0050",
-      "naissance": "2026-10-24",
+      "boucle": "FR 53 8124 0026",
+      "naissance": "2016-08-01",
       "sexe": "Mâle",
-      "mere": "mmtof71fhmb5",
-      "pere": "mm20npn388sp",
-      "notes": "Né(e) le 24/10/2026 de Suprème"
+      "mere": "mmtmrtprr0qe",
+      "pere": "",
+      "notes": "Né(e) le 01/08/2016 de Nectarine"
     }
   ],
   "repros": [
@@ -4070,24 +4070,11 @@
       "taureau": "mm20npn388sp",
       "dateSaillie": "2025-12-22",
       "primo": "Non",
-      "velageReel": "2026-10-24",
-      "sexeVeau": "Mâle",
+      "velageReel": "",
+      "sexeVeau": "",
       "poids": "",
-      "facilite": "1 — Seule",
-      "notes": "",
-      "veaux": [
-        {
-          "etat": "Vivant",
-          "sexe": "Mâle",
-          "nom": "",
-          "boucle": "FF 53 8124 0050",
-          "poids": "",
-          "cause": "",
-          "animalId": "mvmg6mjbbrx7"
-        }
-      ],
-      "nbVeaux": 1,
-      "mortNes": 0
+      "facilite": "",
+      "notes": ""
     },
     {
       "id": "mnofahtvqhtk",
@@ -4616,6 +4603,31 @@
       "poids": "",
       "facilite": "",
       "notes": ""
+    },
+    {
+      "id": "mvp8ug4t4cr5",
+      "vache": "mmtmrtprr0qe",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2016-08-01",
+      "facilite": "1 — Seule",
+      "notes": "Déni de grossesse — ",
+      "veaux": [
+        {
+          "etat": "Vivant",
+          "sexe": "Mâle",
+          "nom": "",
+          "boucle": "FR 53 8124 0026",
+          "poids": "",
+          "cause": "",
+          "animalId": "mvp8ug4tg29r"
+        }
+      ],
+      "nbVeaux": 1,
+      "mortNes": 0,
+      "sexeVeau": "Mâle",
+      "poids": ""
     }
   ],
   "sante": [
