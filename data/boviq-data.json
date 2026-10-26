@@ -3857,6 +3857,18 @@
       "mere": "muzf9l9uuind",
       "pere": "",
       "notes": "Né(e) le 01/08/2016 de Mognolia"
+    },
+    {
+      "id": "mvp8xrlzuvor",
+      "nom": "Veau de Topaze",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0028",
+      "naissance": "2016-08-01",
+      "sexe": "Mâle",
+      "mere": "mmtp29g0g0dk",
+      "pere": "",
+      "notes": "Né(e) le 01/08/2016 de Topaze"
     }
   ],
   "repros": [
@@ -4647,6 +4659,31 @@
           "poids": "",
           "cause": "",
           "animalId": "mvp8w129s6rw"
+        }
+      ],
+      "nbVeaux": 1,
+      "mortNes": 0,
+      "sexeVeau": "Mâle",
+      "poids": ""
+    },
+    {
+      "id": "mvp8xrlz7dqx",
+      "vache": "mmtp29g0g0dk",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2016-08-01",
+      "facilite": "1 — Seule",
+      "notes": "Déni de grossesse — ",
+      "veaux": [
+        {
+          "etat": "Vivant",
+          "sexe": "Mâle",
+          "nom": "",
+          "boucle": "FR 53 8124 0028",
+          "poids": "",
+          "cause": "",
+          "animalId": "mvp8xrlzuvor"
         }
       ],
       "nbVeaux": 1,
