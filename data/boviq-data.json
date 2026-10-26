@@ -3971,6 +3971,18 @@
       "mere": "muzezfggwqmb",
       "pere": "",
       "notes": "Né(e) le 18/08/2016 de Justesse"
+    },
+    {
+      "id": "mvp98kx7ay1n",
+      "nom": "Veau de Radja",
+      "type": "Génisse",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0037",
+      "naissance": "2016-08-24",
+      "sexe": "Femelle",
+      "mere": "mmto5x0nmt0i",
+      "pere": "mm20npn388sp",
+      "notes": "Né(e) le 24/08/2016 de Radja"
     }
   ],
   "repros": [
@@ -4148,11 +4160,24 @@
       "taureau": "mm20npn388sp",
       "dateSaillie": "2026-01-09",
       "primo": "Non",
-      "velageReel": "",
-      "sexeVeau": "",
+      "velageReel": "2016-08-24",
+      "sexeVeau": "Femelle",
       "poids": "",
-      "facilite": "",
-      "notes": ""
+      "facilite": "1 — Seule",
+      "notes": "",
+      "veaux": [
+        {
+          "etat": "Vivant",
+          "sexe": "Femelle",
+          "nom": "",
+          "boucle": "FR 53 8124 0037",
+          "poids": "",
+          "cause": "",
+          "animalId": "mvp98kx7ay1n"
+        }
+      ],
+      "nbVeaux": 1,
+      "mortNes": 0
     },
     {
       "id": "mn3cowrarigz",
