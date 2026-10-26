@@ -3845,6 +3845,18 @@
       "mere": "mmtmrtprr0qe",
       "pere": "",
       "notes": "Né(e) le 01/08/2016 de Nectarine"
+    },
+    {
+      "id": "mvp8w129s6rw",
+      "nom": "Veau de Mognolia",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0027",
+      "naissance": "2016-08-01",
+      "sexe": "Mâle",
+      "mere": "muzf9l9uuind",
+      "pere": "",
+      "notes": "Né(e) le 01/08/2016 de Mognolia"
     }
   ],
   "repros": [
@@ -4622,6 +4634,31 @@
           "poids": "",
           "cause": "",
           "animalId": "mvp8ug4tg29r"
+        }
+      ],
+      "nbVeaux": 1,
+      "mortNes": 0,
+      "sexeVeau": "Mâle",
+      "poids": ""
+    },
+    {
+      "id": "mvp8w129mz3n",
+      "vache": "muzf9l9uuind",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2016-08-01",
+      "facilite": "1 — Seule",
+      "notes": "Déni de grossesse — ",
+      "veaux": [
+        {
+          "etat": "Vivant",
+          "sexe": "Mâle",
+          "nom": "",
+          "boucle": "FR 53 8124 0027",
+          "poids": "",
+          "cause": "",
+          "animalId": "mvp8w129s6rw"
         }
       ],
       "nbVeaux": 1,
