@@ -3941,11 +3941,19 @@ async function renderDashCours(){
     const meta=data.meta||{};
     if(dateBadge)dateBadge.textContent=weekDate?'Semaine du '+weekDate:(meta.generated||'').substring(0,10);
     // Prix lait — historique sparkline
-    const milkPrices=(data.milk?.prices||[]).slice(-6);
+    // DG AGRI publie en EUR/100 kg ; le lait se paie aux 1000 litres, et le
+    // module Cours convertit deja ainsi. Meme facteur des deux cotes.
+    const LAIT_PAR_1000L = p => p * 10;
+    const milkPrices=(data.milk?.prices||[]).slice(-6)
+      .map(p=>({period:p.period, price:LAIT_PAR_1000L(p.price)}));
+    const milkPrix = milk ? LAIT_PAR_1000L(milk.price) : null;
     const milkSparkPoints=milkPrices.map((p,i)=>({x:i,y:p.price}));
     const milkTrend=milkPrices.length>=2?milkPrices[milkPrices.length-1].price-milkPrices[milkPrices.length-2].price:0;
-    const milkTrendIcon=milkTrend>0?'▲':milkTrend<0?'▼':'→';
-    const milkTrendColor=milkTrend>0?'var(--teal)':milkTrend<0?'var(--red)':'var(--ink3)';
+    // La fleche suit la valeur affichee : une variation qui s'arrondit a
+    // zero ne doit pas montrer une hausse ou une baisse.
+    const milkTrendAff=Math.round(milkTrend);
+    const milkTrendIcon=milkTrendAff>0?'▲':milkTrendAff<0?'▼':'→';
+    const milkTrendColor=milkTrendAff>0?'var(--teal)':milkTrendAff<0?'var(--red)':'var(--ink3)';
     // Cotations viande clés pour Simmental laitier
     const viandeItems=[
       {key:'vache_r3',label:'Vache R3'},
@@ -3956,11 +3964,11 @@ async function renderDashCours(){
     el.innerHTML=`
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
       <div style="background:var(--brand-pale);border-radius:10px;padding:16px 20px">
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);margin-bottom:6px">🥛 Prix du lait (${meta.milk_unit||'€/100kg'})</div>
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--ink3);margin-bottom:6px">🥛 Prix du lait</div>
         <div style="display:flex;align-items:baseline;gap:8px">
-          <span style="font-size:30px;font-weight:800;font-family:'Playfair Display',serif;color:var(--brand)">${milk?milk.price.toFixed(2):'—'}</span>
-          <span style="font-size:13px;color:var(--ink3)">€/100 kg</span>
-          <span style="font-size:14px;font-weight:700;color:${milkTrendColor}">${milkTrendIcon} ${Math.abs(milkTrend).toFixed(2)}</span>
+          <span style="font-size:30px;font-weight:800;font-family:'Playfair Display',serif;color:var(--brand)">${milkPrix!=null?Math.round(milkPrix):'—'}</span>
+          <span style="font-size:13px;color:var(--ink3)">€/1000 L</span>
+          <span style="font-size:14px;font-weight:700;color:${milkTrendColor}">${milkTrendIcon} ${Math.abs(milkTrendAff)}</span>
         </div>
         <div style="font-size:11px;color:var(--ink3);margin-top:4px">${milk?milk.period:''} · France · DG AGRI</div>
         <div style="margin-top:10px;height:80px;position:relative"><canvas id="chart-milk-spark" style="width:100%;height:80px"></canvas></div>
@@ -4002,13 +4010,13 @@ async function renderDashCours(){
         }]},
         options:{
           responsive:true,maintainAspectRatio:false,
-          plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.raw} €/100kg`}}},
+          plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${Math.round(ctx.raw)} €/1000 L`}}},
           scales:{
             x:{ticks:{font:{size:8},color:'#9AB0A0',maxRotation:0},grid:{display:false},border:{display:false}},
             y:{
-              min:Math.floor(Math.min(...sparkData)-2),
-              max:Math.ceil(Math.max(...sparkData)+2),
-              ticks:{font:{size:8},color:'#9AB0A0',callback:v=>v+'€'},
+              min:Math.floor(Math.min(...sparkData)-20),
+              max:Math.ceil(Math.max(...sparkData)+20),
+              ticks:{font:{size:8},color:'#9AB0A0',callback:v=>Math.round(v)+'€'},
               grid:{color:'rgba(0,0,0,.04)'},border:{display:false}
             }
           }
