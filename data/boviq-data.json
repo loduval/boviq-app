@@ -2095,7 +2095,7 @@
     {
       "id": "mmv3s88qp3u0",
       "nom": "9777",
-      "type": "Génisse",
+      "type": "Vache",
       "race": "Simmental",
       "boucle": "FR 53 8124 9777",
       "naissance": "2023-11-30",
@@ -4013,6 +4013,18 @@
       "mere": "mm4wxuj4hgo5",
       "pere": "",
       "notes": "Né(e) le 22/11/2026 de Nébuleuse"
+    },
+    {
+      "id": "mwkow6wwy6gq",
+      "nom": "Veau de 9777",
+      "type": "Génisse",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0050",
+      "naissance": "2026-11-23",
+      "sexe": "Femelle",
+      "mere": "mmv3s88qp3u0",
+      "pere": "",
+      "notes": "Né(e) le 23/11/2026 de 9777"
     }
   ],
   "repros": [
@@ -5042,6 +5054,31 @@
           "poids": "",
           "cause": "",
           "animalId": "mwkov3sbw791"
+        }
+      ],
+      "nbVeaux": 1,
+      "mortNes": 0,
+      "sexeVeau": "Femelle",
+      "poids": ""
+    },
+    {
+      "id": "mwkow6ww07e9",
+      "vache": "mmv3s88qp3u0",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-11-23",
+      "facilite": "1 — Seule",
+      "notes": "Déni de grossesse — ",
+      "veaux": [
+        {
+          "etat": "Vivant",
+          "sexe": "Femelle",
+          "nom": "",
+          "boucle": "FR 53 8124 0050",
+          "poids": "",
+          "cause": "",
+          "animalId": "mwkow6wwy6gq"
         }
       ],
       "nbVeaux": 1,
