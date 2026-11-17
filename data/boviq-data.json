@@ -4052,11 +4052,24 @@
       "taureau": "mm20npn388sp",
       "dateSaillie": "2026-01-17",
       "primo": "Non",
-      "velageReel": "",
-      "sexeVeau": "",
+      "velageReel": "2026-11-06",
+      "sexeVeau": "Femelle",
       "poids": "",
-      "facilite": "",
-      "notes": ""
+      "facilite": "3 — Aide forte",
+      "notes": "",
+      "veaux": [
+        {
+          "etat": "Mort-né",
+          "sexe": "Femelle",
+          "nom": "",
+          "boucle": "",
+          "poids": "",
+          "cause": "",
+          "animalId": ""
+        }
+      ],
+      "nbVeaux": 1,
+      "mortNes": 1
     },
     {
       "id": "mm20r5e7mk0y",
