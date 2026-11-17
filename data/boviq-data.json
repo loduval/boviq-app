@@ -2811,8 +2811,12 @@
       "mere": "",
       "pere": "",
       "notes": "",
-      "_trav": "7594",
-      "_categ_ml": "MA"
+      "statut": "Vendu",
+      "dateSortie": "2026-10-19",
+      "dateEntree": "",
+      "provenance": "",
+      "ancienneBoucle": "",
+      "dateRebouclage": ""
     },
     {
       "id": "ml9870",
