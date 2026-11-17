@@ -4001,6 +4001,18 @@
       "provenance": "",
       "ancienneBoucle": "",
       "dateRebouclage": ""
+    },
+    {
+      "id": "mwkov3sbw791",
+      "nom": "Bergamotte",
+      "type": "Génisse",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0049",
+      "naissance": "2026-11-22",
+      "sexe": "Femelle",
+      "mere": "mm4wxuj4hgo5",
+      "pere": "",
+      "notes": "Né(e) le 22/11/2026 de Nébuleuse"
     }
   ],
   "repros": [
@@ -5005,6 +5017,31 @@
           "poids": "",
           "cause": "",
           "animalId": "mvp97oa805bv"
+        }
+      ],
+      "nbVeaux": 1,
+      "mortNes": 0,
+      "sexeVeau": "Femelle",
+      "poids": ""
+    },
+    {
+      "id": "mwkov3sbqxfu",
+      "vache": "mm4wxuj4hgo5",
+      "taureau": "",
+      "dateSaillie": "",
+      "primo": "Non",
+      "velageReel": "2026-11-22",
+      "facilite": "1 — Seule",
+      "notes": "Déni de grossesse — ",
+      "veaux": [
+        {
+          "etat": "Vivant",
+          "sexe": "Femelle",
+          "nom": "Bergamotte",
+          "boucle": "FR 53 8124 0049",
+          "poids": "",
+          "cause": "",
+          "animalId": "mwkov3sbw791"
         }
       ],
       "nbVeaux": 1,
