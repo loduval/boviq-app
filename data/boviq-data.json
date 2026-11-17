@@ -4031,6 +4031,18 @@
       "mere": "mmv3s88qp3u0",
       "pere": "",
       "notes": "Né(e) le 23/11/2026 de 9777"
+    },
+    {
+      "id": "mwkoyevybdig",
+      "nom": "Veau de Suprème",
+      "type": "Jeune mâle",
+      "race": "Simmental",
+      "boucle": "FR 53 8124 0051",
+      "naissance": "2026-11-24",
+      "sexe": "Mâle",
+      "mere": "mmtof71fhmb5",
+      "pere": "mm20npn388sp",
+      "notes": "Né(e) le 24/11/2026 de Suprème"
     }
   ],
   "repros": [
@@ -4270,11 +4282,24 @@
       "taureau": "mm20npn388sp",
       "dateSaillie": "2025-12-22",
       "primo": "Non",
-      "velageReel": "",
-      "sexeVeau": "",
+      "velageReel": "2026-11-24",
+      "sexeVeau": "Mâle",
       "poids": "",
-      "facilite": "",
-      "notes": ""
+      "facilite": "1 — Seule",
+      "notes": "",
+      "veaux": [
+        {
+          "etat": "Vivant",
+          "sexe": "Mâle",
+          "nom": "",
+          "boucle": "FR 53 8124 0051",
+          "poids": "",
+          "cause": "",
+          "animalId": "mwkoyevybdig"
+        }
+      ],
+      "nbVeaux": 1,
+      "mortNes": 0
     },
     {
       "id": "mnofahtvqhtk",
