@@ -4044,11 +4044,17 @@
       "type": "Jeune mâle",
       "race": "Simmental",
       "boucle": "FR 53 8124 0051",
-      "naissance": "2026-11-24",
+      "naissance": "2026-10-24",
       "sexe": "Mâle",
       "mere": "mmtof71fhmb5",
       "pere": "mm20npn388sp",
-      "notes": "Né(e) le 24/11/2026 de Suprème"
+      "notes": "Né(e) le 24/11/2026 de Suprème",
+      "statut": "",
+      "dateSortie": "",
+      "dateEntree": "",
+      "provenance": "",
+      "ancienneBoucle": "",
+      "dateRebouclage": ""
     }
   ],
   "repros": [
