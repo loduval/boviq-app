@@ -4026,11 +4026,17 @@
       "type": "Génisse",
       "race": "Simmental",
       "boucle": "FR 53 8124 0050",
-      "naissance": "2026-11-23",
+      "naissance": "2026-10-23",
       "sexe": "Femelle",
       "mere": "mmv3s88qp3u0",
       "pere": "",
-      "notes": "Né(e) le 23/11/2026 de 9777"
+      "notes": "Né(e) le 23/11/2026 de 9777",
+      "statut": "",
+      "dateSortie": "",
+      "dateEntree": "",
+      "provenance": "",
+      "ancienneBoucle": "",
+      "dateRebouclage": ""
     },
     {
       "id": "mwkoyevybdig",
