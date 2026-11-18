@@ -1737,6 +1737,49 @@ function normBoucle(s){
   if(n.startsWith('0250')&&n.length>=14) n='FR'+n.slice(4);
   return n;
 }
+// ── Préfixe de boucle ─────────────────────────────────────────────────
+// Un élevage commande ses boucles par séries : le pays, le département et le
+// numéro d'exploitation ne changent pas d'un animal à l'autre, seuls les
+// quatre derniers chiffres varient. Plutôt que d'inscrire un préfixe en dur,
+// on le déduit du troupeau : l'application s'adapte ainsi à n'importe quel
+// élevage, et le champ reste librement modifiable pour un animal acheté
+// ailleurs.
+function prefixeBoucle(){
+  const comptes={};
+  (D.animaux||[]).forEach(a=>{
+    const n=normBoucle(a.boucle);
+    const m=/^(FR\d{6})\d{4}$/.exec(n);
+    if(m)comptes[m[1]]=(comptes[m[1]]||0)+1;
+  });
+  const tries=Object.entries(comptes).sort((a,b)=>b[1]-a[1]);
+  // Sous trois animaux, on ne peut rien déduire de fiable.
+  if(!tries.length||tries[0][1]<3)return'';
+  const p=tries[0][0];                       // FRddnnnn
+  return 'FR '+p.slice(2,4)+' '+p.slice(4,8)+' ';
+}
+
+// Pré-remplit un champ boucle vide et place le curseur après le préfixe,
+// prêt pour les quatre chiffres.
+// Une boucle reduite au seul prefixe est une saisie non terminee, pas un
+// numero : on la traite comme vide.
+function boucleSaisie(valeur){
+  const v=(valeur||'').trim();
+  if(!v)return'';
+  const n=normBoucle(v);
+  return /^FR\d{6}$/.test(n) ? '' : v;
+}
+
+function amorcerBoucle(id){
+  const el=document.getElementById(id);
+  if(!el||el.value)return;
+  const p=prefixeBoucle();
+  if(!p)return;
+  el.value=p;
+  el.dataset.prefixe=p;
+  const pos=p.length;
+  requestAnimationFrame(()=>{try{el.setSelectionRange(pos,pos)}catch(e){}});
+}
+
 function debounce(fn,ms){let t;return function(...args){clearTimeout(t);t=setTimeout(()=>fn.apply(this,args),ms);}}
 const debouncedSearchAnimaux=debounce(()=>renderAnimaux(),CONST.DEBOUNCE_MS);
 
@@ -2187,6 +2230,7 @@ function openAnimalModal(id){
     document.getElementById('m-animal-t').textContent='Modifier — '+a.nom;
   } else {
     ['a-id','a-nom','a-boucle','a-naissance','a-notes','a-ancienneBoucle','a-dateRebouclage','a-dateEntree','a-provenance'].forEach(x=>document.getElementById(x).value='');
+    amorcerBoucle('a-boucle');
     document.getElementById('a-type').value='Vache';
     document.getElementById('a-sexe').value='Femelle';
     document.getElementById('a-mere').value='';
@@ -2206,7 +2250,7 @@ function saveAnimal(){
     id:document.getElementById('a-id').value||uid(),
     nom:esc(nom),type:document.getElementById('a-type').value,
     race:document.getElementById('a-race').value,
-    boucle:esc(document.getElementById('a-boucle').value.trim()),
+    boucle:esc(boucleSaisie(document.getElementById('a-boucle').value)),
     naissance:document.getElementById('a-naissance').value,
     sexe:document.getElementById('a-sexe').value,
     mere:document.getElementById('a-mere').value,
@@ -2710,6 +2754,7 @@ function addVeauLigne(v){
   const d=document.createElement('div');
   d.innerHTML=veauLigneHTML(idx,v);
   c.appendChild(d.firstChild);
+  amorcerBoucle('v-boucle-'+idx);
   majBoutonJumeau();
 }
 function removeVeauLigne(idx){
@@ -2742,7 +2787,7 @@ function getVeauxFromModal(){
       etat:el.querySelector('.v-etat').value,
       sexe:el.querySelector('.v-sexe').value,
       nom:esc(el.querySelector('.v-nom').value.trim()),
-      boucle:esc(el.querySelector('.v-boucle').value.trim()),
+      boucle:esc(boucleSaisie(el.querySelector('.v-boucle').value)),
       poids:el.querySelector('.v-poids').value,
       cause:esc(el.querySelector('.v-cause').value.trim())
     });
